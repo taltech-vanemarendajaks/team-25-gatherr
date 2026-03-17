@@ -32,7 +32,7 @@ Gatherr is a SaaS platform designed to solve the "when are we all free?" problem
 order are carried out? These should be each 10-30h of work. -->
 
 1. Project Setup & MVP Infrastructure: Initializing the Spring Boot backend, setting up the PostgreSQL schema with JSONB support, and configuring the React frontend with Tailwind and basic routing.
-2. Core API & Event Flow: Implementing Google OAuth2 sign-in and the CRUD operations for Events. Generating short_id and managing the event_account relationship.
+2. Core API & Event Flow: Implementing Google OAuth2 sign-in and the CRUD operations for Events. Generating short_id and managing the event_user relationship.
 3. The Interactive Heatmap (FE): Developing the availability grid. This includes the "drag-to-select" UI and the logic to aggregate multiple JSONB availability blobs into a single visual heatmap.
 4. Google Calendar Integration: Requesting users calendar info post-login, fetching calendarList, and building the logic to overlay busy blocks onto the Gatherr grid.
 
@@ -44,7 +44,7 @@ order are carried out? These should be each 10-30h of work. -->
 
 * **Google Sign-In:** Implementation of Google OAuth2 for all users (creators and participants).
 * **Basic Submission:** The grid UI allows a user to click slots and save them to the database.
-* **Initial API:** All CRUD endpoints for `Account` and `Event` are functional.
+* **Initial API:** All CRUD endpoints for `User` and `Event` are functional.
 * **Design Implementation:** Implementing the Figma design in the frontend
 * **Event Lifecycle:** Ability to create an event, generate a `short_id`, and share the link.
 * **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
@@ -79,9 +79,9 @@ order are carried out? These should be each 10-30h of work. -->
 > * **Acceptance Criteria:**
 > * User fills in event name and selects time slots on the creation screen.
 > * Clicking "Create Event" triggers the Google Sign-In modal if not already authenticated.
-> * After successful sign-in, the event is created and linked to the authenticated account.
+> * After successful sign-in, the event is created and linked to the authenticated user.
 > * System generates a unique `short_id` for the event URL.
-> * The creator is automatically added to the `event_account` table as the first participant.
+> * The creator is automatically added to the `event_user` table as the first participant.
 >
 >
 >
@@ -100,7 +100,7 @@ order are carried out? These should be each 10-30h of work. -->
 > * **Acceptance Criteria:**
 > * Clicking on the timetable triggers the Google Sign-In modal if not already authenticated.
 > * Availability is sent as a JSON list to the `POST /api/events/{shortId}/available` endpoint.
-> * The `event_account` record is updated or created.
+> * The `event_user` record is updated or created.
 > * The heatmap refreshes to show the updated group availability.
 >
 >
@@ -118,7 +118,7 @@ order are carried out? These should be each 10-30h of work. -->
 > **So that** the group can reach a consensus in real-time.
 >
 > * **Acceptance Criteria:**
-> * The backend must aggregate all `event_account` JSONB records for a specific `event_id`.
+> * The backend must aggregate all `event_user` JSONB records for a specific `event_id`.
 > * The API returns a count of participants per time slot.
 >
 >
@@ -165,7 +165,7 @@ order are carried out? These should be each 10-30h of work. -->
 
 #### 1. Google Sign-In
 
-* **Single Auth Provider:** All users — creators and participants — sign in with Google. No passwords, no email verification, no guest accounts.
+* **Single Auth Provider:** All users — creators and participants — sign in with Google. No passwords, no email verification, no guest users.
 * **Deferred Auth:** Users can browse the event creation screen and the event timetable before being prompted to sign in, reducing perceived friction.
 
 #### 2. Event Management
@@ -198,7 +198,7 @@ order are carried out? These should be each 10-30h of work. -->
 
 * Used for all authentication — creators and participants.
 * Scopes at sign-in: `openid`, `profile`, `email`.
-* No passwords or guest accounts needed.
+* No passwords or guest users needed.
 
 1. **Google Calendar API (OAuth2):**
 
@@ -262,14 +262,14 @@ alt Not Logged In
     U->>G: Signs in with Google
     G-->>FE: Return id_token (name, email, picture)
     FE->>BE: POST /api/auth/google (id_token)
-    BE->>DB: UPSERT INTO account (name, email, picture)
-    BE-->>FE: Return JWT + Account
+    BE->>DB: UPSERT INTO users (name, email, picture)
+    BE-->>FE: Return JWT + User
 end
 
 FE->>BE: POST /api/events (name, times, timezone, creator_id)
 Note right of BE: Service generates short_id
-BE->>DB: INSERT INTO event
-BE->>DB: INSERT INTO event_account (creator as first participant)
+BE->>DB: INSERT INTO events
+BE->>DB: INSERT INTO event_user (creator as first participant)
 BE-->>FE: Return Event (short_id)
 FE->>U: Redirect to /e/{short_id}
 ```
@@ -299,7 +299,7 @@ alt Not Logged In
     U->>G: Signs in with Google
     G-->>FE: Return id_token
     FE->>BE: POST /api/auth/google (id_token)
-    BE-->>FE: Return JWT + Account
+    BE-->>FE: Return JWT + User
 end
 
 opt Google Calendar Sync
@@ -317,7 +317,7 @@ end
 U->>FE: Adjusts and confirms availability slots
 U->>FE: Clicks "Save"
 FE->>BE: POST /api/events/{shortId}/availability
-Note right of BE: Upserts EventAccount record
+Note right of BE: Upserts EventUser record
 BE-->>FE: 200 OK (Updated Heatmap)
 FE->>U: Show updated Heatmap
 ```
@@ -329,12 +329,12 @@ FE->>U: Show updated Heatmap
 ```text
 com.gatherr
 ├── model/
-│   ├── Account.java
+│   ├── User.java
 │   ├── Event.java
-│   └── EventAccount.java
+│   └── EventUser.java
 ```
 
-* src/main/java/com/gatherr/model/Account.java
+* src/main/java/com/gatherr/model/User.java
 
 ```java
 package com.gatherr.model;
@@ -347,12 +347,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "account")
+@Table(name = "users")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Account {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -408,7 +408,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "event")
+@Table(name = "events")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -431,7 +431,7 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)
     @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private Account creator;
+    private User creator;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
@@ -454,7 +454,7 @@ public class Event {
 }
 ```
 
-* src/main/java/com/gatherr/model/EventAccount.java
+* src/main/java/com/gatherr/model/EventUser.java
 
 ```java
 package com.gatherr.model;
@@ -470,13 +470,13 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "event_account",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"event_id", "account_id"}))
+@Table(name = "event_user",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"event_id", "user_id"}))
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EventAccount {
+public class EventUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -487,8 +487,8 @@ public class EventAccount {
     private Event event;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false)
-    private Account account;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
@@ -513,7 +513,7 @@ public class EventAccount {
 * [draw sql](https://drawsql.app/teams/gatherr/diagrams/gatherr)
 
 ```sql
-CREATE TABLE "account" (
+CREATE TABLE "users" (
     "id"              BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
     "name"            VARCHAR(255) NOT NULL,
     "email"           VARCHAR(255) NOT NULL,
@@ -524,10 +524,10 @@ CREATE TABLE "account" (
     "language"        VARCHAR(255) NOT NULL DEFAULT 'EN',
     "created_at"      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "account_email_unique" UNIQUE ("email")
+    CONSTRAINT "users_email_unique" UNIQUE ("email")
 );
 
-CREATE TABLE "event" (
+CREATE TABLE "events" (
     "id"          BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
     "name"        VARCHAR(255) NOT NULL,
     "description" TEXT NULL,
@@ -538,31 +538,31 @@ CREATE TABLE "event" (
     "is_deleted"  BOOLEAN NOT NULL DEFAULT FALSE,
     "created_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "event_short_id_unique" UNIQUE ("short_id"),
-    CONSTRAINT "event_creator_id_foreign" FOREIGN KEY ("creator_id") REFERENCES "account"("id") ON DELETE CASCADE
+    CONSTRAINT "events_short_id_unique" UNIQUE ("short_id"),
+    CONSTRAINT "events_creator_id_foreign" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE
 );
 
-COMMENT ON COLUMN "event"."times" IS '["0700-10032026","0715-10032026","0730-10032026"]';
+COMMENT ON COLUMN "events"."times" IS '["0700-10032026","0715-10032026","0730-10032026"]';
 
-CREATE TABLE "event_account" (
+CREATE TABLE "event_user" (
     "id"            BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
     "event_id"      BIGINT NOT NULL,
-    "account_id"    BIGINT NOT NULL,
+    "user_id"       BIGINT NOT NULL,
     "available"     JSONB NOT NULL,
     "not_available" JSONB NOT NULL,
     "created_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "event_account_unique" UNIQUE ("event_id", "account_id"),
-    CONSTRAINT "event_account_event_foreign" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE,
-    CONSTRAINT "event_account_account_foreign" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE CASCADE
+    CONSTRAINT "event_user_unique" UNIQUE ("event_id", "user_id"),
+    CONSTRAINT "event_user_event_foreign" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE CASCADE,
+    CONSTRAINT "event_user_user_foreign" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE
 );
 
-COMMENT ON COLUMN "event_account"."available"     IS '["0700-10032026","0715-10032026","0730-10032026"]';
-COMMENT ON COLUMN "event_account"."not_available" IS '["0700-10032026","0715-10032026","0730-10032026"]';
+COMMENT ON COLUMN "event_user"."available"     IS '["0700-10032026","0715-10032026","0730-10032026"]';
+COMMENT ON COLUMN "event_user"."not_available" IS '["0700-10032026","0715-10032026","0730-10032026"]';
 
-CREATE INDEX "event_short_id_index"   ON "event"("short_id");
-CREATE INDEX "event_creator_id_index" ON "event"("creator_id");
-CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("available");
+CREATE INDEX "events_short_id_index"          ON "events"("short_id");
+CREATE INDEX "events_creator_id_index"        ON "events"("creator_id");
+CREATE INDEX "event_user_available_gin"   ON "event_user" USING GIN ("available");
 ```
 
 ## Liquibase schema
@@ -573,13 +573,13 @@ CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("availa
 
 ```yml
 databaseChangeLog:
-  # 1. ACCOUNT TABLE
+  # 1. USERS TABLE
   - changeSet:
-      id: 001-create-account
+      id: 001-create-users
       author: gatherr
       changes:
         - createTable:
-            tableName: account
+            tableName: users
             columns:
               - column:
                   name: id
@@ -598,7 +598,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
-                    uniqueConstraintName: account_email_unique
+                    uniqueConstraintName: users_email_unique
               - column:
                   name: profile_picture
                   type: VARCHAR(255)
@@ -636,13 +636,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
-  # 2. EVENT TABLE
+  # 2. EVENTS TABLE
   - changeSet:
-      id: 002-create-event
+      id: 002-create-events
       author: gatherr
       changes:
         - createTable:
-            tableName: event
+            tableName: events
             columns:
               - column:
                   name: id
@@ -664,14 +664,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
-                    uniqueConstraintName: event_short_id_unique
+                    uniqueConstraintName: events_short_id_unique
               - column:
                   name: creator_id
                   type: BIGINT
                   constraints:
                     nullable: false
-                    foreignKeyName: event_creator_id_foreign
-                    references: account(id)
+                    foreignKeyName: events_creator_id_foreign
+                    references: users(id)
                     deleteCascade: true
               - column:
                   name: times
@@ -703,13 +703,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
-  # 3. EVENT_ACCOUNT TABLE
+  # 3. EVENT_USER TABLE
   - changeSet:
-      id: 003-create-event-account
+      id: 003-create-event-user
       author: gatherr
       changes:
         - createTable:
-            tableName: event_account
+            tableName: event_user
             columns:
               - column:
                   name: id
@@ -722,16 +722,16 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
-                    foreignKeyName: event_account_event_foreign
-                    references: event(id)
+                    foreignKeyName: event_user_event_foreign
+                    references: events(id)
                     deleteCascade: true
               - column:
-                  name: account_id
+                  name: user_id
                   type: BIGINT
                   constraints:
                     nullable: false
-                    foreignKeyName: event_account_account_foreign
-                    references: account(id)
+                    foreignKeyName: event_user_user_foreign
+                    references: users(id)
                     deleteCascade: true
               - column:
                   name: available
@@ -746,9 +746,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addUniqueConstraint:
-            tableName: event_account
-            columnNames: event_id, account_id
-            constraintName: event_account_unique
+            tableName: event_user
+            columnNames: event_id, user_id
+            constraintName: event_user_unique
 
   # 4. INDEXES
   - changeSet:
@@ -756,21 +756,21 @@ databaseChangeLog:
       author: gatherr
       changes:
         - createIndex:
-            tableName: event
-            indexName: event_short_id_index
+            tableName: events
+            indexName: events_short_id_index
             columns:
               - column:
                   name: short_id
         - createIndex:
-            tableName: event
-            indexName: event_creator_id_index
+            tableName: events
+            indexName: events_creator_id_index
             columns:
               - column:
                   name: creator_id
         # Liquibase doesn't natively support creating GIN indexes via YAML
         # so we use raw SQL for this specific Postgres feature!
         - sql:
-            sql: CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("available");
+            sql: CREATE INDEX "event_user_available_gin" ON "event_user" USING GIN ("available");
 ```
 
 ---
@@ -785,15 +785,17 @@ databaseChangeLog:
 2. This will also save time as we don’t have to create payment system.
 3. Main “revenue” will be created with ads
 
-#### Removing guest accounts and adding only google login
+#### Removing guest users and adding only google login
 
 1. this is techincally much easier as we don’t need to implement ip rate limits for guest users
-2. The audience we are targeting have google accounts and will probably use google sign in anyway without another thought.
+2. The audience we are targeting have google users and will probably use google sign in anyway without another thought.
 3. This removes password management and guest/regular user management headaches
-4. They only log in once so when someone else sends this link they are already in so no hassle of creating guest accounts
-5. This also means every account can have dashboard with events they have joined
+4. They only log in once so when someone else sends this link they are already in so no hassle of creating guest users
+5. This also means every user can have dashboard with events they have joined
 6. We will have email notifications and a button to fill your google calendar with the event time.
 
 #### Added liquidbase schema
+
+#### Renamed database tables to multilar and replaced account with users table
 
 ---
