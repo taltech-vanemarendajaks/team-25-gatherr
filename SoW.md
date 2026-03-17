@@ -1,6 +1,26 @@
 
 # Gatherr 1.0
 
+## Table of Contents
+
+- [High-level description](#high-level-description)
+- [High-level steps](#high-level-steps)
+- [Scopes](#scopes)
+- [Views and design](#views-and-design)
+- [User stories](#user-stories-ordered-by-importance)
+- [Functionalities](#functionalities)
+- [Integrations](#integrations)
+- [Non-functional requirements](#non-functional-requirements)
+- [Timeline](#timeline)
+- [Cost calculations](#cost-calculations)
+- [Sequence diagrams](#sequence-diagrams)
+- [Spring boot models](#spring-boot-models)
+- [Database schema](#database-schema)
+- [Liquibase schema](#liquidbase-schema)
+- [Changelog](#changelog)
+
+---
+
 ## High-level description
 
 Gatherr is a SaaS platform designed to solve the "when are we all free?" problem. It allows users to create events, propose multiple time slots, and visualize group availability through an aggregated heatmap.
@@ -545,7 +565,7 @@ CREATE INDEX "event_creator_id_index" ON "event"("creator_id");
 CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("available");
 ```
 
-## liquidbase schema
+## Liquibase schema
 
 * Save to path backend/src/main/resources/db/changelog/db.changelog-master.yaml
 
