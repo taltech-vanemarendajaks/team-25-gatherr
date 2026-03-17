@@ -3,7 +3,7 @@
 
 ## High-level description
 
-Gatherr is a SaaS platform designed to solve the "when are we all free?" problem. It allows users to create events, propose multiple time slots, and visualize group availability through an aggregated heatmap. Unlike rigid calendar tools, Gatherr emphasizes a "low-friction" entry, allowing guests to participate without mandatory account creation.
+Gatherr is a SaaS platform designed to solve the "when are we all free?" problem. It allows users to create events, propose multiple time slots, and visualize group availability through an aggregated heatmap.
 
 ## High-level steps
 
@@ -11,71 +11,56 @@ Gatherr is a SaaS platform designed to solve the "when are we all free?" problem
 
 order are carried out? These should be each 10-30h of work. -->
 
-1. Project Setup & MVP Infrastructure: Initializing the Spring Boot backend, setting up the PostgreSQL schema with JSONB support, and configuring the React/Next.js frontend with Tailwind and basic routing.
-2. Core API & Event Flow: Implementing the "Instant Guest" logic and the CRUD operations for Events. Generating short_id and managing the event_account relationship.
+1. Project Setup & MVP Infrastructure: Initializing the Spring Boot backend, setting up the PostgreSQL schema with JSONB support, and configuring the React frontend with Tailwind and basic routing.
+2. Core API & Event Flow: Implementing Google OAuth2 sign-in and the CRUD operations for Events. Generating short_id and managing the event_account relationship.
 3. The Interactive Heatmap (FE): Developing the availability grid. This includes the "drag-to-select" UI and the logic to aggregate multiple JSONB availability blobs into a single visual heatmap.
-4. Google Calendar Integration: Implementing OAuth2 flow, fetching calendarList, and building the logic to overlay "Busy" blocks onto the Gatherr grid.
+4. Google Calendar Integration: Requesting users calendar info post-login, fetching calendarList, and building the logic to overlay busy blocks onto the Gatherr grid.
 
 ## Scopes
 
 ### Scope 1: The Core (Deadline: 04.04)
 
-*Focus: User flow, identity persistence, and basic database interaction.*
+*Focus: Google auth, event flow, and basic database interaction.*
 
-* **Instant Identity:** Implementation of the "Guest" account creation and Local Storage persistence.
-* **Event Lifecycle:** Ability to create an event, generate a `short_id`, and share the link.
+* **Google Sign-In:** Implementation of Google OAuth2 for all users (creators and participants).
 * **Basic Submission:** The grid UI allows a user to click slots and save them to the database.
 * **Initial API:** All CRUD endpoints for `Account` and `Event` are functional.
-* **Design Implementation:** High-fidelity conversion of the Figma design into FE.
+* **Design Implementation:** Implementing the Figma design in the frontend
+* **Event Lifecycle:** Ability to create an event, generate a `short_id`, and share the link.
 * **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
-* **Multi Language Support:** FE structure to enable multi languge application
+* **Multi Language Support:** FE structure to enable multi language application
 
 ### Scope 2: The Platform (Deadline: 03.05)
 
-*Focus: Deployment, App, Ads, Third-party integrations, and user settings.*
+*Focus: Deployment, App, Ads, and third-party integrations.*
 
-* **Google Calendar Sync:** Full OAuth2 flow, fetching `calendarList` and available calendar times.
+* **Google Calendar Sync:** Fetching `calendarList` and busy calendar times.
+* **Email notifications:** Send notifications about event times to users and allow them to add the time to google calendar with one button click.
 * **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, support estonian language).
-* **App:** Simple expo webview app for mobile.
-* **Ads:** Google Ads are implemented.
-* **Subscription:** User can subscribe or buy lifetime package for features.
 * **Deployment:** Moving from local development to a live production environment.
+* **App:** Simple expo webview app for mobile.
 
 ---
 
 ### Views and design
 
-[Figma design](https://www.figma.com/design/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=0-1&t=g1ZWyYb3fhPwprDR-1)
+[Figma design](https://www.figma.com/design/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-769&p=f&t=f4oHycjedvlD1cTR-0)
 
 ### User stories ordered by importance
 
 #### 1. Event Creation (Organizer Flow)
 
-##### Story: Instant Guest Creation
-
-> **As an** unauthenticated user,
-> **I want** the system to automatically create a guest profile for me when I provide my name,
-> **So that** I can create an event immediately without going through a full registration process.
->
-> * **Acceptance Criteria:**
-> * System checks for "guestName" in local storage.
-> * If missing, a modal prompts for a name.
-> * A record is created in the `account` table with type `GUEST`.
-> * The IP address is captured for the guest account.
->
->
->
->
-
 ##### Story: Event Initialization
 
-> **As a** creator (Guest or User),
-> **I want** to define the name, description, and potential time slots for an event,
-> **So that** I can share a specific link with my group.
+> **As a** user,
+> **I want** to define the name and potential time slots for an event and then sign in with Google,
+> **So that** I can share a specific link of the event with my group.
 >
 > * **Acceptance Criteria:**
+> * User fills in event name and selects time slots on the creation screen.
+> * Clicking "Create Event" triggers the Google Sign-In modal if not already authenticated.
+> * After successful sign-in, the event is created and linked to the authenticated account.
 > * System generates a unique `short_id` for the event URL.
-> * The event is linked to the creator's account ID.
 > * The creator is automatically added to the `event_account` table as the first participant.
 >
 >
@@ -86,28 +71,15 @@ order are carried out? These should be each 10-30h of work. -->
 
 #### 2. Event Joining (Participant Flow)
 
-##### Story: Seamless Identity Persistence
-
-> **As a** returning guest,
-> **I want** the system to remember my name from local storage when I click an event link,
-> **So that** I don't have to re-enter my name every time I join a new event.
->
-> * **Acceptance Criteria:**
-> * FE checks Local Storage for `guestName`.
-> * If the user is logged in, their `Account` name updates the local `guestName` to keep them in sync.
->
->
->
->
-
 ##### Story: Availability Submission
 
 > **As a** participant,
 > **I want** to select my available time slots on a grid and save them,
-> **So that** the organizer can see when I am free.
+> **So that** the other users can see when I am free.
 >
 > * **Acceptance Criteria:**
-> * Availability is sent as a JSON list to the `POST /api/events/{shortId}/availability` endpoint.
+> * Clicking on the timetable triggers the Google Sign-In modal if not already authenticated.
+> * Availability is sent as a JSON list to the `POST /api/events/{shortId}/available` endpoint.
 > * The `event_account` record is updated or created.
 > * The heatmap refreshes to show the updated group availability.
 >
@@ -126,7 +98,7 @@ order are carried out? These should be each 10-30h of work. -->
 > **So that** the group can reach a consensus in real-time.
 >
 > * **Acceptance Criteria:**
-> * The backend(or maybe FE not sure yet) must aggregate all `event_account` JSONB records for a specific `event_id`.
+> * The backend must aggregate all `event_account` JSONB records for a specific `event_id`.
 > * The API returns a count of participants per time slot.
 >
 >
@@ -140,11 +112,11 @@ order are carried out? These should be each 10-30h of work. -->
 ##### Story: Calendar Discovery
 
 > **As a** user with multiple calendars,
-> **I want** to see a list of my Google Calendars after authenticating,
+> **I want** to see a list of my Google Calendars after granting calendar access,
 > **So that** I can choose exactly which schedules should affect my availability for this event.
 >
 > * **Acceptance Criteria:**
-> * FE calls Google `calendarList.list` endpoint.
+> * FE requests calendar scope and calls Google `calendarList.list` endpoint.
 > * A selection interface (checkboxes) appears for all returned calendars.
 > * Primary calendar is selected by default.
 >
@@ -156,11 +128,12 @@ order are carried out? These should be each 10-30h of work. -->
 
 > **As a** participant,
 > **I want** the system to fetch busy data only from my selected calendars,
-> **So that** my availability grid is pre-populated with my actual free time.
+> **So that** my availability grid is pre-populated with all the "busy" times. But i must be able to overwrite these busy times.
 >
 > * **Acceptance Criteria:**
-> * System uses Google API for the specific selected IDs.
-> * The FE grid marks all available times
+> * User gets available calendars
+> * Then selects calendars and gets busy times
+> * The FE grid marks all busy times.
 >
 >
 >
@@ -170,10 +143,10 @@ order are carried out? These should be each 10-30h of work. -->
 
 ### Functionalities
 
-#### 1. Low-Friction Entry (The "Guest" System)
+#### 1. Google Sign-In
 
-* **Instant Identity:** Users can create an event or join one by simply providing a name. The system persists this "Guest" identity via Local Storage and IP tracking to avoid the need for immediate email/password registration.
-* **Session Persistence:** Returning guests are automatically recognized on the same device, keeping their name and previous events accessible.
+* **Single Auth Provider:** All users — creators and participants — sign in with Google. No passwords, no email verification, no guest accounts.
+* **Deferred Auth:** Users can browse the event creation screen and the event timetable before being prompted to sign in, reducing perceived friction.
 
 #### 2. Event Management
 
@@ -185,13 +158,14 @@ order are carried out? These should be each 10-30h of work. -->
 
 * **Interactive Availability Grid:** A "paintable" grid where users can click or drag to mark their free time.
 * **The Global Heatmap:** An aggregated view that layers every participant's availability. The "hottest" (darkest) areas of the grid indicate the times when most people are free.
-* **Participant List:** A sidebar or tooltip view showing exactly who is available for a specific time slot when hovering over the heatmap or clicking on mobile.
+* **Participant List:** A sidebar or tooltip view showing exactly who is available for a specific time slot when hovering over the heatmap or pressing on mobile devices.
 
 #### 4. Smart Integrations (Scope 2)
 
-* **Google Calendar Sync:** Users can connect their Google account to overlay their "Busy" events directly onto the Gatherr grid, preventing them from accidentally proposing times they are already booked.
+* **Google Calendar Sync:** Users can grant calendar access to overlay their "Busy" events directly onto the Gatherr grid, preventing them from accidentally proposing times they are already booked.
+* **Email notifications:** Users can get emails of when event is happening and add the event to their calendar with one click.
 
-#### 5. User Preferences & Localization
+#### 5. User Preferences & Localization (Scope 2)
 
 * **Clock Format Toggles:** Support for both 12-hour (AM/PM) and 24-hour time formats.
 * **Week Start Customization:** Option to start the calendar view on Sunday or Monday based on regional preference.
@@ -200,31 +174,24 @@ order are carried out? These should be each 10-30h of work. -->
 
 ### Integrations
 
-1. **Google Calendar API (OAuth2):** * Used for the "Smart Time Overlay."
+1. **Google OAuth2 (Sign-In):**
 
-* Requires `calendar.readonly` and `calendar.events.public.readonly` scopes.
+* Used for all authentication — creators and participants.
+* Scopes at sign-in: `openid`, `profile`, `email`.
+* No passwords or guest accounts needed.
+
+1. **Google Calendar API (OAuth2):**
+
+* Used for the "Smart Time Overlay".
+* `calendar.readonly` and `calendar.events.public.readonly`.
 * Enables the application to fetch "busy" blocks without storing user calendar data permanently.
-
-1. **Stripe API:**
-
-* Essential for managing the `SubscriptionTier` (Pro/Lifetime).
-* Handles webhooks to update `subscription_active_until` and `payment_customer_id` in the `Account` table.
-
-1. **IP Geolocation API (e.g., ipapi.co or similar):**
-
-* Used during "Instant Guest" creation to automatically detect the user's timezone.
-* Ensures that when a user joins, the grid is already aligned to their local time without manual configuration.
-
-1. **Browser Local Storage:**
-
-* A "soft" integration used to persist the `guestName` and `short_id` history, allowing users to find their created events again without an account.
 
 ### Non-functional requirements
 
-1. **Mobile-First Responsiveness:** * Since event links are primarily shared via mobile messaging apps (WhatsApp, Slack, Discord), the availability grid must be fully functional and "touch-friendly" on screens as small as 360px wide.
-2. **Data Integrity (JSONB Validation):** * The system must validate the structure of the `availability` JSONB blobs before saving to prevent corrupted grid states.
-3. **High Availability:** * Targeting **99.9% uptime** during the initial launch phase, as group coordination is time-sensitive and outages during "planning peaks" (like Friday afternoons) are critical.
-4. **Privacy & Minimal Data Collection:** * Guest accounts should only store necessary technical metadata (IP, Name). No PII (Personally Identifiable Information) beyond an optional email for "Pro" users should be required. Events will be deleted after 3 months of creation
+1. **Mobile-First Responsiveness:** Since event links are primarily shared via mobile messaging apps (WhatsApp, Slack, Discord), the availability grid must be fully functional and "touch-friendly" on screens as small as 360px wide. As on rival products this heatmap touching has really bad UX.
+2. **Data Integrity (JSONB Validation):** The system must validate the structure of the `availability` JSONB blobs before saving to prevent corrupted grid states.
+3. **High Availability:** Targeting **99.9% uptime** during the initial launch phase, as group coordination is time-sensitive and outages during "planning peaks" (like Friday afternoons) are critical.
+4. **Privacy & Minimal Data Collection:** Only Google profile data (name, email, picture) is stored. No passwords or IP addresses are collected. Events will be deleted after 3 months of creation.
 
 ---
 
@@ -234,7 +201,7 @@ order are carried out? These should be each 10-30h of work. -->
 | --- | --- | --- |
 | **Project Start** | 09.03 | Repo init, DB schema migration, Boilerplate. |
 | **Scope 1 Ready** | 04.04 | **MVP:** Create event -> Share link -> Save manual slots. |
-| **Initial Demo** | 07.04 | Video presentation showing the core "low-friction" flow. |
+| **Initial Demo** | 07.04 | Video presentation showing the core flow. |
 | **Scope 2 Ready** | 03.05 | **Full v1.0:** Heatmap + Google Sync + Final Polish. |
 | **Final Demo** | 04.05 | Final demo video. |
 
@@ -253,157 +220,86 @@ project-related costs that we are aware of? -->
 
 ### Sequence diagrams
 
-#### Joining event
+#### Creating event
 
 ```mermaid
-
 sequenceDiagram
-
-participant  U  as  User
-
-participant  FE  as  Frontend  App
-
-participant  LS  as  Local  Storage
-
-participant  BE  as  REST  API
-
-participant  GC  as  Google  Calendar  API
-
 autonumber
 
-  
+participant U  as User
+participant FE as Frontend App
+participant G  as Google OAuth
+participant BE as REST API
+participant DB as PostgreSQL
 
-U->>FE: Clicks Event Link (shortId)
+U->>FE: Fills in Event Name + selects Times
+U->>FE: Clicks "Create Event"
 
 FE->>FE: Check Auth State (isLoggedIn?)
 
-alt  Is  Logged  In
-
-FE->>BE: GET /api/account/me
-
-BE-->>FE: Return  Account (Name: "John")
-
-FE->>LS: Save "guestName" = "John" (Update fallback)
-
-else  Not  Logged  In
-
-FE->>LS: Get "guestName"
-
-LS-->>FE: return guestName (e.g., "John" or null)
-
-alt  guestName  is  null
-
-FE->>U: Show Modal (Login or Enter Name)
-
-U->>FE: Enters Name "GuestUser123"
-
-FE->>LS: Save "guestName" = "GuestUser123"
-
+alt Not Logged In
+    FE->>U: Show Google Sign-In Modal
+    U->>G: Signs in with Google
+    G-->>FE: Return id_token (name, email, picture)
+    FE->>BE: POST /api/auth/google (id_token)
+    BE->>DB: UPSERT INTO account (name, email, picture)
+    BE-->>FE: Return JWT + Account
 end
 
-end
-
-  
-
-Note  over  U, FE: UI  now  shows: "Joining as [guestName]"
-
-  
-
-opt  Google  Calendar  Sync
-
-U->>FE: Click "Sync Google Calendar"
-
-FE->>GC: Request calendars to check
-
-GC-->>FE: Return available Calendars
-
-U->>FE: Selects Calendars to add
-
-FE->>GC: Request available Times
-
-GC-->>FE: Return available times
-
-FE->>FE: Overlay available Times on Grid
-
-end
-
-  
-
-U->>FE: Selects availability slots
-
-U->>FE: Clicks "Save"
-
-FE->>BE: POST /api/events/{shortId}/availability
-
-Note  right of  BE: Updates/Creates EventAccount record
-
-BE-->>FE: 200 OK (Updated Heatmap)
-
-FE->>U: Show Success & Heatmap
+FE->>BE: POST /api/events (name, times, timezone, creator_id)
+Note right of BE: Service generates short_id
+BE->>DB: INSERT INTO event
+BE->>DB: INSERT INTO event_account (creator as first participant)
+BE-->>FE: Return Event (short_id)
+FE->>U: Redirect to /e/{short_id}
 ```
 
-##### Creating event
+#### Joining event
 
 ```mermaid
 sequenceDiagram
-
 autonumber
 
-participant  U  as  User
+participant U  as User
+participant FE as Frontend App
+participant G  as Google OAuth
+participant BE as REST API
+participant GC as Google Calendar API
 
-participant  FE  as  Frontend  App
+U->>FE: Clicks Event Link (shortId)
+FE->>BE: GET /api/events/{shortId}
+BE-->>FE: Return Event (name, times, timezone, heatmap)
+FE->>U: Display timetable (read-only until signed in)
 
-participant  LS  as  Local  Storage
+U->>FE: Clicks on timetable to select availability
+FE->>FE: Check Auth State (isLoggedIn?)
 
-participant  BE  as  REST  API
-
-participant  DB  as  PostgreSQL
-
-  
-
-U->>FE: Clicks "Create Event"
-
-FE->>FE: Check Auth State
-
-alt  Not  Logged  In
-
-FE->>U: Prompt for Name (Guest)
-
-U->>FE: Enters "Alex"
-
-FE->>LS: Save guestName = "Alex"
-
-FE->>BE: POST /api/accounts/instant-guest (name, ip)
-
-BE->>DB: INSERT  INTO  account (type: GUEST, name: "Alex")
-
-BE-->>FE: Return temp Account Object
-
+alt Not Logged In
+    FE->>U: Show Google Sign-In Modal
+    U->>G: Signs in with Google
+    G-->>FE: Return id_token
+    FE->>BE: POST /api/auth/google (id_token)
+    BE-->>FE: Return JWT + Account
 end
 
-  
-
-U->>FE: Enters Event Details (Name, Times, Timezone)
-
-U->>FE: Clicks "Create & Get Link"
-
-FE->>BE: POST /api/events (with creator_id)
-
-Note  right of  BE: Service generates short_id
-
-BE->>DB: INSERT INTO event
-
-par  Auto-join  Creator
-
-BE->>DB: INSERT INTO event_account (creator as first participant)
-
+opt Google Calendar Sync
+    U->>FE: Clicks "Sync Google Calendar"
+    FE->>G: Request calendar scope
+    G-->>FE: Grant calendar access
+    FE->>GC: GET calendarList
+    GC-->>FE: Return available Calendars
+    U->>FE: Selects Calendars to use
+    FE->>GC: GET busy times for selected calendars
+    GC-->>FE: Return busy times
+    FE->>FE: Fill busy slots on grid (allow to changes these)
 end
 
-  
-
-BE-->>FE: Return Event (short_id)
-
-FE->>U: Display  Event  Link: /e/{short_id}
+U->>FE: Adjusts and confirms availability slots
+U->>FE: Clicks "Save"
+FE->>BE: POST /api/events/{shortId}/availability
+Note right of BE: Upserts EventAccount record
+BE-->>FE: 200 OK (Updated Heatmap)
+FE->>U: Show updated Heatmap
 ```
 
 ### Spring boot models
@@ -412,29 +308,10 @@ FE->>U: Display  Event  Link: /e/{short_id}
 
 ```text
 com.gatherr
-├── model/    
+├── model/
 │   ├── Account.java
 │   ├── Event.java
 │   └── EventAccount.java
-├── model/enums/ 
-│   ├── AccountType.java
-│   └── SubscriptionTier.java
-```
-
-* src/main/java/com/gatherr/model/enums/AccountType.java
-
-```java
-package com.gatherr.model.enums;
-
-public enum AccountType { GUEST, USER }
-```
-
-* src/main/java/com/gatherr/model/enums/SubscriptionTier.java
-
-```java
-package com.gatherr.model.enums;
-
-public enum SubscriptionTier { FREE, PRO, LIFETIME }
 ```
 
 * src/main/java/com/gatherr/model/Account.java
@@ -442,8 +319,6 @@ public enum SubscriptionTier { FREE, PRO, LIFETIME }
 ```java
 package com.gatherr.model;
 
-import com.gatherr.model.enums.AccountType;
-import com.gatherr.model.enums.SubscriptionTier;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -466,18 +341,13 @@ public class Account {
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    private String password;
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
-    @Column(name = "ip_address", columnDefinition = "inet", nullable = false)
-    private String ipAddress;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AccountType type;
-
     private String timezone;
 
     @Builder.Default
@@ -487,17 +357,6 @@ public class Account {
     @Builder.Default
     @Column(name = "time_format_24", nullable = false)
     private boolean timeFormat24 = true;
-
-    @Column(name = "payment_customer_id")
-    private String paymentCustomerId;
-
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    @Column(name = "subscription_tier", nullable = false)
-    private SubscriptionTier subscriptionTier = SubscriptionTier.FREE;
-
-    @Column(name = "subscription_active_until")
-    private OffsetDateTime subscriptionActiveUntil;
 
     @Builder.Default
     @Column(nullable = false)
@@ -551,12 +410,14 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Account creator;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
-    private List<String> times; 
+    private List<String> times;
 
+    @Column(nullable = false)
     private String timezone;
 
     @Builder.Default
@@ -564,14 +425,16 @@ public class Event {
     private boolean isDeleted = false;
 
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 }
 ```
 
-* src/main/java/com/gatherr/model/Account.java
+* src/main/java/com/gatherr/model/EventAccount.java
 
 ```java
 package com.gatherr.model;
@@ -587,7 +450,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "event_account", 
+@Table(name = "event_account",
        uniqueConstraints = @UniqueConstraint(columnNames = {"event_id", "account_id"}))
 @Getter @Setter
 @NoArgsConstructor
@@ -609,12 +472,18 @@ public class EventAccount {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
-    private List<String> availability;
+    private List<String> available;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "not_available", columnDefinition = "jsonb", nullable = false)
+    private List<String> notAvailable;
 
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 }
 ```
@@ -624,53 +493,287 @@ public class EventAccount {
 * [draw sql](https://drawsql.app/teams/gatherr/diagrams/gatherr)
 
 ```sql
-CREATE TABLE account (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NULL,
-    password VARCHAR(255) NULL,
-    ip_address INET NOT NULL,
-    type VARCHAR(255) CHECK (type IN ('GUEST', 'USER')) NOT NULL,
-    timezone VARCHAR(255) NOT NULL,
-    start_on_monday BOOLEAN NOT NULL DEFAULT TRUE,
-    time_format_24 BOOLEAN NOT NULL DEFAULT TRUE,
-    payment_customer_id VARCHAR(255) NULL,
-    subscription_tier VARCHAR(255) CHECK (subscription_tier IN ('FREE', 'PRO', 'LIFETIME')) NOT NULL DEFAULT 'FREE',
-    subscription_active_until TIMESTAMPTZ NULL,
-    language VARCHAR(255) NOT NULL DEFAULT 'EN',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "account" (
+    "id"              BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    "name"            VARCHAR(255) NOT NULL,
+    "email"           VARCHAR(255) NOT NULL,
+    "profile_picture" VARCHAR(255) NULL,
+    "timezone"        VARCHAR(255) NULL,
+    "start_on_monday" BOOLEAN NOT NULL DEFAULT TRUE,
+    "time_format_24"  BOOLEAN NOT NULL DEFAULT TRUE,
+    "language"        VARCHAR(255) NOT NULL DEFAULT 'EN',
+    "created_at"      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "account_email_unique" UNIQUE ("email")
 );
 
-CREATE UNIQUE INDEX idx_account_email_lower ON account (LOWER(email));
-
-CREATE TABLE event (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT NULL,
-    short_id VARCHAR(255) UNIQUE NOT NULL,
-    creator_id BIGINT NOT NULL,
-    times JSONB NOT NULL,
-    timezone VARCHAR(255) NOT NULL,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT event_creator_id_foreign FOREIGN KEY(creator_id) REFERENCES account(id) ON DELETE CASCADE
+CREATE TABLE "event" (
+    "id"          BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    "name"        VARCHAR(255) NOT NULL,
+    "description" TEXT NULL,
+    "short_id"    VARCHAR(255) NOT NULL,
+    "creator_id"  BIGINT NOT NULL,
+    "times"       JSONB NOT NULL,
+    "timezone"    VARCHAR(255) NOT NULL,
+    "is_deleted"  BOOLEAN NOT NULL DEFAULT FALSE,
+    "created_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "event_short_id_unique" UNIQUE ("short_id"),
+    CONSTRAINT "event_creator_id_foreign" FOREIGN KEY ("creator_id") REFERENCES "account"("id") ON DELETE CASCADE
 );
 
-CREATE TABLE event_account (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    event_id BIGINT NOT NULL,
-    account_id BIGINT NOT NULL,
-    availability JSONB NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT event_account_unique UNIQUE(event_id, account_id),
-    CONSTRAINT event_account_account_foreign FOREIGN KEY(account_id) REFERENCES account(id) ON DELETE CASCADE,
-    CONSTRAINT event_account_event_foreign FOREIGN KEY(event_id) REFERENCES event(id) ON DELETE CASCADE
+COMMENT ON COLUMN "event"."times" IS '["0700-10032026","0715-10032026","0730-10032026"]';
+
+CREATE TABLE "event_account" (
+    "id"            BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    "event_id"      BIGINT NOT NULL,
+    "account_id"    BIGINT NOT NULL,
+    "available"     JSONB NOT NULL,
+    "not_available" JSONB NOT NULL,
+    "created_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "event_account_unique" UNIQUE ("event_id", "account_id"),
+    CONSTRAINT "event_account_event_foreign" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE CASCADE,
+    CONSTRAINT "event_account_account_foreign" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE CASCADE
 );
 
-CREATE INDEX idx_event_short_id ON event(short_id);
-CREATE INDEX idx_event_creator_id ON event(creator_id); 
-CREATE INDEX idx_availability_heatmap ON event_account USING GIN (availability);
+COMMENT ON COLUMN "event_account"."available"     IS '["0700-10032026","0715-10032026","0730-10032026"]';
+COMMENT ON COLUMN "event_account"."not_available" IS '["0700-10032026","0715-10032026","0730-10032026"]';
+
+CREATE INDEX "event_short_id_index"   ON "event"("short_id");
+CREATE INDEX "event_creator_id_index" ON "event"("creator_id");
+CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("available");
 ```
+
+## liquidbase schema
+
+* Save to path backend/src/main/resources/db/changelog/db.changelog-master.yaml
+
+* This is generated by AI with my SQL.
+
+```yml
+databaseChangeLog:
+  # 1. ACCOUNT TABLE
+  - changeSet:
+      id: 001-create-account
+      author: gatherr
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: account_email_unique
+              - column:
+                  name: profile_picture
+                  type: VARCHAR(255)
+              - column:
+                  name: timezone
+                  type: VARCHAR(255)
+              - column:
+                  name: start_on_monday
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time_format_24
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: language
+                  type: VARCHAR(255)
+                  defaultValue: 'EN'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  # 2. EVENT TABLE
+  - changeSet:
+      id: 002-create-event
+      author: gatherr
+      changes:
+        - createTable:
+            tableName: event
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: short_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: event_short_id_unique
+              - column:
+                  name: creator_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: event_creator_id_foreign
+                    references: account(id)
+                    deleteCascade: true
+              - column:
+                  name: times
+                  type: JSONB
+                  remarks: '["0700-10032026","0715-10032026","0730-10032026"]'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timezone
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  # 3. EVENT_ACCOUNT TABLE
+  - changeSet:
+      id: 003-create-event-account
+      author: gatherr
+      changes:
+        - createTable:
+            tableName: event_account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: event_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: event_account_event_foreign
+                    references: event(id)
+                    deleteCascade: true
+              - column:
+                  name: account_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: event_account_account_foreign
+                    references: account(id)
+                    deleteCascade: true
+              - column:
+                  name: available
+                  type: JSONB
+                  remarks: '["0700-10032026","0715-10032026","0730-10032026"]'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: not_available
+                  type: JSONB
+                  remarks: '["0700-10032026","0715-10032026","0730-10032026"]'
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: event_account
+            columnNames: event_id, account_id
+            constraintName: event_account_unique
+
+  # 4. INDEXES
+  - changeSet:
+      id: 004-create-indexes
+      author: gatherr
+      changes:
+        - createIndex:
+            tableName: event
+            indexName: event_short_id_index
+            columns:
+              - column:
+                  name: short_id
+        - createIndex:
+            tableName: event
+            indexName: event_creator_id_index
+            columns:
+              - column:
+                  name: creator_id
+        # Liquibase doesn't natively support creating GIN indexes via YAML
+        # so we use raw SQL for this specific Postgres feature!
+        - sql:
+            sql: CREATE INDEX "event_account_available_gin" ON "event_account" USING GIN ("available");
+```
+
+---
+
+## Changelog
+
+### 17.03.2026
+
+#### Removing payments
+
+1. people hardly want to go trough the hassle of payments and they don’t want to pay for no reason. They will either create facebook events or use another service for a simple event planning.
+2. This will also save time as we don’t have to create payment system.
+3. Main “revenue” will be created with ads
+
+#### Removing guest accounts and adding only google login
+
+1. this is techincally much easier as we don’t need to implement ip rate limits for guest users
+2. The audience we are targeting have google accounts and will probably use google sign in anyway without another thought.
+3. This removes password management and guest/regular user management headaches
+4. They only log in once so when someone else sends this link they are already in so no hassle of creating guest accounts
+5. This also means every account can have dashboard with events they have joined
+6. We will have email notifications and a button to fill your google calendar with the event time.
+
+#### Added liquidbase schema
+
+---
