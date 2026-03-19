@@ -14,6 +14,7 @@
 - [Timeline](#timeline)
 - [Cost calculations](#cost-calculations)
 - [Sequence diagrams](#sequence-diagrams)
+- [REST API Mapping](#rest-api-mapping)
 - [Spring boot models](#spring-boot-models)
 - [Database schema](#database-schema)
 - [Liquibase schema](#liquidbase-schema)
@@ -62,15 +63,15 @@ order are carried out? These should be each 10-30h of work. -->
 
 ---
 
-### Views and design
+## Views and design
 
 [Figma design](https://www.figma.com/design/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-769&p=f&t=f4oHycjedvlD1cTR-0)
 
-### User stories ordered by importance
+## User stories ordered by importance
 
-#### 1. Event Creation (Organizer Flow)
+### 1. Event Creation (Organizer Flow)
 
-##### Story: Event Initialization
+#### Story: Event Initialization
 
 > **As a** user,
 > **I want** to define the name and potential time slots for an event and then sign in with Google,
@@ -89,9 +90,9 @@ order are carried out? These should be each 10-30h of work. -->
 
 ---
 
-#### 2. Event Joining (Participant Flow)
+### 2. Event Joining (Participant Flow)
 
-##### Story: Availability Submission
+#### Story: Availability Submission
 
 > **As a** participant,
 > **I want** to select my available time slots on a grid and save them,
@@ -109,9 +110,9 @@ order are carried out? These should be each 10-30h of work. -->
 
 ---
 
-#### 3. Technical / System Stories
+### 3. Technical / System Stories
 
-##### Story: Real-time Heatmap Visibility
+#### Story: Real-time Heatmap Visibility
 
 > **As a** participant,
 > **I want** the event heatmap to update for everyone once I save my times,
@@ -127,9 +128,9 @@ order are carried out? These should be each 10-30h of work. -->
 
 ---
 
-#### 4. Calendar Selection
+### 4. Calendar Selection
 
-##### Story: Calendar Discovery
+#### Story: Calendar Discovery
 
 > **As a** user with multiple calendars,
 > **I want** to see a list of my Google Calendars after granting calendar access,
@@ -144,7 +145,7 @@ order are carried out? These should be each 10-30h of work. -->
 >
 >
 
-##### Story: Smart Time Overlay
+#### Story: Smart Time Overlay
 
 > **As a** participant,
 > **I want** the system to fetch busy data only from my selected calendars,
@@ -161,38 +162,38 @@ order are carried out? These should be each 10-30h of work. -->
 
 ---
 
-### Functionalities
+## Functionalities
 
-#### 1. Google Sign-In
+### 1. Google Sign-In
 
 * **Single Auth Provider:** All users — creators and participants — sign in with Google. No passwords, no email verification, no guest users.
 * **Deferred Auth:** Users can browse the event creation screen and the event timetable before being prompted to sign in, reducing perceived friction.
 
-#### 2. Event Management
+### 2. Event Management
 
 * **Event Creation:** Organizers can define a name, description, and a set of proposed dates/times using a drag-and-drop interface.
 * **Short Link Generation:** Unique, human-readable `short_id` URLs are generated for easy sharing across social platforms.
 * **Timezone Auto-Detection:** The system automatically detects the creator's and participant's timezones to ensure time slots are displayed correctly for everyone, regardless of location.
 
-#### 3. Availability & Consensus
+### 3. Availability & Consensus
 
 * **Interactive Availability Grid:** A "paintable" grid where users can click or drag to mark their free time.
 * **The Global Heatmap:** An aggregated view that layers every participant's availability. The "hottest" (darkest) areas of the grid indicate the times when most people are free.
 * **Participant List:** A sidebar or tooltip view showing exactly who is available for a specific time slot when hovering over the heatmap or pressing on mobile devices.
 
-#### 4. Smart Integrations (Scope 2)
+### 4. Smart Integrations (Scope 2)
 
 * **Google Calendar Sync:** Users can grant calendar access to overlay their "Busy" events directly onto the Gatherr grid, preventing them from accidentally proposing times they are already booked.
 * **Email notifications:** Users can get emails of when event is happening and add the event to their calendar with one click.
 
-#### 5. User Preferences & Localization (Scope 2)
+### 5. User Preferences & Localization (Scope 2)
 
 * **Clock Format Toggles:** Support for both 12-hour (AM/PM) and 24-hour time formats.
 * **Week Start Customization:** Option to start the calendar view on Sunday or Monday based on regional preference.
 
 ---
 
-### Integrations
+## Integrations
 
 1. **Google OAuth2 (Sign-In):**
 
@@ -206,7 +207,7 @@ order are carried out? These should be each 10-30h of work. -->
 * `calendar.readonly` and `calendar.events.public.readonly`.
 * Enables the application to fetch "busy" blocks without storing user calendar data permanently.
 
-### Non-functional requirements
+## Non-functional requirements
 
 1. **Mobile-First Responsiveness:** Since event links are primarily shared via mobile messaging apps (WhatsApp, Slack, Discord), the availability grid must be fully functional and "touch-friendly" on screens as small as 360px wide. As on rival products this heatmap touching has really bad UX.
 2. **Data Integrity (JSONB Validation):** The system must validate the structure of the `availability` JSONB blobs before saving to prevent corrupted grid states.
@@ -235,12 +236,12 @@ the hourly rate, how much does the project cost? Are there any other
 
 project-related costs that we are aware of? -->
 
-* Total Estimated Hours: ~120–150 hours.
-* Infrastructure Costs: Minimal (PostgreSQL, Spring Boot on AWS).
+- Total Estimated Hours: ~120–150 hours.
+- Infrastructure Costs: Minimal (PostgreSQL, Spring Boot on AWS).
 
-### Sequence diagrams
+## Sequence diagrams
 
-#### Creating event
+### Creating event
 
 ```mermaid
 sequenceDiagram
@@ -274,7 +275,7 @@ BE-->>FE: Return Event (short_id)
 FE->>U: Redirect to /e/{short_id}
 ```
 
-#### Joining event
+### Joining event
 
 ```mermaid
 sequenceDiagram
@@ -322,9 +323,29 @@ BE-->>FE: 200 OK (Updated Heatmap)
 FE->>U: Show updated Heatmap
 ```
 
-### Spring boot models
+## REST API mapping
 
-* models
+- Everything starts with /api/v1
+
+SET `server.servlet.context-path=/api/v1` in `application.properties`
+
+| Group | Method | Endpoint | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Users** | `GET` | `/users/me` | Fetch current user profile & settings |
+| **Users** | `PATCH` | `/users/me` | Update user preferences (e.g. timezone) |
+| **Events** | `POST` | `/events` | Create a new event and time slots |
+| **Events** | `GET` | `/events/{id}` | Fetch specific event details |
+| **Events** | `GET` | `/events/mine` | List all events created by the user |
+| **Events** | `PATCH` | `/events/{id}` | Update event (name, description, etc.) |
+| **Events** | `DELETE` | `/events/{id}` | Soft delete event (`is_deleted = true`) |
+| **Availability** | `PUT` | `/events/{id}/respond` | Save or overwrite user's availability |
+| **Availability** | `GET` | `/events/{id}/summary` | Fetch all responses (Heatmap data) |
+
+---
+
+## Spring boot models
+
+- models
 
 ```text
 com.gatherr
@@ -336,7 +357,7 @@ com.gatherr
 │   └── EventType.java
 ```
 
-* src/main/java/com/gatherr/model/enums/EventType.java
+- src/main/java/com/gatherr/model/enums/EventType.java
 
 ```java
 package com.gatherr.model.enums;
@@ -347,7 +368,7 @@ public enum EventType {
 }
 ```
 
-* src/main/java/com/gatherr/model/User.java
+- src/main/java/com/gatherr/model/User.java
 
 ```java
 package com.gatherr.model;
@@ -525,7 +546,7 @@ public class EventUser {
 }
 ```
 
-### Database schema
+## Database schema
 
 * [draw sql](https://drawsql.app/teams/gatherr/diagrams/gatherr)
 
@@ -829,3 +850,5 @@ databaseChangeLog:
 
 1. This is for different event types.
 2. Left it as varchar because its harder to add or remove enums.
+
+#### Added rest api mapping
