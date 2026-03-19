@@ -332,6 +332,19 @@ com.gatherr
 │   ├── User.java
 │   ├── Event.java
 │   └── EventUser.java
+├── model/enums/
+│   └── EventType.java
+```
+
+* src/main/java/com/gatherr/model/enums/EventType.java
+
+```java
+package com.gatherr.model.enums;
+
+public enum EventType {
+    SPECIFIC_DATES,
+    DAYS_OF_THE_WEEK
+}
 ```
 
 * src/main/java/com/gatherr/model/User.java
@@ -433,6 +446,10 @@ public class Event {
     @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private User creator;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EventType type;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
     private List<String> times;
@@ -533,6 +550,7 @@ CREATE TABLE "events" (
     "description" TEXT NULL,
     "short_id"    VARCHAR(255) NOT NULL,
     "creator_id"  BIGINT NOT NULL,
+    "type"        VARCHAR(50) NOT NULL,
     "times"       JSONB NOT NULL,
     "timezone"    VARCHAR(255) NOT NULL,
     "is_deleted"  BOOLEAN NOT NULL DEFAULT FALSE,
@@ -674,6 +692,11 @@ databaseChangeLog:
                     references: users(id)
                     deleteCascade: true
               - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: times
                   type: JSONB
                   remarks: '["0700-10032026","0715-10032026","0730-10032026"]'
@@ -799,3 +822,10 @@ databaseChangeLog:
 #### Renamed database tables to multilar and replaced account with users table
 
 ---
+
+### 19.03.2026
+
+#### Added type varchar for events
+
+1. This is for different event types.
+2. Left it as varchar because its harder to add or remove enums.
