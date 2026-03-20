@@ -1,4 +1,4 @@
-# Contributing to TalTech Börsibaar
+# Contributing to Gatherr
 
 To maintain code quality and a smooth development workflow, please follow these guidelines.
 
@@ -9,7 +9,32 @@ To maintain code quality and a smooth development workflow, please follow these 
 
 ## <a name="development"></a> Development Setup
 
-Todo
+### Running the backend with the dev profile
+
+The `dev` profile disables Google token verification so you can get a JWT instantly without a real Google account.
+
+1. Copy `.env.example` to `.env` in the `backend/` directory:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+2. The `.env` file already has `SPRING_PROFILES_ACTIVE=dev` — no changes needed for local development
+3. Start the backend:
+   ```bash
+   cd backend && docker compose up -d
+   ```
+
+### Getting a token in Postman
+
+1. Import `postman_collection.json` from the repo root into Postman
+2. Call `POST /auth/google` with any body:
+   ```json
+   { "idToken": "dev" }
+   ```
+3. Copy the `token` value from the response
+4. Set it as the `token` collection variable in Postman (Collections → Gatherr API → Variables)
+5. All other requests will now automatically include `Authorization: Bearer <token>`
+
+The JWT lasts 1 year. After it expires, repeat steps 2–4.
 
 ## <a name="commit"></a> Commit Message Guidelines
 
