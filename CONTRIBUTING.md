@@ -9,18 +9,28 @@ To maintain code quality and a smooth development workflow, please follow these 
 
 ## <a name="development"></a> Development Setup
 
+### IDE
+
+We use **IntelliJ IDEA**. After cloning, configure the JDK:
+
+1. `File` → `Project Structure` → `SDK` → select **Java 21**
+2. `Build` → `Rebuild Project`
+
 ### Running the backend with the dev profile
 
 The `dev` profile disables Google token verification so you can get a JWT instantly without a real Google account.
 
-1. Copy `.env.example` to `.env` in the `backend/` directory:
+1. Copy `.env.example` to `.env` in root:
    ```bash
-   cp backend/.env.example backend/.env
+   cp .env.example .env
    ```
-2. The `.env` file already has `SPRING_PROFILES_ACTIVE=dev` — no changes needed for local development
+2. Give the Maven wrapper execute permissions (only needed once after cloning):
+   ```bash
+   chmod +x backend/mvnw
+   ```
 3. Start the backend:
    ```bash
-   cd backend && docker compose up -d
+   docker compose up -d
    ```
 
 ### Getting a token in Postman
