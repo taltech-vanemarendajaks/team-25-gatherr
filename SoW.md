@@ -334,12 +334,12 @@ SET `server.servlet.context-path=/api/v1` in `application.properties`
 | **Users** | `GET` | `/users/me` | Fetch current user profile & settings |
 | **Users** | `PATCH` | `/users/me` | Update user preferences (e.g. timezone) |
 | **Events** | `POST` | `/events` | Create a new event and time slots |
-| **Events** | `GET` | `/events/{id}` | Fetch specific event details |
+| **Events** | `GET` | `/events/{shortId}` | Fetch specific event details |
 | **Events** | `GET` | `/events/mine` | List all events created by the user |
-| **Events** | `PATCH` | `/events/{id}` | Update event (name, description, etc.) |
-| **Events** | `DELETE` | `/events/{id}` | Soft delete event (`is_deleted = true`) |
-| **Availability** | `PUT` | `/events/{id}/respond` | Save or overwrite user's availability |
-| **Availability** | `GET` | `/events/{id}/summary` | Fetch all responses (Heatmap data) |
+| **Events** | `PATCH` | `/events/{shortId}` | Update event (name, description, etc.) |
+| **Events** | `DELETE` | `/events/{shortId}` | Soft delete event (`is_deleted = true`) |
+| **Availability** | `PUT` | `/events/{shortId}/respond` | Save or overwrite user's availability |
+| **Availability** | `GET` | `/events/{shortId}/summary` | Fetch all responses (Heatmap data) |
 
 ---
 
