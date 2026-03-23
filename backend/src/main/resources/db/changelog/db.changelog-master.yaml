@@ -214,3 +214,18 @@ databaseChangeLog:
         # so we use raw SQL for this specific Postgres feature!
         - sql:
             sql: CREATE INDEX "event_user_available_gin" ON "event_user" USING GIN ("available");
+
+  # 5. ADD TIME_INCREMENT TO EVENTS
+  - changeSet:
+      id: 005-add-time-increment-to-events
+      author: gatherr
+      changes:
+        - addColumn:
+            tableName: events
+            columns:
+              - column:
+                  name: time_increment
+                  type: INT
+                  defaultValueNumeric: 30
+                  constraints:
+                    nullable: false

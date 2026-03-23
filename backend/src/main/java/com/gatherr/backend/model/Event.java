@@ -44,6 +44,10 @@ public class Event {
     @Column(columnDefinition = "jsonb", nullable = false)
     private List<String> times;
 
+    @Builder.Default
+    @Column(name = "time_increment", nullable = false)
+    private int timeIncrement = 30;
+
     @Column(nullable = false)
     private String timezone;
 
