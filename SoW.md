@@ -17,7 +17,7 @@
 - [REST API Mapping](#rest-api-mapping)
 - [Spring boot models](#spring-boot-models)
 - [Database schema](#database-schema)
-- [Liquibase schema](#liquidbase-schema)
+- [Liquibase schema](#liquibase-schema)
 - [Changelog](#changelog)
 
 ---
@@ -475,6 +475,10 @@ public class Event {
     @Column(columnDefinition = "jsonb", nullable = false)
     private List<String> times;
 
+    @Builder.Default
+    @Column(name = "time_increment", nullable = false)
+    private int timeIncrement = 30;
+
     @Column(nullable = false)
     private String timezone;
 
@@ -572,8 +576,9 @@ CREATE TABLE "events" (
     "short_id"    VARCHAR(255) NOT NULL,
     "creator_id"  BIGINT NOT NULL,
     "type"        VARCHAR(50) NOT NULL,
-    "times"       JSONB NOT NULL,
-    "timezone"    VARCHAR(255) NOT NULL,
+    "times"           JSONB NOT NULL,
+    "time_increment"  INT NOT NULL DEFAULT 30,
+    "timezone"        VARCHAR(255) NOT NULL,
     "is_deleted"  BOOLEAN NOT NULL DEFAULT FALSE,
     "created_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -815,6 +820,21 @@ databaseChangeLog:
         # so we use raw SQL for this specific Postgres feature!
         - sql:
             sql: CREATE INDEX "event_user_available_gin" ON "event_user" USING GIN ("available");
+
+  # 5. ADD TIME_INCREMENT TO EVENTS
+  - changeSet:
+      id: 005-add-time-increment-to-events
+      author: gatherr
+      changes:
+        - addColumn:
+            tableName: events
+            columns:
+              - column:
+                  name: time_increment
+                  type: INT
+                  defaultValueNumeric: 30
+                  constraints:
+                    nullable: false
 ```
 
 ---
@@ -852,3 +872,7 @@ databaseChangeLog:
 2. Left it as varchar because its harder to add or remove enums.
 
 #### Added rest api mapping
+
+### 23.03.2026
+
+#### Added time_increment to schema
