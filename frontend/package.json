@@ -59,6 +59,7 @@
     "@content-collections/markdown": "^0.1.4",
     "@content-collections/mdx": "^0.2.2",
     "@content-collections/vite": "^0.2.8",
+    "@faker-js/faker": "^10.3.0",
     "@inlang/paraglide-js": "^2.8.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-event-client": "^0.4.0",
@@ -75,6 +76,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "lint-staged": "^16.3.1",
+    "msw": "^2.12.14",
     "remark-gfm": "^4.0.1",
     "tsx": "^4.0.0",
     "typescript": "^5.7.2",
@@ -82,5 +84,10 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.5",
     "zod": "^4.3.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
