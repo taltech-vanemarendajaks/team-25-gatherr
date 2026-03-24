@@ -46,6 +46,7 @@ order are carried out? These should be each 10-30h of work. -->
 ## Scopes
 
 ![User Story Map](assets/user_story_map.png)
+*Find the descriptions of epics and features [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
 ### Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04)
 
