@@ -1,4 +1,3 @@
-import contentCollections from "@content-collections/vite";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -17,7 +16,6 @@ const config = defineConfig({
 			strategy: ["url", "baseLocale"],
 		}),
 		nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-		contentCollections(),
 		tsconfigPaths({ projects: ["./tsconfig.json"] }),
 		tailwindcss(),
 		tanstackStart(),
