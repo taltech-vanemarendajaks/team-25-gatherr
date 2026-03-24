@@ -1,0 +1,175 @@
+import { HttpResponse, http } from "msw";
+import { EVENT_USERS, EVENTS, ME } from "./data";
+import type { Event, EventUser } from "./types";
+
+const BASE = "/api/v1";
+
+/**
+ * FETCH EXAMPLES
+  // GET /users/me
+  fetch('/api/v1/users/me').then(r => r.json()).then(console.log)
+
+  // PATCH /users/me
+  fetch('/api/v1/users/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ language:
+  'ET', timezone: 'UTC' }) }).then(r => r.json()).then(console.log)
+
+  // GET /events/mine
+  fetch('/api/v1/events/mine').then(r => r.json()).then(console.log)
+
+  // POST /events
+  fetch('/api/v1/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Test
+  Event', type: 'SPECIFIC_DATES', times: ['0900-25032026', '0930-25032026'], timeIncrement: 30, timezone: 'Europe/Tallinn' })
+  }).then(r => r.json()).then(console.log)
+
+  // GET /events/:shortId  — first grab a shortId from /events/mine, then:
+  fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`).then(r =>
+  r.json()).then(console.log))
+
+  // PATCH /events/:shortId
+  fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`, { method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Renamed Event' }) }).then(r =>
+  r.json()).then(console.log))
+
+  // PUT /events/:shortId/respond
+  fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}/respond`, { method:
+  'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ available: ['0900-25032026', '0930-25032026'],
+  notAvailable: ['1000-25032026'] }) }).then(r => r.json()).then(console.log))
+
+  // GET /events/:shortId/summary
+  fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}/summary`).then(r =>
+  r.json()).then(console.log))
+
+  // DELETE /events/:shortId
+  fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`, { method: 'DELETE'
+  }).then(r => console.log('deleted, status:', r.status)))
+ */
+
+// IMPORTANT: MSW matches handlers in registration order.
+// Specific paths (mine, summary, respond) MUST be registered before the
+// generic /:shortId handler, or they'll be shadowed by the param matcher.
+export const handlers = [
+	// ── GET /users/me ─────────────────────────────────────────────────────────
+	http.get(`${BASE}/users/me`, () => {
+		return HttpResponse.json(ME);
+	}),
+
+	// ── PATCH /users/me ───────────────────────────────────────────────────────
+	http.patch(`${BASE}/users/me`, async ({ request }) => {
+		const body = (await request.json()) as Partial<typeof ME>;
+		Object.assign(ME, body, { updatedAt: new Date().toISOString() });
+		return HttpResponse.json(ME);
+	}),
+
+	// ── GET /events/mine /:shortId ───────────────────────────────────
+	http.get(`${BASE}/events/mine`, () => {
+		const mine = EVENTS.filter(e => e.creator.id === ME.id && !e.isDeleted);
+		return HttpResponse.json(mine);
+	}),
+
+	// ── GET /events/:shortId/summary ──────────────────────
+	http.get(`${BASE}/events/:shortId/summary`, ({ params }) => {
+		const event = EVENTS.find(e => e.shortId === params.shortId && !e.isDeleted);
+		if (!event) return new HttpResponse(null, { status: 404 });
+
+		const userResponses = EVENT_USERS.filter(eu => eu.event.shortId === params.shortId);
+
+		const heatMap: Record<string, number> = {};
+
+		for (const user of userResponses) {
+			for (const availability of user.available) {
+				heatMap[availability] = (heatMap[availability] ?? 0) + 1;
+			}
+		}
+
+		const responseWithHeatmap = {
+			users: userResponses,
+			heatMap,
+		};
+
+		return HttpResponse.json(responseWithHeatmap);
+	}),
+
+	// ── PUT /events/:shortId/respond ──────────────────────
+	http.put(`${BASE}/events/:shortId/respond`, async ({ params, request }) => {
+		const event = EVENTS.find(e => e.shortId === params.shortId && !e.isDeleted);
+		if (!event) return new HttpResponse(null, { status: 404 });
+
+		const body = (await request.json()) as {
+			available: string[];
+			notAvailable: string[];
+		};
+		const existing = EVENT_USERS.find(
+			eu => eu.event.shortId === params.shortId && eu.user.id === ME.id,
+		);
+
+		if (existing) {
+			existing.available = body.available;
+			existing.notAvailable = body.notAvailable;
+			existing.updatedAt = new Date().toISOString();
+			return HttpResponse.json(existing);
+		}
+
+		const newEu: EventUser = {
+			id: EVENT_USERS.length + 1,
+			event: { id: event.id, shortId: event.shortId, name: event.name },
+			user: {
+				id: ME.id,
+				name: ME.name,
+				email: ME.email,
+				profilePicture: ME.profilePicture,
+			},
+			available: body.available,
+			notAvailable: body.notAvailable,
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		};
+		EVENT_USERS.push(newEu);
+		return HttpResponse.json(newEu, { status: 201 });
+	}),
+
+	// ── POST /events ──────────────────────────────────────────────────────────
+	http.post(`${BASE}/events`, async ({ request }) => {
+		const body = (await request.json()) as Partial<Event>;
+		const newEvent: Event = {
+			id: EVENTS.length + 1,
+			name: body.name ?? "New Event",
+			description: body.description ?? null,
+			shortId: Math.random().toString(36).slice(2, 10),
+			creator: ME,
+			type: body.type ?? "SPECIFIC_DATES",
+			times: body.times ?? [],
+			timeIncrement: body.timeIncrement ?? 30,
+			timezone: body.timezone ?? ME.timezone,
+			isDeleted: false,
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		};
+		EVENTS.push(newEvent);
+		return HttpResponse.json(newEvent, { status: 201 });
+	}),
+
+	// ── GET /events/:shortId ──────────────────────────────────────────────────
+	http.get(`${BASE}/events/:shortId`, ({ params }) => {
+		const event = EVENTS.find(e => e.shortId === params.shortId && !e.isDeleted);
+		if (!event) return new HttpResponse(null, { status: 404 });
+		return HttpResponse.json(event);
+	}),
+
+	// ── PATCH /events/:shortId ────────────────────────────────────────────────
+	http.patch(`${BASE}/events/:shortId`, async ({ params, request }) => {
+		const event = EVENTS.find(e => e.shortId === params.shortId && !e.isDeleted);
+		if (!event) return new HttpResponse(null, { status: 404 });
+		const body = (await request.json()) as Partial<Event>;
+		Object.assign(event, body, { updatedAt: new Date().toISOString() });
+		return HttpResponse.json(event);
+	}),
+
+	// ── DELETE /events/:shortId ───────────────────────────────────────────────
+	http.delete(`${BASE}/events/:shortId`, ({ params }) => {
+		const event = EVENTS.find(e => e.shortId === params.shortId);
+		if (!event) return new HttpResponse(null, { status: 404 });
+		event.isDeleted = true;
+		event.updatedAt = new Date().toISOString();
+		return new HttpResponse(null, { status: 204 });
+	}),
+];
