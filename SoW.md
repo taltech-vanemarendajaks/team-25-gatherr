@@ -24,7 +24,13 @@
 
 ## High-level description
 
-Gatherr is a SaaS platform designed to solve the "when are we all free?" problem. It allows users to create events, propose multiple time slots, and visualize group availability through an aggregated heatmap.
+| | |
+|---|---|
+| **Problem** | The complexity and significant time cost of finding shared free time between people (friend groups, teams, organizations). |
+| **Affects** | Everyone who needs to coordinate meetings, gatherings, or events with multiple participants. |
+| **Impact** | Inefficient communication, endless back-and-forth messaging trying to align schedules, and the potential for meetings falling through due to conflicting calendars. |
+| **A successful solution enables** | Easily creating events, proposing multiple time slots, and visualizing all participants' availability through an aggregated interactive heatmap. Additionally, the system eliminates the hassle of managing passwords and payments by using only Google login, while offering users a convenient overview of their events. |
+| | |
 
 ## High-level steps
 
