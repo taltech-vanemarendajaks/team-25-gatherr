@@ -1,7 +1,13 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { getLocale } from "#/paraglide/runtime";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
@@ -13,8 +19,6 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	beforeLoad: async () => {
-		// Other redirect strategies are possible; see
-		// https://github.com/TanStack/router/tree/main/examples/react/i18n-paraglide#offline-redirect
 		if (typeof document !== "undefined") {
 			document.documentElement.setAttribute("lang", getLocale());
 		}
@@ -43,7 +47,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function useMswReady(): boolean {
+	"use no memo"; // opt out of React Compiler — async .then() chains in useEffect are not safe to memoize
+	// In production or SSR: always ready
+	const [ready, setReady] = useState(
+		!import.meta.env.DEV || typeof window === "undefined",
+	);
+
+	useEffect(() => {
+		if (!import.meta.env.DEV) return;
+		import("../mocks/index").then(({ enableMocking }) =>
+			enableMocking().then(() => setReady(true)),
+		);
+	}, []);
+
+	return ready;
+}
+
+function RootDocument({ children }: { children: ReactNode }) {
+	const mswReady = useMswReady();
+
 	return (
 		<html lang={getLocale()} suppressHydrationWarning>
 			<head>
@@ -51,17 +74,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
 				<TanStackQueryProvider>
-					{children}
+					{mswReady ? children : null}
 					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
+						config={{ position: "bottom-right" }}
 						plugins={[
 							{
 								name: "Tanstack Router",
 								render: <TanStackRouterDevtoolsPanel />,
 							},
-							// StoreDevtools,
 							TanStackQueryDevtools,
 						]}
 					/>
