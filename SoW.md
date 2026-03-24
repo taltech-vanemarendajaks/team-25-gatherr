@@ -45,6 +45,8 @@ order are carried out? These should be each 10-30h of work. -->
 
 ## Scopes
 
+![User Story Map](assets/user_story_map.png)
+
 ### Scope 1: The Core (Deadline: 04.04)
 
 *Focus: Google auth, event flow, and basic database interaction.*
