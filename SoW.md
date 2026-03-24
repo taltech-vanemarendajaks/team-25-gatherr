@@ -47,27 +47,44 @@ order are carried out? These should be each 10-30h of work. -->
 
 ![User Story Map](assets/user_story_map.png)
 
-### Scope 1: The Core (Deadline: 04.04)
+### Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04)
 
-*Focus: Google auth, event flow, and basic database interaction.*
+*Focus: Figma wireframe/prototype covering all MVP screens.*
+
+* **Figma Wireframe/Prototype:** Complete wireframe and clickable prototype covering all MVP user flows (auth, event creation, invite link, availability marking, and heatmap view).
+
+### Scope 2: MVP (Deadline: 03.05)
+
+*Focus: Google auth, event flow, basic database interaction, and heatmap visualization, deployment.*
 
 * **Google Sign-In:** Implementation of Google OAuth2 for all users (creators and participants).
 * **Basic Submission:** The grid UI allows a user to click slots and save them to the database.
 * **Initial API:** All CRUD endpoints for `User` and `Event` are functional.
-* **Design Implementation:** Implementing the Figma design in the frontend
-* **Event Lifecycle:** Ability to create an event, generate a `short_id`, and share the link.
-* **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
-* **Multi Language Support:** FE structure to enable multi language application
-
-### Scope 2: The Platform (Deadline: 03.05)
-
-*Focus: Deployment, App, Ads, and third-party integrations.*
-
-* **Google Calendar Sync:** Fetching `calendarList` and busy calendar times.
+* **Design Implementation:** Implementing the Figma design in the frontend.
+* **Event Lifecycle:** Ability to create an event, select multiple time slot candidates, generate a `short_id`, and share the invite link.
 * **Email notifications:** Send notifications about event times to users and allow them to add the time to google calendar with one button click.
-* **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, support estonian language).
+* **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
 * **Deployment:** Moving from local development to a live production environment.
-* **App:** Simple expo webview app for mobile.
+
+### Scope 3: The Platform Enhancements (Deadline: TBD)
+
+*Focus: Automations, user experience improvements, and third-party integrations.*
+
+* **Dashboard:** Personal event overview showing events the user created and events they were invited to.
+* **Google Calendar Sync:** Fetching `calendarList` and busy calendar times to auto-populate availability.
+* **Invite by Email:** When creating an event, the organizer can input participant e-mail addresses to send invites directly.
+* **Auto-select Best Time:** After the event deadline, the system automatically selects the time that suits the most participants.
+* **ICS File Export:** Send an official calendar file (.ics) for the selected time to all participants — even those who did not submit availability.
+* **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, Estonian language support).
+* **Multi Language Support:** FE structure to enable multi-language application.
+* **App:** Simple Expo WebView app for mobile.
+
+### Scope 4: Additional Capabilities (Deadline: TBD)
+
+*Focus: Automated notifications.*
+
+* **Automated Event Notifications:** The system automatically sends an e-mail after participants have chosen suitable timeslots for themselves to keep track of progress.
+* **Other User Requests:** TBD.
 
 ---
 
