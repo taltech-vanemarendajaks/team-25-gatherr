@@ -1,16 +1,14 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-	createRootRouteWithContext,
-	HeadContent,
-	Scripts,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { getLocale } from "#/paraglide/runtime";
+import { Toaster } from "../components/ui/sonner";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
+import { SITE_TITLE } from "../lib/site";
+import { getLocale } from "../paraglide/runtime";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -34,7 +32,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: SITE_TITLE,
 			},
 		],
 		links: [
@@ -50,9 +48,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function useMswReady(): boolean {
 	"use no memo"; // opt out of React Compiler — async .then() chains in useEffect are not safe to memoize
 	// In production or SSR: always ready
-	const [ready, setReady] = useState(
-		!import.meta.env.DEV || typeof window === "undefined",
-	);
+	const [ready, setReady] = useState(!import.meta.env.DEV || typeof window === "undefined");
 
 	useEffect(() => {
 		if (!import.meta.env.DEV) return;
@@ -72,7 +68,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
+			<body className="font-main bg-surface text-content">
 				<TanStackQueryProvider>
 					{mswReady ? children : null}
 					<TanStackDevtools
@@ -87,6 +83,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 					/>
 				</TanStackQueryProvider>
 				<Scripts />
+				<Toaster />
 			</body>
 		</html>
 	);
