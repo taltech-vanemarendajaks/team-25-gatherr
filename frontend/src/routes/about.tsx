@@ -1,4 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { ChooseEventTypeSlider } from "../components/ui/pages/create/ChooseEventTypeSlider";
 
 export const Route = createFileRoute("/about")({
 	component: About,
@@ -6,22 +9,18 @@ export const Route = createFileRoute("/about")({
 
 function About() {
 	return (
-		<main className="page-wrap px-4 py-12">
-			<section className="island-shell rounded-2xl p-6 sm:p-8">
-				<img
-					src="/images/lagoon-about.svg"
-					alt=""
-					className="mb-6 h-56 w-full rounded-2xl object-cover"
-				/>
-				<p className="island-kicker mb-2">About</p>
-				<h1 className="display-title mb-3 text-4xl font-bold text-[var(--sea-ink)] sm:text-5xl">
-					Built for shipping fast.
-				</h1>
-				<p className="m-0 max-w-3xl text-base leading-8 text-[var(--sea-ink-soft)]">
-					TanStack Start gives you type-safe routing, server functions, and modern SSR defaults so
-					you can focus on product work instead of framework glue.
-				</p>
-			</section>
+		<main className="mt-40 px-4 py-12">
+			<div className="min-w-sm p-20 bg-canvas rounded-2xl">
+				<Input className="mb-20" placeholder="e.g. Team meeting, game night" />
+				<Input placeholder="e.g. Team meeting, game night" />
+			</div>
+			<div className="my-20" />
+			<Button>Create Event</Button>
+
+			<p>Button slider</p>
+			<div>
+				<ChooseEventTypeSlider />
+			</div>
 		</main>
 	);
 }
