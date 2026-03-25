@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "../components/ui/sonner";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
+import { SITE_TITLE } from "../lib/site";
 import { getLocale } from "../paraglide/runtime";
 import appCss from "../styles.css?url";
 
@@ -31,7 +32,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: SITE_TITLE,
 			},
 		],
 		links: [
@@ -67,7 +68,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
+			<body className="font-main bg-surface text-content">
 				<TanStackQueryProvider>
 					{mswReady ? children : null}
 					<TanStackDevtools

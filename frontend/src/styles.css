@@ -1,4 +1,45 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/typography';
+/** biome-ignore-all lint/suspicious/noUnknownAtRules: <these are tailwind plugins> */
 
-@import 'tw-animate-css';
+@import url("https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Quicksand:wght@300..700&display=swap");
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "tailwind-scrollbar-hide/v4";
+@plugin '@tailwindcss/typography';
+@plugin 'tailwind-scrollbar';
+
+@theme {
+	--font-main: "Catamaran", sans-serif;
+	--font-number: "Quicksand", sans-serif;
+
+	--color-surface: #0d0d0d; /* bg-surface */
+	--color-canvas: #1a1a1a; /* bg-canvas */
+	--color-primary: #f26716; /* bg-primary, text-primary */
+	--color-secondary: #a62f03; /* bg-secondary, text-secondary */
+	--color-content: #f5f5f5; /* text-content */
+	--color-info: #bdaa95; /* text-info */
+
+	--background-image-gradient: linear-gradient(60deg, #f26716, #a62f03);
+}
+
+html,
+body {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}

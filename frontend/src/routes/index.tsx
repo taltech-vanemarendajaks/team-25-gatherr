@@ -4,8 +4,8 @@ export const Route = createFileRoute("/")({ component: App });
 
 function App() {
 	return (
-		<main className="page-wrap px-4 pb-8 pt-14">
-			<h1>Ajaplaneerija</h1>
+		<main className="max-w-md m-auto mt-40">
+			<p className="text-5xl text-center">Gatherr</p>
 		</main>
 	);
 }
