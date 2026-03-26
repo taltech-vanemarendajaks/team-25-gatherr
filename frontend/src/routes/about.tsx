@@ -11,11 +11,11 @@ export const Route = createFileRoute("/about")({
 function About() {
 	return (
 		<main className="mt-40 px-4 py-12">
-			<div>
+			<div className="mb-32">
 				<TimeSlider />
 			</div>
 
-			{/* <div className="min-w-sm p-20 bg-canvas rounded-2xl">
+			<div className="min-w-sm p-20 bg-canvas rounded-2xl">
 				<Input className="mb-20" placeholder="e.g. Team meeting, game night" />
 				<Input placeholder="e.g. Team meeting, game night" />
 			</div>
@@ -25,7 +25,7 @@ function About() {
 			<p>Button slider</p>
 			<div>
 				<ChooseEventTypeSlider />
-			</div> */}
+			</div>
 		</main>
 	);
 }

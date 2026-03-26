@@ -1,31 +1,15 @@
 import { type HTMLMotionProps, motion } from "framer-motion";
 import { forwardRef } from "react";
-import { useIsMobile } from "./useIsMobile";
 
 interface Props {
 	children?: React.ReactNode;
-	/**
-	 * @description Set false if you don't want to use animation on mobile
-	 * @default true
-	 */
 	child?: boolean;
-	animateOnMobile?: boolean;
 }
 
 type IProps = Props & HTMLMotionProps<"div">;
 
 export const AnimationWrapper = forwardRef<HTMLDivElement, IProps>(
-	({ children, animateOnMobile = true, variants, child = false, ...props }, ref) => {
-		const { isMobile } = useIsMobile();
-
-		// when user is on mobile and you dont want to animate on mobile
-		// return regular div
-		if (!animateOnMobile && isMobile) {
-			<motion.div ref={ref} variants={{}} {...props}>
-				{children}
-			</motion.div>;
-		}
-
+	({ children, variants, child = false, ...props }, ref) => {
 		return (
 			<motion.div
 				ref={ref}
