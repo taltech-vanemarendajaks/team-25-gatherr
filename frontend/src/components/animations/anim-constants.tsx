@@ -1,4 +1,4 @@
-import type { Variants } from "framer-motion";
+import type { Variants } from "motion/react";
 
 const fadeInFromTop: Variants = {
 	initial: { opacity: 0, y: -100 },
