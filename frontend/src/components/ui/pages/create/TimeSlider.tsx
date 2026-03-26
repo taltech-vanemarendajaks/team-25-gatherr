@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "../../../../lib/utils";
 
 const HOURS = 24;
-const BALL_OVERFLOW = 40;
-const OFFSET = 15;
+const BALL_OVERFLOW = 20;
+const GRADIENT_BAR_OFFSET = 10;
 const START_TIME = 7;
 const END_TIME = 17;
 
@@ -30,10 +30,10 @@ export const TimeSlider = () => {
 	const [endTime, setEndTime] = useState(0);
 
 	const highlightedBarWidth = useTransform([leftX, rightX], ([left, right]: number[]) => {
-		return right - left + OFFSET;
+		return right - left + GRADIENT_BAR_OFFSET;
 	});
 	const highlightedBarLeft = useTransform(leftX, left => {
-		return left + OFFSET;
+		return left + GRADIENT_BAR_OFFSET;
 	});
 
 	useEffect(() => {
@@ -59,14 +59,17 @@ export const TimeSlider = () => {
 
 	return (
 		<div className="flex flex-col items-center">
-			<div className="flex-row flex justify-center font-semibold font-number mb-4 text-2xl">
+			<div className="flex-row flex justify-center font-semibold font-number mb-7 text-2xl">
 				<p>{format(setHours(startOfDay(new Date()), startTime), "HH:mm")}</p>
 				<p>-</p>
 				<p>{format(setHours(startOfDay(new Date()), endTime), "HH:mm")}</p>
 			</div>
-			<div ref={trackRef} className="h-5 rounded-2xl min-w-xs max-w-md relative bg-stone-600">
+			<div
+				ref={trackRef}
+				className="h-5 rounded-xl min-w-xs max-w-md relative bg-canvas ring-2 ring-amber-300"
+			>
 				<motion.div
-					className="bg-gradient absolute h-5"
+					className="bg-linear-to-r from-orange-600 via-yellow-500 to-orange-600 absolute h-5 shadow-md shadow-amber-400"
 					style={{ x: highlightedBarLeft, width: highlightedBarWidth }}
 				/>
 				<motion.div
@@ -79,7 +82,10 @@ export const TimeSlider = () => {
 							leftX.set(rightX.get());
 						}
 					}}
-					className={cn("absolute bg-amber-300 size-10 rounded-full -top-2")}
+					className={cn(
+						"absolute ring-2 ring-amber-300 bg-linear-to-tr from-primary from-5% to-[#C21515] w-5 h-16 rounded-lg -top-5.5",
+						"shadow-[0_0_8px_2px_rgba(251,191,36,0.5)]",
+					)}
 					style={{
 						x: leftX,
 					}}
@@ -94,7 +100,10 @@ export const TimeSlider = () => {
 							rightX.set(leftX.get());
 						}
 					}}
-					className={cn("absolute bg-orange-500 size-10 rounded-full -top-2")}
+					className={cn(
+						"absolute ring-2 ring-amber-300 bg-linear-to-tr from-primary from-5% to-[#C21515] w-5 h-16 rounded-lg -top-5.5",
+						"shadow-[0_0_8px_2px_rgba(251,191,36,0.5)]",
+					)}
 					style={{
 						x: rightX,
 					}}
