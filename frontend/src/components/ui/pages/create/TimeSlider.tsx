@@ -5,29 +5,61 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../../../../lib/utils";
 
-const HOURS = 24;
-const BALL_OVERFLOW = 20;
+const OBJECT_OVERFLOW = 20;
 const GRADIENT_BAR_OFFSET = 10;
-const START_TIME = 7;
+const START_TIME = 8;
 const END_TIME = 17;
 
-const convertPositionToHour = (position: number, trackWidth: number) => {
-	return Math.round((position / (trackWidth - BALL_OVERFLOW)) * HOURS);
+interface ConvertProps {
+	trackWidth: number;
+	minHour: number;
+	totalHours: number;
+	overflow: number;
+}
+
+interface PositionToHourProps extends ConvertProps {
+	position: number;
+}
+
+interface HourToPositionProps extends ConvertProps {
+	hour: number;
+}
+const convertPositionToHour = ({
+	minHour,
+	overflow,
+	position,
+	totalHours,
+	trackWidth,
+}: PositionToHourProps) => {
+	return Math.round((position / (trackWidth - overflow)) * totalHours) + minHour;
 };
 
-const convertHourToPosition = (hour: number, trackWidth: number) => {
-	return (hour / HOURS) * (trackWidth - BALL_OVERFLOW);
+const convertHourToPosition = ({
+	minHour,
+	overflow,
+	hour,
+	totalHours,
+	trackWidth,
+}: HourToPositionProps) => {
+	return ((hour - minHour) / totalHours) * (trackWidth - overflow);
 };
 
-export const TimeSlider = () => {
+interface Props {
+	useFullTimeRange?: boolean;
+}
+
+export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
+	const minHour = useFullTimeRange ? 0 : 8;
+	const totalHours = useFullTimeRange ? 24 : 13;
+
 	const trackRef = useRef<HTMLDivElement>(null);
 
 	const trackWidth = useMotionValue(0);
 	const leftX = useMotionValue(0);
 	const rightX = useMotionValue(0);
 
-	const [startTime, setStartTime] = useState(0);
-	const [endTime, setEndTime] = useState(0);
+	const [startTime, setStartTime] = useState(START_TIME);
+	const [endTime, setEndTime] = useState(END_TIME);
 
 	const highlightedBarWidth = useTransform([leftX, rightX], ([left, right]: number[]) => {
 		return right - left + GRADIENT_BAR_OFFSET;
@@ -40,18 +72,50 @@ export const TimeSlider = () => {
 		const observer = new ResizeObserver(entries => {
 			const width = entries[0].contentRect.width;
 			trackWidth.set(width);
-			leftX.set(convertHourToPosition(START_TIME, width));
-			rightX.set(convertHourToPosition(END_TIME, width));
+			leftX.set(
+				convertHourToPosition({
+					hour: START_TIME,
+					minHour,
+					overflow: OBJECT_OVERFLOW,
+					totalHours,
+					trackWidth: width,
+				}),
+			);
+			rightX.set(
+				convertHourToPosition({
+					hour: END_TIME,
+					minHour,
+					overflow: OBJECT_OVERFLOW,
+					totalHours,
+					trackWidth: width,
+				}),
+			);
 		});
 		if (trackRef.current) {
 			observer.observe(trackRef.current);
 		}
 
-		leftX.on("change", latest => {
-			setStartTime(() => convertPositionToHour(latest, trackWidth.get()));
+		leftX.on("change", position => {
+			setStartTime(() =>
+				convertPositionToHour({
+					position,
+					minHour,
+					overflow: OBJECT_OVERFLOW,
+					totalHours,
+					trackWidth: trackWidth.get(),
+				}),
+			);
 		});
-		rightX.on("change", latest => {
-			setEndTime(() => convertPositionToHour(latest, trackWidth.get()));
+		rightX.on("change", position => {
+			setEndTime(() =>
+				convertPositionToHour({
+					position,
+					minHour,
+					overflow: OBJECT_OVERFLOW,
+					totalHours,
+					trackWidth: trackWidth.get(),
+				}),
+			);
 		});
 
 		return () => observer.disconnect();
