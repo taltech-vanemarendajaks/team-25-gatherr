@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { ChooseEventTypeSlider } from "../components/ui/pages/create/ChooseEventTypeSlider";
+import { CalendarMonthView } from "../components/ui/pages/create/calendar/CalendarMonthView";
 import { TimeSlider } from "../components/ui/pages/create/TimeSlider";
 
 export const Route = createFileRoute("/about")({
@@ -9,8 +11,13 @@ export const Route = createFileRoute("/about")({
 });
 
 function About() {
+	const [selected, setSelected] = useState<Date[]>([]);
+
 	return (
 		<main className="mt-40 px-4 py-12">
+			<div className="mb-32 bg-canvas rounded-xl py-6 max-w-xs m-auto px-4">
+				<CalendarMonthView selected={selected} setSelected={setSelected} />
+			</div>
 			<div className="mb-32">
 				<TimeSlider />
 			</div>

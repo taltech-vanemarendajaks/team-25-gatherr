@@ -68,7 +68,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body className="font-main bg-surface text-content">
+			<body className="font-main bg-surface text-content touch-manipulation">
 				<TanStackQueryProvider>
 					{mswReady ? children : null}
 					<TanStackDevtools
