@@ -20,7 +20,6 @@ npm install
 3. Add:
     - Name
     - Authorized JavaScript origins: `http://localhost:3000`
-    - Authorized redirect URIs: `http://localhost:8080/login/oauth2/code/google`
 4. Copy the Client ID and Client Secret to your `.env` file.
 
 ## Running backend
