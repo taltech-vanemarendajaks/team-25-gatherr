@@ -25,13 +25,15 @@ public class JwtService {
         this.expirationTime = expirationTime;
     }
 
-    public String generateToken(Long internalUserId, String email) {
+    public String generateToken(Long internalUserId, String email, String name, String picture) {
         long now = System.currentTimeMillis();
         long expiry = now + expirationTime;
 
         return Jwts.builder()
                 .subject(String.valueOf(internalUserId))
                 .claim("email", email)
+                .claim("name", name)
+                .claim("profilePicture", picture)
                 .issuedAt(new Date(now))
                 .expiration(new Date(expiry))
                 .signWith(key) 
