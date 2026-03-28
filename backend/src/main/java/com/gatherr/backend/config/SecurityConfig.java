@@ -45,8 +45,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/google").permitAll() // The login endpoint is public so users can actually log in
-                        .anyRequest().authenticated() // Everything else requires authentication
+                        .requestMatchers("/auth/google").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.decoder(appJwtDecoder))
