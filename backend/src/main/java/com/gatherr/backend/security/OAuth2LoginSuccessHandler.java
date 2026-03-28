@@ -2,6 +2,7 @@ package com.gatherr.backend.security;
 
 import com.gatherr.backend.service.AuthService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String token = authService.processOAuthPostLogin(oAuth2User);
-        String targetUrl = frontendUrl + "/oauth2/redirect?token=" + token;
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
+        Cookie authCookie = new Cookie("gatherr_token", token);
+        authCookie.setHttpOnly(true);
+        authCookie.setSecure(false);  // TODO: Set to TRUE in production (requires HTTPS)
+        authCookie.setPath("/");
+        authCookie.setMaxAge(24 * 60 * 60);
+
+        response.addCookie(authCookie);
+        getRedirectStrategy().sendRedirect(request, response, frontendUrl + "/dashboard");
     }
 }
