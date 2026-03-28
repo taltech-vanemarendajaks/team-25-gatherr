@@ -25,6 +25,24 @@ function App() {
 						Log out
 					</button>
 				</>
+			) : import.meta.env.DEV ? (
+				<button
+					type="button"
+					onClick={async () => {
+						try {
+							const res = await api.post("/auth/google", {
+								idToken: "bypass",
+								timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+							});
+							setUser(res.data);
+						} catch (err) {
+							console.error("Dev login failed", err);
+						}
+					}}
+					className="px-4 py-2 bg-blue-600 text-white rounded"
+				>
+					Dev Login (bypass)
+				</button>
 			) : (
 				<GoogleLogin
 					onSuccess={async credentialResponse => {
