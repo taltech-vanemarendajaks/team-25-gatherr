@@ -7,6 +7,7 @@ import com.gatherr.backend.model.User;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
