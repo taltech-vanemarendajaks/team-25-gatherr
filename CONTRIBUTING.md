@@ -36,15 +36,20 @@ The `dev` profile disables Google token verification so you can get a JWT instan
 ### Getting a token in Postman
 
 1. Import `postman_collection.json` from the repo root into Postman
-2. Call `POST /auth/google` with any body:
-   ```json
-   { "idToken": "dev" }
-   ```
-3. Copy the `token` value from the response
+2. Create a `POST` request to `http://localhost:8080/api/v1/auth/google`.
+3. Set the `Content-Type` header to `application/json`.
+4. Provide any dummy data in the body:
+```
+{
+    "idToken": "bypass",
+    "timezone": "UTC"
+}
+```
+5. Copy the `token` value from the response.
 4. Set it as the `token` collection variable in Postman (Collections → Gatherr API → Variables)
 5. All other requests will now automatically include `Authorization: Bearer <token>`
 
-The JWT lasts 1 year. After it expires, repeat steps 2–4.
+*Note: The JWT lasts 1 year. After it expires, repeat steps 2–6.*
 
 ## <a name="commit"></a> Commit Message Guidelines
 
