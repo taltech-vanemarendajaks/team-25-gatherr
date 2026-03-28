@@ -5,10 +5,10 @@ import com.gatherr.backend.dto.AuthResponseDto;
 import com.gatherr.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.jsonwebtoken.JwtException;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // TODO: remove after testing
 public class AuthController {
 
     private final AuthService authService;
@@ -19,7 +19,11 @@ public class AuthController {
 
     @PostMapping("/google")
     public ResponseEntity<AuthResponseDto> googleAuth(@RequestBody AuthRequestDto request) {
-        AuthResponseDto response = authService.googleLogin(request);
-        return ResponseEntity.ok(response);
+        try {
+            AuthResponseDto response = authService.googleLogin(request);
+            return ResponseEntity.ok(response);
+        } catch (JwtException e) {
+            return ResponseEntity.status(401).build();
+        }
     }
 }
