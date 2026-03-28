@@ -31,7 +31,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(email, name, picture, language, "UTC"));
 
-        return jwtService.generateToken(user.getId(), email);
+        return jwtService.generateToken(user.getId(), email, name, picture);
     }
 
     private User createNewUser(String email, String name, String picture, String language, String timezone) {
