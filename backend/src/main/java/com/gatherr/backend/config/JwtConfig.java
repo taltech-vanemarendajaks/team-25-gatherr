@@ -1,21 +1,27 @@
 package com.gatherr.backend.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.*;
 
+@Configuration
 public class JwtConfig {
 
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder decoder =
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String googleClientId;
+
+    @Bean(name = "googleJwtDecoder")
+    public JwtDecoder googleJwtDecoder() {
+        NimbusJwtDecoder decoder = 
                 JwtDecoders.fromIssuerLocation("https://accounts.google.com");
 
         OAuth2TokenValidator<Jwt> audienceValidator = jwt -> {
-            if (jwt.getAudience().contains("YOUR_GOOGLE_CLIENT_ID")) {
+            if (jwt.getAudience().contains(googleClientId)) {
                 return OAuth2TokenValidatorResult.success();
             }
             return OAuth2TokenValidatorResult.failure(

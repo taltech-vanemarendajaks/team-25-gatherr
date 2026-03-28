@@ -29,7 +29,6 @@ public class AuthService {
 
         Jwt jwt = googleJwtDecoder.decode(request.idToken());
 
-        String googleId = jwt.getSubject();
         String email = jwt.getClaimAsString("email");
         String name = jwt.getClaimAsString("name");
         String picture = jwt.getClaimAsString("picture");
@@ -41,7 +40,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(email, name, picture, language, timezone));
 
-        String appToken = jwtService.generateToken(googleId, email);
+        String appToken = jwtService.generateToken(user.getId(), email);
 
         return new AuthResponseDto(
                 appToken,
