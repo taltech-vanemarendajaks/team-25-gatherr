@@ -48,11 +48,11 @@ order are carried out? These should be each 10-30h of work. -->
 ![User Story Map](assets/user_story_map.png)
 *Find the descriptions of epics and features [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
-### Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04)
+### ✅ Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04) 
 
-*Focus: Figma wireframe/prototype covering all MVP screens.*
+*Focus: Figma high-fidelity wireframe/prototype covering the basic MVP user flow.*
 
-* **Figma Wireframe/Prototype:** Complete wireframe and clickable prototype covering all MVP user flows (auth, event creation, invite link, availability marking, and heatmap view).
+* [Link to prototype](https://www.figma.com/proto/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-948&p=f&t=Hlr5b9izTN32UbAD-1&scaling=min-zoom&content-scaling=fixed&page-id=69%3A769&starting-point-node-id=69%3A770)
 
 ### Scope 2: MVP (Deadline: 03.05)
 
