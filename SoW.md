@@ -45,7 +45,7 @@ order are carried out? These should be each 10-30h of work. -->
 
 ## Scopes
 
-*Find the link to the user story map in Miro [here](https://miro.com/app/board/uXjVJC_HDu8=/?share_link_id=12787197284) and the descriptions of epics and features [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
+*Find the link to the **user story map** in Miro [here](https://miro.com/app/board/uXjVJC_HDu8=/?share_link_id=12787197284) and the descriptions of **epics** and **features** [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
 ### ✅ Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04) 
 
@@ -92,100 +92,9 @@ order are carried out? These should be each 10-30h of work. -->
 
 [Figma design](https://www.figma.com/design/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-769&p=f&t=f4oHycjedvlD1cTR-0)
 
-## User stories ordered by importance
+## User stories & acceptance criteria
 
-### 1. Event Creation (Organizer Flow)
-
-#### Story: Event Initialization
-
-> **As a** user,
-> **I want** to define the name and potential time slots for an event and then sign in with Google,
-> **So that** I can share a specific link of the event with my group.
->
-> * **Acceptance Criteria:**
-> * User fills in event name and selects time slots on the creation screen.
-> * Clicking "Create Event" triggers the Google Sign-In modal if not already authenticated.
-> * After successful sign-in, the event is created and linked to the authenticated user.
-> * System generates a unique `short_id` for the event URL.
-> * The creator is automatically added to the `event_user` table as the first participant.
->
->
->
->
-
----
-
-### 2. Event Joining (Participant Flow)
-
-#### Story: Availability Submission
-
-> **As a** participant,
-> **I want** to select my available time slots on a grid and save them,
-> **So that** the other users can see when I am free.
->
-> * **Acceptance Criteria:**
-> * Clicking on the timetable triggers the Google Sign-In modal if not already authenticated.
-> * Availability is sent as a JSON list to the `POST /api/events/{shortId}/available` endpoint.
-> * The `event_user` record is updated or created.
-> * The heatmap refreshes to show the updated group availability.
->
->
->
->
-
----
-
-### 3. Technical / System Stories
-
-#### Story: Real-time Heatmap Visibility
-
-> **As a** participant,
-> **I want** the event heatmap to update for everyone once I save my times,
-> **So that** the group can reach a consensus in real-time.
->
-> * **Acceptance Criteria:**
-> * The backend must aggregate all `event_user` JSONB records for a specific `event_id`.
-> * The API returns a count of participants per time slot.
->
->
->
->
-
----
-
-### 4. Calendar Selection
-
-#### Story: Calendar Discovery
-
-> **As a** user with multiple calendars,
-> **I want** to see a list of my Google Calendars after granting calendar access,
-> **So that** I can choose exactly which schedules should affect my availability for this event.
->
-> * **Acceptance Criteria:**
-> * FE requests calendar scope and calls Google `calendarList.list` endpoint.
-> * A selection interface (checkboxes) appears for all returned calendars.
-> * Primary calendar is selected by default.
->
->
->
->
-
-#### Story: Smart Time Overlay
-
-> **As a** participant,
-> **I want** the system to fetch busy data only from my selected calendars,
-> **So that** my availability grid is pre-populated with all the "busy" times. But i must be able to overwrite these busy times.
->
-> * **Acceptance Criteria:**
-> * User gets available calendars
-> * Then selects calendars and gets busy times
-> * The FE grid marks all busy times.
->
->
->
->
-
----
+*Find the link to the **user stories** and **acceptance criteria** [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
 ## Functionalities
 
