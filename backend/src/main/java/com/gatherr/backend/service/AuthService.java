@@ -7,7 +7,6 @@ import com.gatherr.backend.model.User;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.BadJwtException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
@@ -20,16 +19,25 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtDecoder googleJwtDecoder;
 
-    @Value("${app.auth.skip-google-verification:false}")
-    private boolean skipGoogleVerification;
+    private final boolean skipGoogleVerification;
+    private final String devUserEmail;
 
-    @Value("${app.auth.dev-user-email:dev@gatherr.com}")
-    private String devUserEmail;
-
-    public AuthService(JwtService jwtService, UserRepository userRepository, JwtDecoder googleJwtDecoder) {
+    public AuthService(
+            JwtService jwtService, 
+            UserRepository userRepository, 
+            JwtDecoder googleJwtDecoder,
+            @Value("${app.auth.skip-google-verification:false}") boolean skipGoogleVerification,
+            @Value("${app.auth.dev-user-email:#{null}}") String devUserEmail) {
+        
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.googleJwtDecoder = googleJwtDecoder;
+        this.skipGoogleVerification = skipGoogleVerification;
+        this.devUserEmail = devUserEmail;
+
+        if (this.skipGoogleVerification && (this.devUserEmail == null || this.devUserEmail.isBlank())) {
+            throw new IllegalStateException("FATAL: Google Auth bypass is enabled, but 'app.auth.dev-user-email' is missing in your properties/env.");
+        }
     }
 
     @Transactional
