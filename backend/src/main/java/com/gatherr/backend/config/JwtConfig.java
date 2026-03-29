@@ -2,12 +2,19 @@ package com.gatherr.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.nio.charset.StandardCharsets;
+
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.*;
+
+import io.jsonwebtoken.security.Keys;
 
 @Configuration
 public class JwtConfig {
@@ -37,5 +44,11 @@ public class JwtConfig {
         );
 
         return decoder;
+    }
+
+    @Bean(name = "appJwtDecoder")
+    public JwtDecoder appJwtDecoder(@Value("${jwt.secret}") String secret) {
+        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        return NimbusJwtDecoder.withSecretKey(key).build();
     }
 }
