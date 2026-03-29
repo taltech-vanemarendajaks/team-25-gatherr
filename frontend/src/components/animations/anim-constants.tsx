@@ -191,6 +191,10 @@ const makeBiggerAndRotateSlightly: Variants = {
 };
 
 const smallScale: Variants = {
+	initial: {
+		scale: 1,
+		transition: { duration: 0.2 },
+	},
 	whileHover: {
 		scale: [1, 1.1],
 		transition: {
@@ -288,40 +292,58 @@ const accordionHeader = (open: boolean) => {
 };
 
 const header: Variants = {
-	enter: (direction: number) => ({ x: `${30 * direction}%`, opacity: 0 }),
-	middle: { x: "0%", opacity: 1 },
-	exit: (direction: number) => ({ x: `${-30 * direction}%`, opacity: 0 }),
+	enter: () => ({
+		opacity: 0,
+		transition: { opacity: { duration: 0.2 }, ease: "easeOut" },
+	}),
+	middle: {
+		opacity: 1,
+		transition: { opacity: { duration: 0.2 }, ease: "easeOut" },
+	},
+	exit: () => ({
+		opacity: 0,
+		transition: { opacity: { duration: 0.2 }, ease: "easeOut" },
+	}),
 };
 
 const view: Variants = {
 	enter: (direction: number) => ({
-		x: `${10 * direction}%`,
+		x: `${40 * direction}%`,
 		opacity: 0,
-		transition: { opacity: { duration: 0.5 } },
+		transition: { opacity: { duration: 0.2 }, ease: "easeOut" },
 	}),
-	middle: { x: "0%", opacity: 1 },
-	exit: (direction: number) => ({ x: `${-10 * direction}%`, opacity: 0 }),
+	middle: {
+		x: "0%",
+		opacity: 1,
+		transition: { ease: "easeOut", opacity: { duration: 0.2 } },
+	},
+	exit: (direction: number) => ({
+		x: `${-40 * direction}%`,
+		opacity: 0,
+		transition: { ease: "easeOut" },
+	}),
 };
 
+const dateScale: Variants = {
+	initial: {
+		scale: 1,
+		transition: { duration: 0.2 },
+	},
+	whileHover: {
+		scale: [1, 1.15],
+		transition: {
+			duration: 0.3,
+			ease: "easeIn",
+			times: [0, 1],
+		},
+	},
+	whileTap: { scale: 0.6 },
+};
 const calendar = {
 	header,
 	view,
+	dateScale,
 };
-
-const tabSwitch: Variants = {
-	hidden: {
-		opacity: 0,
-	},
-	active: {
-		x: 0,
-		opacity: 1,
-		transition: {
-			duration: 1,
-		},
-	},
-};
-
-const calendarEventCreation = { tabSwitch };
 
 export const defaultTransition = {
 	type: "ease",
@@ -347,7 +369,6 @@ export const animations = {
 	buttonGhost,
 	accordionHeader,
 	calendar,
-	calendarEventCreation,
 	pageItems,
 	mouseFadeInFromBottom,
 };
