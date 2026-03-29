@@ -43,7 +43,9 @@ public class AuthService {
     @Transactional
     public AuthResponseDto googleLogin(AuthRequestDto request) {
 
-        AuthResponseDto devResponse = checkIfDev();
+        String timezone = (request.timezone() != null && !request.timezone().isBlank()) ? request.timezone() : "UTC";
+
+        AuthResponseDto devResponse = checkIfDev(timezone);
         if (devResponse != null) {
             return devResponse;
         }
@@ -61,7 +63,6 @@ public class AuthService {
 
         String locale = jwt.getClaimAsString("locale");
         String language = (locale != null) ? locale.substring(0, 2).toUpperCase() : "EN";
-        String timezone = (request.timezone() != null && !request.timezone().isBlank()) ? request.timezone() : "UTC";
 
         User user = getOrCreateUser(email, name, picture, language, timezone);
         String appToken = jwtService.generateToken(user.getId(), email);
@@ -75,9 +76,9 @@ public class AuthService {
         );
     }
 
-    private AuthResponseDto checkIfDev() {
+    private AuthResponseDto checkIfDev(String timezone) {
         if (skipGoogleVerification) {
-            User devUser = getOrCreateUser(devUserEmail, "Dev User", "", "EN", "UTC");
+            User devUser = getOrCreateUser(devUserEmail, "Dev User", "", "EN", timezone);
             String devAppToken = jwtService.generateToken(devUser.getId(), devUserEmail);
             
             return new AuthResponseDto(
