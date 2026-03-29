@@ -5,7 +5,7 @@ import com.gatherr.backend.dto.AuthResponseDto;
 import com.gatherr.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.jsonwebtoken.JwtException;
+import org.springframework.security.oauth2.jwt.JwtException;
 
 @RestController
 @RequestMapping("/auth")
