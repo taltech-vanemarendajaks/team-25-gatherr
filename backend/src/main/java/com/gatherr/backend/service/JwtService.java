@@ -19,7 +19,7 @@ public class JwtService {
 
     public JwtService(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration:86400000}") long expirationTime // Defaults to 24h if not in properties
+            @Value("${jwt.expiration:31536000000}") long expirationTime // Defaults to 1 year (365 days) if not in properties
     ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationTime = expirationTime;
