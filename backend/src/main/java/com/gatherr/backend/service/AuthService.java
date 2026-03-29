@@ -5,6 +5,7 @@ import com.gatherr.backend.dto.AuthResponseDto;
 import com.gatherr.backend.repository.UserRepository;
 import com.gatherr.backend.model.User;
 
+import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class AuthService {
     public AuthResponseDto googleLogin(AuthRequestDto request) {
 
         Jwt jwt = googleJwtDecoder.decode(request.idToken());
+
+        Boolean emailVerified = jwt.getClaimAsBoolean("email_verified");
+        if (emailVerified == null || !emailVerified) {
+            throw new BadJwtException("Google account email is not verified.");
+        }
 
         String email = jwt.getClaimAsString("email");
         String name = jwt.getClaimAsString("name");
