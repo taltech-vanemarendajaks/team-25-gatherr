@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
@@ -5,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Toaster } from "../components/ui/sonner";
+import { env } from "../env";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
 import { SITE_TITLE } from "../lib/site";
@@ -69,19 +71,21 @@ function RootDocument({ children }: { children: ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className="font-main bg-surface text-content">
-				<TanStackQueryProvider>
-					{mswReady ? children : null}
-					<TanStackDevtools
-						config={{ position: "bottom-right" }}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-							TanStackQueryDevtools,
-						]}
-					/>
-				</TanStackQueryProvider>
+				<GoogleOAuthProvider clientId={env.VITE_GOOGLE_CLIENT_ID}>
+					<TanStackQueryProvider>
+						{mswReady ? children : null}
+						<TanStackDevtools
+							config={{ position: "bottom-right" }}
+							plugins={[
+								{
+									name: "Tanstack Router",
+									render: <TanStackRouterDevtoolsPanel />,
+								},
+								TanStackQueryDevtools,
+							]}
+						/>
+					</TanStackQueryProvider>
+				</GoogleOAuthProvider>
 				<Scripts />
 				<Toaster />
 			</body>
