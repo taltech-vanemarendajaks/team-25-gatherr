@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 import { GatherrApiClient } from "../../lib/axios";
 
@@ -27,8 +27,5 @@ export const useCreateSomething = () => {
 			toast.success("Created successfully");
 			queryClient.invalidateQueries({ queryKey: ["something"] });
 		},
-		// onError: (error: AxiosError<{ message?: string }>) => {
-		// 	toast.error(error.response?.data?.message ?? error.message);
-		// },
 	});
 };

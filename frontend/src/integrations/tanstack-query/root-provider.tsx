@@ -1,7 +1,7 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { ReactNode } from "react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 let context:
 	| {
