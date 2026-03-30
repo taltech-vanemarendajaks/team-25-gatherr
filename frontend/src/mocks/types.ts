@@ -1,4 +1,8 @@
-export type EventType = "SPECIFIC_DATES" | "DAYS_OF_THE_WEEK";
+export type EventType =
+	| "SPECIFIC_DATES_AND_TIMES"
+	| "SPECIFIC_DATES"
+	| "WEEKDAYS"
+	| "WEEKDAYS_AND_TIMES";
 
 export interface User {
 	id: number;
