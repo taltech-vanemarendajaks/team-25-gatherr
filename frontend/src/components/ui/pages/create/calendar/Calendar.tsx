@@ -36,7 +36,7 @@ interface Props {
 	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
 
-export const CalendarMonthView = ({ selected, setSelected }: Props) => {
+export const Calendar = ({ selected, setSelected }: Props) => {
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
 	const [currentMonthString, setCurrentMonthString] = useState(
