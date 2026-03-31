@@ -30,7 +30,7 @@ export const Accordion = ({ title, body }: Props) => {
 
 	const rotateAmount = 480;
 	return (
-		<div className={cn("w-full rounded-2xl bg-canvas px-2 py-3 flex flex-col", "max-w-xs")}>
+		<div className={cn("rounded-2xl bg-canvas px-2 py-3 flex flex-col")}>
 			<button
 				type="button"
 				aria-controls={title}
