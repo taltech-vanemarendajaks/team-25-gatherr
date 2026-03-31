@@ -69,7 +69,7 @@ function Create() {
 	};
 
 	return (
-		<main className="px-8 py-12">
+		<main className="py-12 max-w-md m-auto px-4 sm:px-0">
 			<h1 className="text-2xl text-center mb-5">{name}</h1>
 			<ChooseEventTypeSlider
 				selected={calendarSelectedDates}
@@ -92,7 +92,7 @@ function Create() {
 				)}
 			</div>
 
-			<div className="mt-8">
+			<div className="mt-16">
 				<Accordion
 					key="Advanced"
 					title="Advanced"
@@ -119,7 +119,7 @@ function Create() {
 							</div>
 
 							{/* start of time range button */}
-							<div className="text-center">
+							<div className="flex flex-col justify-start mb-4">
 								{eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES" ? (
 									<>
 										<p className="text-info text-sm mb-2">
@@ -134,7 +134,7 @@ function Create() {
 												}
 											}}
 											variant="red"
-											size="small"
+											size="xs"
 										>
 											Remove time ranges
 										</Button>
