@@ -22,6 +22,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		}
 	},
 
+	notFoundComponent: () => {
+		return <p>Not Found</p>;
+	},
+
 	head: () => ({
 		meta: [
 			{
