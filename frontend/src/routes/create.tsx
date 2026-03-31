@@ -15,6 +15,7 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { useCreateEvent } from "../hooks/mutation/useCreateEvent";
+import { useGetMe } from "../hooks/query/useGetMe";
 import type { EventType } from "../mocks/types";
 
 export const Route = createFileRoute("/create")({
@@ -28,6 +29,8 @@ function Create() {
 	const { name } = Route.useSearch();
 
 	const { mutate } = useCreateEvent();
+
+	const { data: user } = useGetMe();
 
 	const [calendarSelectedDates, setCalendarSelectedDates] = useState<Date[]>([]);
 	const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -179,6 +182,7 @@ function Create() {
 							times: calculateTimes(),
 							timeIncrement,
 							timezone: "Europe/Tallinn",
+							creator: user,
 						})
 					}
 				>
