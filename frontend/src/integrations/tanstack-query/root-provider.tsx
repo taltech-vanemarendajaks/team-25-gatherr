@@ -2,6 +2,7 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@ta
 
 import type { ReactNode } from "react";
 import { toast } from "react-hot-toast";
+import { AppInit } from "./AppInit";
 
 let context:
 	| {
@@ -38,5 +39,10 @@ export function getContext() {
 export default function TanStackQueryProvider({ children }: { children: ReactNode }) {
 	const { queryClient } = getContext();
 
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>
+			<AppInit />
+			{children}
+		</QueryClientProvider>
+	);
 }
