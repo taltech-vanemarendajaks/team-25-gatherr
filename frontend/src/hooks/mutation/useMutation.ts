@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 
 import { GatherrApiClient } from "../../lib/axios";
 
-interface CreateSomethingInput {
+interface CreateInput {
 	id: string;
 	// ...
 }
@@ -13,7 +13,7 @@ interface ResponseType {
 	// ...
 }
 
-const mutationFn = async (input: CreateSomethingInput): Promise<ResponseType> => {
+const mutationFn = async (input: CreateInput): Promise<ResponseType> => {
 	const { data } = await GatherrApiClient.post<ResponseType>("/something", input);
 	return data;
 };
