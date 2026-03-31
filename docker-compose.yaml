@@ -21,7 +21,7 @@ services:
   backend:
     build:
       context: backend
-      dockerfile: ./backend/Dockerfile.dev
+      dockerfile: ./Dockerfile.dev
     container_name: gatherr-backend
     command: ./mvnw spring-boot:run
     volumes:
