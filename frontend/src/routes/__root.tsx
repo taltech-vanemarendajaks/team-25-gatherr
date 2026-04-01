@@ -4,7 +4,7 @@ import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { Toaster } from "../components/ui/sonner";
+import { Toaster } from "react-hot-toast";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
 import { SITE_TITLE } from "../lib/site";
@@ -20,6 +20,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		if (typeof document !== "undefined") {
 			document.documentElement.setAttribute("lang", getLocale());
 		}
+	},
+
+	notFoundComponent: () => {
+		return <p>Not Found</p>;
 	},
 
 	head: () => ({
@@ -83,7 +87,15 @@ function RootDocument({ children }: { children: ReactNode }) {
 					/>
 				</TanStackQueryProvider>
 				<Scripts />
-				<Toaster />
+				<Toaster
+					position="top-center"
+					toastOptions={{
+						style: {
+							background: "#1a1a1a",
+							color: "#f5f5f5",
+						},
+					}}
+				/>
 			</body>
 		</html>
 	);

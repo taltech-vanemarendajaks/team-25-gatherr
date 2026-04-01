@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 import { GatherrApiClient } from "../../lib/axios";
 
-interface CreateSomethingInput {
+interface CreateInput {
 	id: string;
 	// ...
 }
@@ -13,7 +13,7 @@ interface ResponseType {
 	// ...
 }
 
-const mutationFn = async (input: CreateSomethingInput): Promise<ResponseType> => {
+const mutationFn = async (input: CreateInput): Promise<ResponseType> => {
 	const { data } = await GatherrApiClient.post<ResponseType>("/something", input);
 	return data;
 };
@@ -27,8 +27,5 @@ export const useCreateSomething = () => {
 			toast.success("Created successfully");
 			queryClient.invalidateQueries({ queryKey: ["something"] });
 		},
-		// onError: (error: AxiosError<{ message?: string }>) => {
-		// 	toast.error(error.response?.data?.message ?? error.message);
-		// },
 	});
 };

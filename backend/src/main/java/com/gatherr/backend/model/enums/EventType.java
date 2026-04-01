@@ -1,6 +1,8 @@
 package com.gatherr.backend.model.enums;
 
 public enum EventType {
-    SPECIFIC_DATES,
-    DAYS_OF_THE_WEEK
+    SPECIFIC_DATES_AND_TIMES,
+	SPECIFIC_DATES,
+	WEEKDAYS,
+	WEEKDAYS_AND_TIMES,
 }
