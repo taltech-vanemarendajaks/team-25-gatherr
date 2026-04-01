@@ -24,6 +24,7 @@ export function getContext() {
 		mutationCache: new MutationCache({
 			onError: (error, _, __, mutation) => {
 				const { mutationKey } = mutation.options;
+
 				toast.error(`API Mutation Error ${error.message} ${mutationKey ? `: ${mutation}` : ""}`);
 			},
 		}),
