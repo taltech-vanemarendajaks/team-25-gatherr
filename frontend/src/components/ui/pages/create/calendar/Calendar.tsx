@@ -36,7 +36,7 @@ interface Props {
 	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
 
-export const CalendarMonthView = ({ selected, setSelected }: Props) => {
+export const Calendar = ({ selected, setSelected }: Props) => {
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
 	const [currentMonthString, setCurrentMonthString] = useState(
@@ -90,6 +90,7 @@ export const CalendarMonthView = ({ selected, setSelected }: Props) => {
 			<div className="flex items-center justify-center">
 				<header className="relative mb-4 flex justify-between items-center min-w-[18rem] max-w-[18rem]">
 					<motion.button
+						type="button"
 						variants={removeImmediately}
 						className={cn("z-10 rounded-full cursor-pointer")}
 						onClick={previousMonth}
@@ -107,6 +108,7 @@ export const CalendarMonthView = ({ selected, setSelected }: Props) => {
 						<span>{beautifulCurrentMonth}</span>
 					</motion.p>
 					<motion.button
+						type="button"
 						variants={removeImmediately}
 						className={cn("z-10 rounded-full cursor-pointer")}
 						onClick={nextMonth}

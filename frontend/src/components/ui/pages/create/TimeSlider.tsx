@@ -2,13 +2,13 @@
 
 import { format, setHours, startOfDay } from "date-fns";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "../../../../lib/utils";
 
 const OBJECT_OVERFLOW = 20;
 const GRADIENT_BAR_OFFSET = 10;
-const START_TIME = 8;
-const END_TIME = 17;
+export const START_TIME = 8;
+export const END_TIME = 17;
 
 interface ConvertProps {
 	trackWidth: number;
@@ -45,10 +45,20 @@ const convertHourToPosition = ({
 };
 
 interface Props {
+	startTime: number;
+	setStartTime: React.Dispatch<React.SetStateAction<number>>;
+	endTime: number;
+	setEndTime: React.Dispatch<React.SetStateAction<number>>;
 	useFullTimeRange?: boolean;
 }
 
-export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
+export const TimeSlider = ({
+	startTime,
+	endTime,
+	setStartTime,
+	setEndTime,
+	useFullTimeRange = true,
+}: Props) => {
 	const minHour = useFullTimeRange ? 0 : 8;
 	const totalHours = useFullTimeRange ? 24 : 13;
 
@@ -57,9 +67,6 @@ export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
 	const trackWidth = useMotionValue(0);
 	const leftX = useMotionValue(0);
 	const rightX = useMotionValue(0);
-
-	const [startTime, setStartTime] = useState(START_TIME);
-	const [endTime, setEndTime] = useState(END_TIME);
 
 	const highlightedBarWidth = useTransform([leftX, rightX], ([left, right]: number[]) => {
 		return right - left + GRADIENT_BAR_OFFSET;
@@ -122,8 +129,8 @@ export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
 	}, []);
 
 	return (
-		<div className="flex flex-col items-center">
-			<div className="flex-row flex justify-center font-semibold font-number mb-7 text-2xl">
+		<div className="flex flex-col items-center mb-12">
+			<div className="flex-row flex justify-center font-medium font-number mb-7 text-2xl">
 				<p>{format(setHours(startOfDay(new Date()), startTime), "HH:mm")}</p>
 				<p>-</p>
 				<p>{format(setHours(startOfDay(new Date()), endTime), "HH:mm")}</p>
@@ -149,6 +156,7 @@ export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
 					className={cn(
 						"absolute ring-2 ring-amber-300 bg-linear-to-tr from-primary from-5% to-[#C21515] w-5 h-16 rounded-lg -top-5.5",
 						"shadow-[0_0_8px_2px_rgba(251,191,36,0.5)]",
+						"touch-manipulation",
 					)}
 					style={{
 						x: leftX,
@@ -167,6 +175,7 @@ export const TimeSlider = ({ useFullTimeRange = true }: Props) => {
 					className={cn(
 						"absolute ring-2 ring-amber-300 bg-linear-to-tr from-primary from-5% to-[#C21515] w-5 h-16 rounded-lg -top-5.5",
 						"shadow-[0_0_8px_2px_rgba(251,191,36,0.5)]",
+						"touch-manipulation",
 					)}
 					style={{
 						x: rightX,

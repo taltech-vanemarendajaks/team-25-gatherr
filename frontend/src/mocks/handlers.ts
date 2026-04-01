@@ -51,6 +51,8 @@ export const handlers = [
 	// ── GET /users/me ─────────────────────────────────────────────────────────
 	http.get(`${BASE}/users/me`, () => {
 		return HttpResponse.json(ME);
+		// unauthorized
+		// return new HttpResponse(null, { status: 401 });
 	}),
 
 	// ── PATCH /users/me ───────────────────────────────────────────────────────
