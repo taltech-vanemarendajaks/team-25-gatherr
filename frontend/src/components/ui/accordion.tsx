@@ -1,24 +1,7 @@
-/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <aa> */
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: <aa> */
-import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useState } from "react";
 import { cn } from "../../lib/utils";
-
-interface AccordionContentListProps {
-	title: string;
-	content: React.ReactNode;
-	className?: string;
-}
-
-export const AccordionContentList = ({ title, content, className }: AccordionContentListProps) => (
-	<div className={cn(className)}>
-		<p className="text-lg font-medium">{title}</p>
-		<div className="px-6 pt-2">
-			<ul className="list-disc text-base text-gray-700 space-y-1">{content}</ul>
-		</div>
-	</div>
-);
 
 interface Props {
 	title: string;
@@ -35,12 +18,12 @@ export const Accordion = ({ title, body }: Props) => {
 				type="button"
 				aria-controls={title}
 				aria-expanded={isOpen}
+				onClick={() => setIsOpen(prev => !prev)}
 				className={cn("flex justify-between items-center w-full space-x-4 px-4")}
 			>
 				<p className={cn("text-lg sm:text-xl font-semibold text-start")}>{title}</p>
 				<AnimatePresence initial={false} mode="wait">
 					<motion.div
-						onClick={() => setIsOpen(prev => !prev)}
 						key={isOpen ? "minus" : "plus"}
 						initial={{
 							rotate: isOpen ? -rotateAmount : rotateAmount,
