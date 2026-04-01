@@ -1,9 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format, setMinutes, startOfDay } from "date-fns";
-import { useState } from "react";
+import { User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { Accordion } from "../components/ui/accordion";
 import { Button } from "../components/ui/button";
 import { ComponentExplainer } from "../components/ui/ComponentExplainer";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "../components/ui/dialog";
 import { ChooseEventTypeSlider } from "../components/ui/pages/create/ChooseEventTypeSlider";
 import { END_TIME, START_TIME, TimeSlider } from "../components/ui/pages/create/TimeSlider";
 import {
@@ -25,24 +34,71 @@ export const Route = createFileRoute("/create")({
 	}),
 });
 
+const DRAFT_KEY = "gatherr:create-event-draft";
+
+interface Draft {
+	eventType: EventType;
+	calendarSelectedDates: string[];
+	selectedDays: string[];
+	startTime: number;
+	endTime: number;
+	timeIncrement: number;
+}
+
+function loadDraft(): Draft | null {
+	try {
+		const raw = localStorage.getItem(DRAFT_KEY);
+		return raw ? (JSON.parse(raw) as Draft) : null;
+	} catch {
+		return null;
+	}
+}
+
+function saveDraft(draft: Draft) {
+	localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function clearDraft() {
+	localStorage.removeItem(DRAFT_KEY);
+}
+
 function Create() {
 	const { name } = Route.useSearch();
 
 	const { mutate } = useCreateEvent();
-
 	const { data: user } = useGetMe();
 
-	const [calendarSelectedDates, setCalendarSelectedDates] = useState<Date[]>([]);
-	const [selectedDays, setSelectedDays] = useState<string[]>([]);
+	// @todo: after login modal completes and user becomes defined,
+	// auto-trigger the create with creator (pendingCreate flag + useEffect)
+	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-	const [startTime, setStartTime] = useState(START_TIME);
-	const [endTime, setEndTime] = useState(END_TIME);
-	const [timeIncrement, setTimeIncrement] = useState(30);
+	const draft = loadDraft();
 
-	const [eventType, setEventType] = useState<EventType>("SPECIFIC_DATES_AND_TIMES");
+	const [calendarSelectedDates, setCalendarSelectedDates] = useState<Date[]>(
+		draft?.calendarSelectedDates.map(d => new Date(d)) ?? [],
+	);
+	const [selectedDays, setSelectedDays] = useState<string[]>(draft?.selectedDays ?? []);
+
+	const [startTime, setStartTime] = useState(draft?.startTime ?? START_TIME);
+	const [endTime, setEndTime] = useState(draft?.endTime ?? END_TIME);
+	const [timeIncrement, setTimeIncrement] = useState(draft?.timeIncrement ?? 30);
+
+	const [eventType, setEventType] = useState<EventType>(
+		draft?.eventType ?? "SPECIFIC_DATES_AND_TIMES",
+	);
+
+	useEffect(() => {
+		saveDraft({
+			eventType,
+			calendarSelectedDates: calendarSelectedDates.map(d => d.toISOString()),
+			selectedDays,
+			startTime,
+			endTime,
+			timeIncrement,
+		});
+	}, [eventType, calendarSelectedDates, selectedDays, startTime, endTime, timeIncrement]);
 
 	/**
-	 * @todo implement different event types when calculating
 	 * Calculates the times array based on the event type:
 	 *
 	 * SPECIFIC_DATES_AND_TIMES → ["HHmm-DDMMyyyy", ...]  ["0900-31032026", "0930-31032026", "0900-01042026"]
@@ -51,21 +107,46 @@ function Create() {
 	 * WEEKDAYS                 → ["DDD", ...]            ["MON", "TUE", "FRI"]
 	 */
 	const calculateTimes = () => {
-		const times = [];
+		if (eventType === "SPECIFIC_DATES_AND_TIMES") {
+			const times = [];
 
-		for (let time = startTime * 60; time <= endTime * 60; time = time + timeIncrement) {
-			times.push(format(setMinutes(startOfDay(new Date()), time), "HHmm"));
-		}
-
-		const timesAndDates = [];
-		for (const selectedDate of calendarSelectedDates) {
-			const formattedDate = format(selectedDate, "ddMMyyyy");
-			for (const time of times) {
-				timesAndDates.push(`${time}-${formattedDate}`);
+			for (let time = startTime * 60; time <= endTime * 60; time = time + timeIncrement) {
+				times.push(format(setMinutes(startOfDay(new Date()), time), "HHmm"));
 			}
-		}
 
-		return timesAndDates;
+			const timesAndDates = [];
+			for (const selectedDate of calendarSelectedDates) {
+				const formattedDate = format(selectedDate, "ddMMyyyy");
+				for (const time of times) {
+					timesAndDates.push(`${time}-${formattedDate}`);
+				}
+			}
+			return timesAndDates;
+		} else if (eventType === "SPECIFIC_DATES") {
+			const dates = [];
+			for (const selectedDate of calendarSelectedDates) {
+				const formattedDate = format(selectedDate, "ddMMyyyy");
+
+				dates.push(`${formattedDate}`);
+			}
+			return dates;
+		} else if (eventType === "WEEKDAYS") {
+			return selectedDays;
+		} else if (eventType === "WEEKDAYS_AND_TIMES") {
+			const times = [];
+
+			for (let time = startTime * 60; time <= endTime * 60; time = time + timeIncrement) {
+				times.push(format(setMinutes(startOfDay(new Date()), time), "HHmm"));
+			}
+
+			const timesAndDays = [];
+			for (const selectedDay of selectedDays) {
+				for (const time of times) {
+					timesAndDays.push(`${time}-${selectedDay}`);
+				}
+			}
+			return timesAndDays;
+		}
 	};
 
 	return (
@@ -126,6 +207,7 @@ function Create() {
 											If you wish to only have dates press this
 										</p>
 										<Button
+											className="self-start"
 											onClick={() => {
 												if (eventType === "SPECIFIC_DATES_AND_TIMES") {
 													setEventType("SPECIFIC_DATES");
@@ -153,7 +235,7 @@ function Create() {
 												}
 											}}
 											variant="red"
-											size="small"
+											size="xs"
 										>
 											Add time ranges
 										</Button>
@@ -161,8 +243,8 @@ function Create() {
 								)}
 							</div>
 
-							{/* start of timezone */}
 							{/* @todo */}
+							{/* start of timezone */}
 						</div>
 					}
 				/>
@@ -170,25 +252,51 @@ function Create() {
 			<div className="flex justify-center mt-16">
 				<Button
 					disabled={
+						!name.trim() ||
 						((eventType === "SPECIFIC_DATES" || eventType === "SPECIFIC_DATES_AND_TIMES") &&
 							calendarSelectedDates.length === 0) ||
 						((eventType === "WEEKDAYS" || eventType === "WEEKDAYS_AND_TIMES") &&
 							selectedDays.length === 0)
 					}
-					onClick={() =>
-						mutate({
-							name,
-							type: eventType,
-							times: calculateTimes(),
-							timeIncrement,
-							timezone: "Europe/Tallinn",
-							creator: user,
-						})
-					}
+					onClick={() => {
+						if (!user) {
+							// draft already persisted by useEffect
+							setIsLoginModalOpen(true);
+							return;
+						}
+						mutate(
+							{
+								name,
+								type: eventType,
+								times: calculateTimes(),
+								timeIncrement,
+								timezone: "Europe/Tallinn",
+								creator: user,
+							},
+							{ onSuccess: clearDraft },
+						);
+					}}
 				>
 					Create Event
 				</Button>
 			</div>
+
+			<Dialog open={isLoginModalOpen}>
+				<DialogContent className="max-w-sm" showCloseButton={false}>
+					<DialogHeader>
+						<User className="text-amber-500 mb-8 size-12" />
+						<DialogTitle className="font-medium text-2xl mb-8">Sign in to create event</DialogTitle>
+						<Button onClick={() => setIsLoginModalOpen(false)} className="mb-8 px-8">
+							<GoogleIcon className="size-8 mr-3" />
+							Continue with Google
+						</Button>
+						<DialogDescription className="text-info -mb-1">
+							This also allows you to get
+						</DialogDescription>
+						<DialogDescription className="text-info">your google calendar events</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
 		</main>
 	);
 }
