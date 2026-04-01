@@ -9,7 +9,8 @@ interface Props {
 }
 
 export const DaysOfTheWeek = ({ selected, setSelected }: Props) => {
-	const toggle = (day: string) => {
+	const toggle = (lowerCaseDay: string) => {
+		const day = lowerCaseDay.toUpperCase();
 		setSelected(prev => (prev.includes(day) ? prev.filter(_day => _day !== day) : [...prev, day]));
 	};
 
