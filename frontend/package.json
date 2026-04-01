@@ -23,6 +23,7 @@
 		"prepare": "cd .. && husky frontend/.husky"
 	},
 	"dependencies": {
+		"@radix-ui/react-dialog": "^1.1.15",
 		"@radix-ui/react-tabs": "^1.1.13",
 		"@react-hook/window-size": "^3.1.1",
 		"@sentry/tanstackstart-react": "^10.34.0",
