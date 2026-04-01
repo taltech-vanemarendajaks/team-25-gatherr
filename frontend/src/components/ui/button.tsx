@@ -16,7 +16,6 @@ export const buttonVariants = cva(
 		"active:translate-y-[0.2rem] active:duration-75",
 		"touch-manipulation",
 		"disabled:opacity-50 disabled:cursor-not-allowed",
-		"self-start",
 	],
 	{
 		// regular --> hover --> active --> dark --> focus
