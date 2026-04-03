@@ -27,7 +27,6 @@ import { useCreateEvent } from "../hooks/mutation/useCreateEvent";
 import { useGetMe } from "../hooks/query/useGetMe";
 import type { EventType } from "../mocks/types";
 import * as m from "../paraglide/messages";
-import { setLocale } from "../paraglide/runtime";
 
 export const Route = createFileRoute("/create")({
 	component: Create,
@@ -45,6 +44,7 @@ interface Draft {
 	startTime: number;
 	endTime: number;
 	timeIncrement: number;
+	timezone: string;
 }
 
 function loadDraft(): Draft | null {
@@ -85,6 +85,10 @@ function Create() {
 	const [endTime, setEndTime] = useState(draft?.endTime ?? END_TIME);
 	const [timeIncrement, setTimeIncrement] = useState(draft?.timeIncrement ?? 30);
 
+	const [timezone, setTimezone] = useState(
+		draft?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+	);
+
 	const [eventType, setEventType] = useState<EventType>(
 		draft?.eventType ?? "SPECIFIC_DATES_AND_TIMES",
 	);
@@ -97,8 +101,9 @@ function Create() {
 			startTime,
 			endTime,
 			timeIncrement,
+			timezone,
 		});
-	}, [eventType, calendarSelectedDates, selectedDays, startTime, endTime, timeIncrement]);
+	}, [eventType, calendarSelectedDates, selectedDays, startTime, endTime, timeIncrement, timezone]);
 
 	/**
 	 * Calculates the times array based on the event type:
@@ -186,7 +191,7 @@ function Create() {
 						<div className="px-6 mb-2">
 							{/* start of time increment */}
 							<div className="flex flex-row items-center mb-4">
-								<p className="mr-3">{m.create_time_increment_label()}</p>
+								<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
 								<Select
 									value={timeIncrement.toString()}
 									onValueChange={value => setTimeIncrement(parseInt(value))}
@@ -244,8 +249,25 @@ function Create() {
 								)}
 							</div>
 
-							{/* @todo */}
-							{/* start of timezone */}
+							<div>
+								<p className="mb-2 text-lg font-semibold">{m.create_timezone()}</p>
+								<Select value={timezone} onValueChange={value => setTimezone(value)}>
+									<SelectTrigger>
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectGroup>
+											{Intl.supportedValuesOf("timeZone").map(_timezone => {
+												return (
+													<SelectItem key={_timezone} value={_timezone}>
+														{_timezone}
+													</SelectItem>
+												);
+											})}
+										</SelectGroup>
+									</SelectContent>
+								</Select>
+							</div>
 						</div>
 					}
 				/>
@@ -271,7 +293,7 @@ function Create() {
 								type: eventType,
 								times: calculateTimes(),
 								timeIncrement,
-								timezone: "Europe/Tallinn",
+								timezone,
 								creator: user,
 							},
 							{ onSuccess: clearDraft },
