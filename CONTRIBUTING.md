@@ -9,14 +9,14 @@ To maintain code quality and a smooth development workflow, please follow these 
 
 ## <a name="development"></a> Development Setup
 
-### IDE
+### IDE Go through these steps
 
 We use **IntelliJ IDEA**. After cloning, configure the JDK:
 
 1. `File` → `Project Structure` → `SDK` → select **Java 21**
 2. `Build` → `Rebuild Project`
 
-### Running the backend with the dev profile
+#### 1. Running the backend with the dev profile
 
 The `dev` profile disables Google token verification so you can get a JWT instantly without a real Google account.
 
@@ -33,7 +33,7 @@ The `dev` profile disables Google token verification so you can get a JWT instan
    docker compose up -d
    ```
 
-### Getting a token in Postman (Using the Dev Google Login Bypass)
+### 2. Getting a token in Postman (Using the Dev Google Login Bypass)
 
 1. Import `postman_collection.json` from the repo root into Postman
 2. Create a `POST` request to `http://localhost:8080/api/v1/auth/google`.
@@ -42,14 +42,11 @@ The `dev` profile disables Google token verification so you can get a JWT instan
 ```
 {
     "idToken": "bypass",
-    "timezone": "UTC"
 }
 ```
 5. Copy the `token` value from the response.
 4. Set it as the `token` collection variable in Postman (Collections → Gatherr API → Variables)
 5. All other requests will now automatically include `Authorization: Bearer <token>`
-
-*Note: The JWT lasts 1 year. After it expires, repeat steps 2–6.*
 
 ### OPTIONAL: Testing the real Google Login flow
 
@@ -59,7 +56,7 @@ If you are working on the frontend UI or need to test the actual Google authenti
 2. Go to [Google Auth Clients](https://console.cloud.google.com/auth/clients) and create a new client.
 3. Add the following details:
     - **Name:** Gatherr Local Dev (or similar)
-    - **Authorized JavaScript origins:** `http://localhost:3000`
+    - **Authorized JavaScript origins:** `http://localhost:8080`
 4. Copy the generated **Client ID** into your frontend `.env.local` file (`VITE_GOOGLE_CLIENT_ID`).
 5. Copy the exact same **Client ID** into your backend `.env` file (`GOOGLE_CLIENT_ID`). *(Note: You do not need the Client Secret for this architecture).*
 6. Remove `SPRING_PROFILES_ACTIVE=dev` from your `.env` file and restart the backend to re-enable real Google token verification.

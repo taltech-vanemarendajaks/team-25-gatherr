@@ -323,6 +323,43 @@ BE-->>FE: 200 OK (Updated Heatmap)
 FE->>U: Show updated Heatmap
 ```
 
+### Timezone-aware availability and heatmap
+
+```mermaid
+sequenceDiagram
+autonumber
+
+participant U  as User
+participant FE as Frontend App
+participant BE as REST API
+participant DB as PostgreSQL
+
+Note over FE: FE detects user timezone via Intl.DateTimeFormat().resolvedOptions().timeZone
+
+U->>FE: Selects available slots on grid
+U->>FE: Clicks "Save"
+FE->>BE: PUT /api/events/{shortId}/respond<br/>{ available, notAvailable, timezone: "Europe/Tallinn" }
+BE->>DB: UPSERT event_user (available, notAvailable, timezone)
+BE-->>FE: 200 OK
+
+Note over BE: Each event_user row now stores slots in the participant's own timezone
+
+FE->>BE: GET /api/events/{shortId}/summary
+BE->>DB: SELECT all event_user rows for event
+
+Note over BE: For each event_user row:<br/>convert available slots from eventUser.timezone → event.timezone<br/>using ZonedDateTime (e.g. "0700-10042026" Europe/Tallinn → "0600-10042026" Europe/Amsterdam)
+
+BE->>BE: Build slots list — count per slot using normalized times
+BE-->>FE: { users: [...], slots: [{ slot, count, users }] }
+
+Note over FE: Slots are now in event.timezone
+
+FE->>FE: Heatmap wrapper converts each slot from event.timezone → user.timezone<br/>for display (e.g. "0600-10042026" → "0800-10042026" for Tallinn user)
+FE->>U: Render heatmap — each cell colored by count, labels in user's local time
+```
+
+---
+
 ## REST API mapping
 
 - Everything starts with /api/v1

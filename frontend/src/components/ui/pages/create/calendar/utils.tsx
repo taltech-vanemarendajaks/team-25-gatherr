@@ -1,5 +1,6 @@
 import { addMonths, format, isBefore, isSameMonth, isToday, subMonths } from "date-fns";
 import type { Dispatch, SetStateAction } from "react";
+import { dateFnsLocale } from "./Calendar";
 
 interface TimeFrameProps {
 	setCurrentString: Dispatch<SetStateAction<string>>;
@@ -25,7 +26,7 @@ export const previousTimeFrame = ({
 
 	const previous = subMonths(current, 1);
 
-	setCurrentString(format(previous, currentType));
+	setCurrentString(format(previous, currentType, { locale: dateFnsLocale }));
 };
 
 export const nextTimeFrame = ({
@@ -43,7 +44,7 @@ export const nextTimeFrame = ({
 
 	const next = addMonths(current, 1);
 
-	setCurrentString(format(next, currentType));
+	setCurrentString(format(next, currentType, { locale: dateFnsLocale }));
 };
 
 interface GetTextColorForDateProps {

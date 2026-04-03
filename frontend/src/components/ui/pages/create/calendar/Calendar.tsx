@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: <a> */
 import {
+	addDays,
 	eachDayOfInterval,
 	eachWeekOfInterval,
 	endOfMonth,
@@ -8,18 +9,25 @@ import {
 	parse,
 	startOfWeek,
 } from "date-fns";
+import { enUS, et, type Locale } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
 import { motion, type Variants } from "motion/react";
 import { useState } from "react";
+import { useGetMe } from "../../../../../hooks/query/useGetMe";
 import { cn } from "../../../../../lib/utils";
+import { getLocale } from "../../../../../paraglide/runtime";
 import { AnimationWrapper } from "../../../../animations/AnimationWrapper";
 import { animations } from "../../../../animations/anim-constants";
 import { CalendarDate } from "./CalendarDate";
 import { getSeason, nextTimeFrame, previousTimeFrame, seasonEmoji } from "./utils";
 
+const dateFnsLocales: Record<string, Locale> = {
+	en: enUS,
+	et: et,
+};
+
+export const dateFnsLocale = dateFnsLocales[getLocale()] ?? enUS;
 // @todo
-// add localization
 // draggable grid
 
 const removeImmediately: Variants = {
@@ -27,31 +35,43 @@ const removeImmediately: Variants = {
 };
 const currentMonthType = "MMMM yyyy";
 
-export const days = {
-	short: ["M", "T", "W", "T", "F", "S", "S"],
-};
-
 interface Props {
 	selected: Date[];
 	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
 
 export const Calendar = ({ selected, setSelected }: Props) => {
+	const { data: user } = useGetMe();
+
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
 	const [currentMonthString, setCurrentMonthString] = useState(
-		format(new Date(), currentMonthType),
+		format(new Date(), currentMonthType, { locale: dateFnsLocale }),
 	);
 
-	const firstDayOfCurrentMonth = parse(currentMonthString, currentMonthType, new Date());
-	const firstDayOfCalendarMonth = startOfWeek(firstDayOfCurrentMonth);
+	const firstDayOfCurrentMonth = parse(currentMonthString, currentMonthType, new Date(), {
+		locale: dateFnsLocale,
+	});
+
+	const firstDayOfCalendarMonth = startOfWeek(firstDayOfCurrentMonth, {
+		weekStartsOn: user?.startOnMonday ? 1 : 0,
+	});
+
+	const days = Array.from({ length: 7 }, (_, i) =>
+		format(addDays(firstDayOfCalendarMonth, i), "EEEEE", {
+			locale: dateFnsLocale,
+		}),
+	);
+
 	const lastDayOfCalendarMonth = endOfWeek(endOfMonth(firstDayOfCurrentMonth));
 	const weeks = eachWeekOfInterval({
 		start: firstDayOfCalendarMonth,
 		end: lastDayOfCalendarMonth,
 	});
 
-	const month = parse(currentMonthString, currentMonthType, new Date());
+	const month = parse(currentMonthString, currentMonthType, new Date(), {
+		locale: dateFnsLocale,
+	});
 
 	const previousMonth = () =>
 		previousTimeFrame({
@@ -121,7 +141,7 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 			</div>
 
 			<div className="grid grid-cols-7 font-semibold mb-2">
-				{days.short.map(day => (
+				{days.map(day => (
 					<div key={day} className="flex justify-center">
 						<p className="text-content">{day}</p>
 					</div>
