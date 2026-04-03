@@ -2,6 +2,7 @@ import { motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { cn } from "../../../../lib/utils";
 import type { EventType } from "../../../../mocks/types";
+import * as m from "../../../../paraglide/messages";
 import { ComponentExplainer } from "../../ComponentExplainer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../tabs";
 import { Calendar } from "./calendar/Calendar";
@@ -65,7 +66,7 @@ export const ChooseEventTypeSlider = ({
 						}}
 						value="dates-and-times"
 					>
-						Dates and times
+						{m.choose_event_type_dates_and_times()}
 					</TabsTrigger>
 					<TabsTrigger
 						onClick={() => {
@@ -74,19 +75,25 @@ export const ChooseEventTypeSlider = ({
 						}}
 						value="days-of-the-week"
 					>
-						Weekdays
+						{m.choose_event_type_weekdays()}
 					</TabsTrigger>
 					<TwoElementMovingBox selectedIndex={selectedIndex} />
 				</TabsList>
 			</div>
 			<TabsContent value="dates-and-times">
-				<ComponentExplainer title="What dates might work?" text="Press to select" />
+				<ComponentExplainer
+					title={m.choose_event_type_dates_title()}
+					text={m.choose_event_type_dates_text()}
+				/>
 				<div className="mb-8 bg-canvas rounded-xl py-6 max-w-xs m-auto px-4">
 					<Calendar selected={selected} setSelected={setSelected} />
 				</div>
 			</TabsContent>
 			<TabsContent value="days-of-the-week">
-				<ComponentExplainer title="What days might work?" text="Press to select" />
+				<ComponentExplainer
+					title={m.choose_event_type_days_title()}
+					text={m.choose_event_type_days_text()}
+				/>
 				<div className="mb-8 bg-canvas rounded-xl py-4 px-4">
 					<DaysOfTheWeek selected={selectedDays} setSelected={setSelectedDays} />
 				</div>

@@ -1,0 +1,22 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"create_pick_time_range_title": "Vali ajavahemik",
+	"create_pick_time_range_text": "Vajuta ja lohista valimiseks",
+	"create_advanced": "Täpsemalt",
+	"create_time_increment_label": "Ajasamm:",
+	"create_remove_time_ranges_hint": "Kui soovid ainult kuupäevi, vajuta seda",
+	"create_remove_time_ranges": "Eemalda kellajad",
+	"create_add_time_ranges_hint": "Kui soovid lisada kellajad, vajuta seda",
+	"create_add_time_ranges": "Lisa kellajad",
+	"create_event_button": "Loo üritus",
+	"create_sign_in_title": "Logi sisse ürituse loomiseks",
+	"create_continue_with_google": "Jätka Googlega",
+	"create_google_calendar_hint_1": "See võimaldab sul saada ka",
+	"create_google_calendar_hint_2": "oma Google kalendri sündmused",
+	"choose_event_type_dates_and_times": "Kuupäevad ja kellaajad",
+	"choose_event_type_weekdays": "Nädalapäevad",
+	"choose_event_type_dates_title": "Millised kuupäevad sobivad?",
+	"choose_event_type_dates_text": "Vajuta valimiseks",
+	"choose_event_type_days_title": "Millised päevad sobivad?",
+	"choose_event_type_days_text": "Vajuta valimiseks"
+}

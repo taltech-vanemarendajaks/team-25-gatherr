@@ -26,6 +26,8 @@ import {
 import { useCreateEvent } from "../hooks/mutation/useCreateEvent";
 import { useGetMe } from "../hooks/query/useGetMe";
 import type { EventType } from "../mocks/types";
+import * as m from "../paraglide/messages";
+import { setLocale } from "../paraglide/runtime";
 
 export const Route = createFileRoute("/create")({
 	component: Create,
@@ -162,7 +164,10 @@ function Create() {
 			<div>
 				{(eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES") && (
 					<>
-						<ComponentExplainer title="Pick a time range" text="Press and drag to select" />
+						<ComponentExplainer
+							title={m.create_pick_time_range_title()}
+							text={m.create_pick_time_range_text()}
+						/>
 						<TimeSlider
 							startTime={startTime}
 							endTime={endTime}
@@ -176,12 +181,12 @@ function Create() {
 			<div className="mt-16">
 				<Accordion
 					key="Advanced"
-					title="Advanced"
+					title={m.create_advanced()}
 					body={
 						<div className="px-6 mb-2">
 							{/* start of time increment */}
 							<div className="flex flex-row items-center mb-4">
-								<p className="mr-3">Time increment:</p>
+								<p className="mr-3">{m.create_time_increment_label()}</p>
 								<Select
 									value={timeIncrement.toString()}
 									onValueChange={value => setTimeIncrement(parseInt(value))}
@@ -203,9 +208,7 @@ function Create() {
 							<div className="flex flex-col justify-start mb-4">
 								{eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES" ? (
 									<>
-										<p className="text-info text-sm mb-2">
-											If you wish to only have dates press this
-										</p>
+										<p className="text-info text-sm mb-2">{m.create_remove_time_ranges_hint()}</p>
 										<Button
 											className="self-start"
 											onClick={() => {
@@ -218,14 +221,12 @@ function Create() {
 											variant="red"
 											size="xs"
 										>
-											Remove time ranges
+											{m.create_remove_time_ranges()}
 										</Button>
 									</>
 								) : (
 									<>
-										<p className="text-info text-sm mb-2">
-											If you wish to also have times press this
-										</p>
+										<p className="text-info text-sm mb-2">{m.create_add_time_ranges_hint()}</p>
 										<Button
 											onClick={() => {
 												if (eventType === "SPECIFIC_DATES") {
@@ -237,7 +238,7 @@ function Create() {
 											variant="red"
 											size="xs"
 										>
-											Add time ranges
+											{m.create_add_time_ranges()}
 										</Button>
 									</>
 								)}
@@ -277,7 +278,7 @@ function Create() {
 						);
 					}}
 				>
-					Create Event
+					{m.create_event_button()}
 				</Button>
 			</div>
 
@@ -285,15 +286,19 @@ function Create() {
 				<DialogContent className="max-w-sm" showCloseButton={false}>
 					<DialogHeader>
 						<User className="text-amber-500 mb-8 size-12" />
-						<DialogTitle className="font-medium text-2xl mb-8">Sign in to create event</DialogTitle>
+						<DialogTitle className="font-medium text-2xl mb-8">
+							{m.create_sign_in_title()}
+						</DialogTitle>
 						<Button onClick={() => setIsLoginModalOpen(false)} className="mb-8 px-8">
 							<GoogleIcon className="size-8 mr-3" />
-							Continue with Google
+							{m.create_continue_with_google()}
 						</Button>
 						<DialogDescription className="text-info -mb-1">
-							This also allows you to get
+							{m.create_google_calendar_hint_1()}
 						</DialogDescription>
-						<DialogDescription className="text-info">your google calendar events</DialogDescription>
+						<DialogDescription className="text-info">
+							{m.create_google_calendar_hint_2()}
+						</DialogDescription>
 					</DialogHeader>
 				</DialogContent>
 			</Dialog>
