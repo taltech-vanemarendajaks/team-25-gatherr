@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Navbar } from "../components/ui/navbar";
 
 export const Route = createFileRoute("/")({ component: App });
 
 function App() {
 	return (
-		<main className="max-w-md m-auto mt-40">
-			<p className="text-5xl text-center">Gatherr</p>
+		<main className="m-auto max-w-md">
+			<div className="mb-4">
+				<Navbar />
+			</div>
 		</main>
 	);
 }
