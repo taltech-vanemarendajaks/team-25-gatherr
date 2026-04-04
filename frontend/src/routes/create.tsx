@@ -13,6 +13,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "../components/ui/dialog";
+import { Navbar } from "../components/ui/navbar";
 import { ChooseEventTypeSlider } from "../components/ui/pages/create/ChooseEventTypeSlider";
 import { END_TIME, START_TIME, TimeSlider } from "../components/ui/pages/create/TimeSlider";
 import {
@@ -157,8 +158,11 @@ function Create() {
 	};
 
 	return (
-		<main className="py-12 max-w-md m-auto px-4 sm:px-0">
-			<h1 className="text-2xl text-center mb-5">{name}</h1>
+		<main className="max-w-md m-auto px-4 sm:px-0">
+			<div className="mb-12">
+				<Navbar />
+			</div>
+			<h1 className="text-3xl font-viking text-center mb-6">{name}</h1>
 			<ChooseEventTypeSlider
 				selected={calendarSelectedDates}
 				setSelected={setCalendarSelectedDates}
