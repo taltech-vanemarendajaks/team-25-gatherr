@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noUnknownAtRules: <these are tailwind plugins> */
 
 @import url("https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Quicksand:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caesar+Dressing&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -11,6 +12,7 @@
 @theme {
 	--font-main: "Catamaran", sans-serif;
 	--font-number: "Quicksand", sans-serif;
+	--font-viking: "Caesar Dressing", cursive;
 
 	--color-surface: #0d0d0d; /* bg-surface */
 	--color-canvas: #1a1a1a; /* bg-canvas */
