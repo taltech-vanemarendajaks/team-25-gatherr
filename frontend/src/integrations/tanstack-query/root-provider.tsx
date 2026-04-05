@@ -16,11 +16,7 @@ export function getContext() {
 	}
 
 	const queryClient = new QueryClient({
-		queryCache: new QueryCache({
-			onError: error => {
-				toast.error(error.message);
-			},
-		}),
+		queryCache: new QueryCache({}),
 		mutationCache: new MutationCache({
 			onError: (error, _, __, mutation) => {
 				const { mutationKey } = mutation.options;
