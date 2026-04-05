@@ -9,7 +9,6 @@ import com.gatherr.backend.repository.EventRepository;
 import com.gatherr.backend.repository.EventUserRepository;
 import com.gatherr.backend.repository.UserRepository;
 import com.gatherr.backend.util.WordConstants;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class EventService {
     public EventResponseDto createEvent(Long creatorId, CreateEventDto dto) {
 
         User creator = userRepository.findById(creatorId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + creatorId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + creatorId));
 
         Event event = new Event();
         event.setName(dto.getName());
@@ -59,7 +58,7 @@ public class EventService {
     private String generateUniqueShortId() {
         String shortId;
         do {
-            shortId = "gatherr.com/e/" + generateSlug();
+            shortId = generateSlug();
         } while (eventRepository.existsByShortId(shortId));
         return shortId;
     }
