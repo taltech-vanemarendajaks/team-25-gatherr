@@ -2,8 +2,6 @@ import { format, isBefore, subDays } from "date-fns";
 
 import { motion } from "motion/react";
 import { cn } from "../../../../../lib/utils";
-import { AnimationWrapper } from "../../../../animations/AnimationWrapper";
-import { animations } from "../../../../animations/anim-constants";
 import { getTextColorForCalendarDate } from "./utils";
 
 interface Props {
@@ -48,17 +46,16 @@ export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
 				style={{ originX: 0.5, originY: 0.5 }}
 			/>
 
-			<AnimationWrapper
-				className={cn("relative z-10 flex flex-col h-full justify-center")}
-				variants={animations.calendar.dateScale}
+			<div
+				className={cn(
+					"relative z-10 flex flex-col h-full justify-center text-sm",
+					"duration-300 hover:text-lg",
+				)}
 			>
-				<time
-					className={cn("font-number font-medium text-sm")}
-					dateTime={format(date, "dd-MM-yyyy")}
-				>
+				<time className={cn("font-number font-medium")} dateTime={format(date, "dd-MM-yyyy")}>
 					{date.getDate()}
 				</time>
-			</AnimationWrapper>
+			</div>
 		</motion.button>
 	);
 };
