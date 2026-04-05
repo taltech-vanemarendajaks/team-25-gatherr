@@ -19,7 +19,9 @@ export const DaysOfTheWeek = ({ selected, setSelected }: Props) => {
 	const days = Array.from({ length: 7 }, (_, i) => {
 		const localizedDay = format(addDays(firstDayOfCalendarMonth, i), "EEE", {
 			locale: dateFnsLocale,
-		}).slice(0, 3);
+		})
+			.slice(0, 3)
+			.toLowerCase();
 		const day = format(addDays(firstDayOfCalendarMonth, i), "EEE", {
 			locale: enUS,
 		}).toUpperCase();
