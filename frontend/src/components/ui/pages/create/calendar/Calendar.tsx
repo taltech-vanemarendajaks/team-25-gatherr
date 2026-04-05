@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: <a> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <same letters> */
 import {
 	addDays,
 	eachDayOfInterval,
@@ -41,7 +42,7 @@ interface Props {
 }
 
 export const Calendar = ({ selected, setSelected }: Props) => {
-	const { data: user } = useGetMe();
+	const { data: me } = useGetMe();
 
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
@@ -53,8 +54,10 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 		locale: dateFnsLocale,
 	});
 
+	const weekStartsOn = me?.startOnMonday === true || me?.startOnMonday === undefined ? 1 : 0;
+
 	const firstDayOfCalendarMonth = startOfWeek(firstDayOfCurrentMonth, {
-		weekStartsOn: user?.startOnMonday ? 1 : 0,
+		weekStartsOn,
 	});
 
 	const days = Array.from({ length: 7 }, (_, i) =>
@@ -63,11 +66,16 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 		}),
 	);
 
-	const lastDayOfCalendarMonth = endOfWeek(endOfMonth(firstDayOfCurrentMonth));
-	const weeks = eachWeekOfInterval({
-		start: firstDayOfCalendarMonth,
-		end: lastDayOfCalendarMonth,
+	const lastDayOfCalendarMonth = endOfWeek(endOfMonth(firstDayOfCurrentMonth), {
+		weekStartsOn,
 	});
+	const weeks = eachWeekOfInterval(
+		{
+			start: firstDayOfCalendarMonth,
+			end: lastDayOfCalendarMonth,
+		},
+		{ weekStartsOn },
+	);
 
 	const month = parse(currentMonthString, currentMonthType, new Date(), {
 		locale: dateFnsLocale,
@@ -141,8 +149,8 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 			</div>
 
 			<div className="grid grid-cols-7 font-semibold mb-2">
-				{days.map(day => (
-					<div key={day} className="flex justify-center">
+				{days.map((day, index) => (
+					<div key={day + index} className="flex justify-center">
 						<p className="text-content">{day}</p>
 					</div>
 				))}
@@ -151,8 +159,8 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 				<div className="grid grid-rows-5 gap-0.5">
 					{weeks.map(week => {
 						const daysForWeek = eachDayOfInterval({
-							start: startOfWeek(week),
-							end: endOfWeek(week),
+							start: startOfWeek(week, { weekStartsOn }),
+							end: endOfWeek(week, { weekStartsOn }),
 						});
 						return (
 							<div key={week.toISOString()} className={cn("grid grid-cols-7 gap-0.5 h-10")}>

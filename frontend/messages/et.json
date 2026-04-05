@@ -19,5 +19,10 @@
     "choose_event_type_dates_title": "Millised kuupäevad sobivad?",
     "choose_event_type_dates_text": "Vajuta valimiseks",
     "choose_event_type_days_title": "Millised päevad sobivad?",
-    "choose_event_type_days_text": "Vajuta valimiseks"
+    "choose_event_type_days_text": "Vajuta valimiseks",
+    "user_settings_language": "Keel",
+    "user_settings_monday": "Esm",
+    "user_settings_sunday": "Püh",
+    "user_settings_week_starts_on": "Nädal algab",
+    "user_settings_settings": "Seaded"
 }

@@ -19,5 +19,10 @@
   "choose_event_type_dates_title": "What dates might work?",
   "choose_event_type_dates_text": "Press to select",
   "choose_event_type_days_title": "What days might work?",
-  "choose_event_type_days_text": "Press to select"
+  "choose_event_type_days_text": "Press to select",
+  "user_settings_language": "Language",
+  "user_settings_monday": "Monday",
+  "user_settings_sunday": "Sunday",
+  "user_settings_week_starts_on": "Week starts on",
+  "user_settings_settings": "Settings"
 }
