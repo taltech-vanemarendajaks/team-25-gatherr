@@ -2,8 +2,6 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
-import { AnimationWrapper } from "../animations/AnimationWrapper";
-import { animations } from "../animations/anim-constants";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -28,19 +26,17 @@ const TabsTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => {
 	return (
-		<AnimationWrapper className="z-1 w-full my-auto text-center" variants={animations.smallScaleXs}>
-			<TabsPrimitive.Trigger
-				ref={ref}
-				className={cn(
-					"text-lg sm:text-xl ring-offset-background rounded-xl mx-[0.2rem] font-normal px-1 py-3 opacity-20 inline-flex items-center justify-center whitespace-nowrap",
-					"hover:opacity-100 data-[state=active]:opacity-100 data-[state=active]:bg-background data-[state=active]:text-foreground",
-					"disabled:pointer-events-none disabled:opacity-50",
-					"touch-manipulation",
-					className,
-				)}
-				{...props}
-			/>
-		</AnimationWrapper>
+		<TabsPrimitive.Trigger
+			ref={ref}
+			className={cn(
+				"z-1 w-full my-auto text-center text-lg sm:text-xl ring-offset-background rounded-xl mx-[0.2rem] font-normal px-1 py-3 opacity-20 inline-flex items-center justify-center whitespace-nowrap",
+				"hover:opacity-100 data-[state=active]:opacity-100 data-[state=active]:bg-background data-[state=active]:text-foreground",
+				"disabled:pointer-events-none disabled:opacity-50",
+				"touch-manipulation",
+				className,
+			)}
+			{...props}
+		/>
 	);
 });
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
