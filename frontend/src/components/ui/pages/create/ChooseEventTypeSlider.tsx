@@ -34,7 +34,7 @@ const TwoElementMovingBox = ({ selectedIndex, duration = 0.4 }: TwoElementMoving
 		<motion.div
 			variants={whiteMovingBox}
 			animate={selectedIndex === 0 ? "active" : "inactive"}
-			className="bg-primary absolute inset-0 w-[50%] rounded-2xl shadow-lg/60 shadow-amber-900"
+			className="bg-primary absolute inset-0 w-[50%] rounded-2xl shadow-lg/60 shadow-amber-900 pointer-events-none"
 		/>
 	);
 };
@@ -56,27 +56,25 @@ export const ChooseEventTypeSlider = ({
 }: Props) => {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	return (
-		<Tabs defaultValue="dates-and-times" className={cn()}>
+		<Tabs
+			defaultValue="dates-and-times"
+			className={cn()}
+			onValueChange={value => {
+				if (value === "dates-and-times") {
+					setSelectedIndex(0);
+					setEventType("SPECIFIC_DATES_AND_TIMES");
+					setSelected([]);
+				} else {
+					setSelectedIndex(1);
+					setEventType("WEEKDAYS_AND_TIMES");
+					setSelectedDays([]);
+				}
+			}}
+		>
 			<div className="bg-canvas p-2 rounded-xl max-w-xl m-auto">
 				<TabsList>
-					<TabsTrigger
-						onClick={() => {
-							setSelectedIndex(0);
-							setEventType("SPECIFIC_DATES_AND_TIMES");
-						}}
-						value="dates-and-times"
-					>
-						{m.choose_event_type_dates_and_times()}
-					</TabsTrigger>
-					<TabsTrigger
-						onClick={() => {
-							setSelectedIndex(1);
-							setEventType("WEEKDAYS_AND_TIMES");
-						}}
-						value="days-of-the-week"
-					>
-						{m.choose_event_type_weekdays()}
-					</TabsTrigger>
+					<TabsTrigger value="dates-and-times">{m.choose_event_type_dates_and_times()}</TabsTrigger>
+					<TabsTrigger value="days-of-the-week">{m.choose_event_type_weekdays()}</TabsTrigger>
 					<TwoElementMovingBox selectedIndex={selectedIndex} />
 				</TabsList>
 			</div>
