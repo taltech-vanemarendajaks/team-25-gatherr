@@ -73,5 +73,12 @@ public class EventService {
 
         return first + "-" + second + "-" + third + "-" + number;
     }
+
+    public EventResponseDto getEventByShortId(String shortId) {
+        Event event = eventRepository.findByShortId(shortId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found: " + shortId));
+    return EventResponseDto.from(event);
+    }
+
 }
 
