@@ -24,5 +24,11 @@
   "user_settings_monday": "Monday",
   "user_settings_sunday": "Sunday",
   "user_settings_week_starts_on": "Week starts on",
-  "user_settings_settings": "Settings"
+  "user_settings_settings": "Settings",
+  "home_plan_any_gathering": "Plan any gathering",
+  "home_in_seconds": "in seconds",
+  "home_description": "Just share a link and let everyone pick their availability. The simplest way to coordinate with friends, family, or colleagues.",
+  "home_create_new_event_title": "Create a new event",
+  "home_event_name_placeholder": "e.g. Team meeting, game night, some",
+  "home_create_event_button": "Create event"
 }

@@ -24,5 +24,11 @@
     "user_settings_monday": "Esm",
     "user_settings_sunday": "Püh",
     "user_settings_week_starts_on": "Nädal algab",
-    "user_settings_settings": "Seaded"
+    "user_settings_settings": "Seaded",
+    "home_plan_any_gathering": "Planeeri iga kogunemine",
+    "home_in_seconds": "sekunditega",
+    "home_description": "Jaga lihtsalt linki ja lase kõigil valida oma sobiv aeg. Lihtsaim viis koordineerida sõprade, pere või kolleegidega.",
+    "home_create_new_event_title": "Loo uus sündmus",
+    "home_event_name_placeholder": "nt tiimikoosolek, mänguõhtu, midagi",
+    "home_create_event_button": "Loo sündmus"       
 }
