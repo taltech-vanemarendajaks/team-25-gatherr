@@ -135,18 +135,18 @@
           }
         },
         {
-          "name": "GET /events/:id",
+          "name": "GET /events/:shortId",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/events/:id",
+              "raw": "{{baseUrl}}/events/:shortId",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "events",
-                ":id"
+                ":shortId"
               ],
               "variable": [
                 {
@@ -180,7 +180,7 @@
           }
         },
         {
-          "name": "PATCH /events/:id",
+          "name": "PATCH /events/:shortId",
           "request": {
             "method": "PATCH",
             "header": [
@@ -194,13 +194,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/events/:id",
+              "raw": "{{baseUrl}}/events/:shortId",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "events",
-                ":id"
+                ":shortId"
               ],
               "variable": [
                 {
@@ -216,7 +216,7 @@
           }
         },
         {
-          "name": "DELETE /events/:id",
+          "name": "DELETE /events/:shortId",
           "request": {
             "method": "DELETE",
             "header": [
@@ -226,13 +226,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/events/:id",
+              "raw": "{{baseUrl}}/events/:shortId",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "events",
-                ":id"
+                ":shortId"
               ],
               "variable": [
                 {
@@ -249,7 +249,7 @@
       "name": "Availability",
       "item": [
         {
-          "name": "PUT /events/:id/respond",
+          "name": "PUT /events/:shortId/respond",
           "request": {
             "method": "PUT",
             "header": [
@@ -263,13 +263,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/events/:id/respond",
+              "raw": "{{baseUrl}}/events/:shortId/respond",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "events",
-                ":id",
+                ":shortId",
                 "respond"
               ],
               "variable": [
@@ -286,18 +286,18 @@
           }
         },
         {
-          "name": "GET /events/:id/summary",
+          "name": "GET /events/:shortId/summary",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/events/:id/summary",
+              "raw": "{{baseUrl}}/events/:shortId/summary",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "events",
-                ":id",
+                ":shortId",
                 "summary"
               ],
               "variable": [
