@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { EVENT_USERS, EVENTS, ME } from "./data";
+import { EVENT_USERS, EVENTS, ME, shortId } from "./data";
 import type { Event, EventUser, SummaryResponse, SummarySlot, SummaryUserResponse } from "./types";
 
 const BASE = "/api/v1";
@@ -162,7 +162,7 @@ export const handlers = [
 			id: EVENTS.length + 1,
 			name: body.name ?? "New Event",
 			description: body.description ?? null,
-			shortId: Math.random().toString(36).slice(2, 10),
+			shortId: shortId(),
 			creator: ME,
 			type: body.type ?? "SPECIFIC_DATES",
 			times: body.times ?? [],

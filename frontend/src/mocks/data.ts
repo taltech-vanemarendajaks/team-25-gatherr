@@ -32,7 +32,7 @@ function generateTimeSlots(startDate: Date, numberOfDays: number, increment: num
 	return slots;
 }
 
-function shortId(): string {
+export function shortId(): string {
 	return `cozy-hot-toast-${faker.string.alphanumeric(8)}`;
 }
 
@@ -97,7 +97,7 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 }
 
 export const EVENTS: Event[] = [
-	makeEvent(1, ME),
+	makeEvent(1, ME, { shortId: "cozy-hot-toast-1234" }),
 	makeEvent(2, ME),
 	makeEvent(3, ME),
 	makeEvent(4, USERS[1]),
