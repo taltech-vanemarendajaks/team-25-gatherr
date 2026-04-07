@@ -75,8 +75,10 @@ public class EventService {
     }
 
     public EventResponseDto getEventByShortId(String shortId) {
-        Event event = eventRepository.findByShortId(shortId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found: " + shortId));
+        Event event = eventRepository.findByShortIdAndDeletedFalse(shortId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Event not found: " + shortId
+                ));
     return EventResponseDto.from(event);
     }
 

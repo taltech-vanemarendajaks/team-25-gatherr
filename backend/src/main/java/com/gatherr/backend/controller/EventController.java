@@ -31,7 +31,6 @@ public class EventController {
 
     @GetMapping("/{shortId}")
     public ResponseEntity<EventResponseDto> getEventByShortId(
-            @AuthenticationPrincipal Jwt jwt,
             @PathVariable String shortId
     ) {
         EventResponseDto response = eventService.getEventByShortId(shortId);
