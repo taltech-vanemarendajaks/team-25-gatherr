@@ -23,7 +23,6 @@ export const useCreateEvent = () => {
 	return useMutation({
 		mutationFn,
 		onSuccess: ({ shortId }) => {
-			toast.success("Event created");
 			if (shortId) {
 				navigate({ to: `/e/${shortId}` });
 			}
