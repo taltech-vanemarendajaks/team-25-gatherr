@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 import { EVENT_USERS, EVENTS, ME } from "./data";
-import type { Event, EventUser } from "./types";
+import type { Event, EventUser, SummaryResponse, SummarySlot, SummaryUserResponse } from "./types";
 
 const BASE = "/api/v1";
 
@@ -24,6 +24,8 @@ const BASE = "/api/v1";
   // GET /events/:shortId  — first grab a shortId from /events/mine, then:
   fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`).then(r =>
   r.json()).then(console.log))
+
+  fetch(`/api/v1/events/cozy-hot-toast-HmYXfuih`).then(r => r.json()).then(console.log)
 
   // PATCH /events/:shortId
   fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`, { method: 'PATCH',
@@ -75,17 +77,41 @@ export const handlers = [
 
 		const userResponses = EVENT_USERS.filter(eu => eu.event.shortId === params.shortId);
 
-		const heatMap: Record<string, number> = {};
+		const heatMap: Record<string, { count: number; users: string[] }> = {};
+		const users = userResponses.map(user => {
+			return {
+				available: user.available,
+				notAvailable: user.notAvailable,
+				user: {
+					id: user.id,
+					name: user.user.name,
+					profilePicture: user.user.profilePicture,
+				},
+			} satisfies SummaryUserResponse;
+		});
 
 		for (const user of userResponses) {
 			for (const availability of user.available) {
-				heatMap[availability] = (heatMap[availability] ?? 0) + 1;
+				heatMap[availability] = {
+					count: (heatMap[availability]?.count ?? 0) + 1,
+					users: [...(heatMap[availability]?.users ?? []), user.user.name],
+				};
 			}
 		}
 
-		const responseWithHeatmap = {
-			users: userResponses,
-			heatMap,
+		const slots: SummarySlot[] = Object.keys(heatMap).map(slot => {
+			const count = heatMap[slot].count;
+			const users = heatMap[slot].users;
+			return {
+				slot,
+				count,
+				users,
+			};
+		});
+
+		const responseWithHeatmap: SummaryResponse = {
+			users,
+			slots,
 		};
 
 		return HttpResponse.json(responseWithHeatmap);
