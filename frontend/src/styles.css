@@ -13,7 +13,7 @@
 	--font-main: "Catamaran", sans-serif;
 	--font-number: "Quicksand", sans-serif;
 	--font-viking: "Caesar Dressing", cursive;
-	--font-logo: "Ceasar's Palace", cursive;
+	--font-logo: "Caesar Dressing", cursive;
 	--color-surface: #0d0d0d; /* bg-surface */
 	--color-canvas: #1a1a1a; /* bg-canvas */
 	--color-paint: #23211e; /* bg-paint */
@@ -22,6 +22,7 @@
 	--color-content: #f5f5f5; /* text-content */
 	--color-info: #bdaa95; /* text-info */
 	--color-placeholder: #686868; /* text-placeholder */
+
 
 
 	--background-image-gradient: linear-gradient(60deg, #f26716, #a62f03);
