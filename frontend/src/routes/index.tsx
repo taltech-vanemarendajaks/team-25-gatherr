@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import FireplaceIcon from "../components/icons/fireplace";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import FireplaceIcon from "../components/icons/fireplace";
