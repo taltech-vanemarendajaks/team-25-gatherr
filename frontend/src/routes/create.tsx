@@ -68,7 +68,7 @@ function clearDraft() {
 function Create() {
 	const { name } = Route.useSearch();
 
-	const { mutate } = useCreateEvent();
+	const { mutate: createEvent } = useCreateEvent();
 	const { data: user } = useGetMe();
 
 	// @todo: after login modal completes and user becomes defined,
@@ -291,14 +291,13 @@ function Create() {
 							setIsLoginModalOpen(true);
 							return;
 						}
-						mutate(
+						createEvent(
 							{
 								name,
 								type: eventType,
 								times: calculateTimes(),
 								timeIncrement,
 								timezone,
-								creator: user,
 							},
 							{ onSuccess: clearDraft },
 						);
