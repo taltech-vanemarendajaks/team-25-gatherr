@@ -25,5 +25,11 @@
   "user_settings_sunday": "Sunday",
   "user_settings_week_starts_on": "Week starts on",
   "user_settings_settings": "Settings",
-  "update_user_user_updated": "User updated!"
+  "update_user_user_updated": "User updated!",
+  "event_sign_in_title": "Sign in to add your availability",
+  "event_mark_availability_title": "Mark your availability",
+  "event_mark_availability_text": "Click and drag on the grid below to mark your availability",
+  "event_participants_title": "Participants",
+  "event_participants_text": "Select participants to highlight their specific times",
+  "event_time_slots": "{count} time slots"
 }

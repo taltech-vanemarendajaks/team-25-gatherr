@@ -39,15 +39,15 @@ function RouteComponent() {
 				<div></div>
 			) : (
 				<div className="bg-canvas rounded-2xl p-8 flex flex-col items-center mb-8">
-					<p className="text-2xl mb-8">Sign in to add your availability</p>
+					<p className="text-2xl mb-8">{m.event_sign_in_title()}</p>
 					<div className="mb-8">
 						<Button onClick={() => {}} className="px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>
 					</div>
-					<p className="text-info text-center">This also allows you to get</p>
-					<p className="text-info text-center -mt-1">your google calendar events</p>
+					<p className="text-info text-center">{m.create_google_calendar_hint_1()}</p>
+					<p className="text-info text-center -mt-1">{m.create_google_calendar_hint_2()}</p>
 				</div>
 			)}
 
@@ -56,10 +56,8 @@ function RouteComponent() {
 				<div className="flex flex-row items-start">
 					<GradientIcon icon={PenBoxIcon} className="size-6 mr-2.5" />
 					<div>
-						<p className="text-lg">Mark your availability</p>
-						<p className="text-info text-sm">
-							Click and drag on the grid below to mark your availability
-						</p>
+						<p className="text-lg">{m.event_mark_availability_title()}</p>
+						<p className="text-info text-sm">{m.event_mark_availability_text()}</p>
 					</div>
 				</div>
 				<div>Heatmap</div>
@@ -70,10 +68,8 @@ function RouteComponent() {
 					<GradientIcon icon={UsersRound} className="size-6 mr-2.5" />
 					<div className="flex flex-row justify-between">
 						<div>
-							<p className="text-xl">Participants</p>
-							<p className="text-info text-sm">
-								Select participants to highlight their specific times{" "}
-							</p>
+							<p className="text-xl">{m.event_participants_title()}</p>
+							<p className="text-info text-sm">{m.event_participants_text()}</p>
 						</div>
 						<p className="text-xl ml-6">{event?.summary.users.length}</p>
 					</div>
@@ -93,7 +89,9 @@ function RouteComponent() {
 								</div>
 								<div>
 									<p className="text-xl">{user.name}</p>
-									<p className="text-sm text-info">{available.length} time slots</p>
+									<p className="text-sm text-info">
+										{m.event_time_slots({ count: available.length })}
+									</p>
 								</div>
 							</div>
 						);
