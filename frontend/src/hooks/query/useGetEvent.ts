@@ -9,12 +9,11 @@ interface ResponseType {
 }
 
 const queryFn = async (shortId: string): Promise<ResponseType> => {
-	const { data: details } = await GatherrApiClient.get(`/events/${shortId}`);
-	const { data: summary } = await GatherrApiClient.get(`/events/${shortId}/summary`);
-	return {
-		details,
-		summary,
-	};
+	const [{ data: details }, { data: summary }] = await Promise.all([
+		GatherrApiClient.get(`/events/${shortId}`),
+		GatherrApiClient.get(`/events/${shortId}/summary`),
+	]);
+	return { details, summary };
 };
 
 export const useGetEvent = (shortId: string) => {
