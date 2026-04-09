@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Link, PenBoxIcon, UsersRound } from "lucide-react";
+import { LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
@@ -24,7 +24,7 @@ function RouteComponent() {
 				<div>
 					<p className="text-3xl mb-2">{event?.details.name}</p>
 					<Button size="xs">
-						<Link className="size-5" />
+						<LinkIcon className="size-5" />
 					</Button>
 				</div>
 				<div>
