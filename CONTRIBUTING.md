@@ -61,6 +61,24 @@ If you are working on the frontend UI or need to test the actual Google authenti
 5. Copy the exact same **Client ID** into your backend `.env` file (`GOOGLE_CLIENT_ID`). *(Note: You do not need the Client Secret for this architecture).*
 6. Remove `SPRING_PROFILES_ACTIVE=dev` from your `.env` file and restart the backend to re-enable real Google token verification.
 
+### 3. API Documentation & Frontend Types
+
+We use OpenAPI (Swagger) to document our REST API and automatically generate TypeScript types for the frontend. This ensures our frontend and backend never drift out of sync.
+
+**Viewing the API Docs (Swagger UI):**
+While the backend is running via Docker, you can view the interactive API documentation at:
+`http://localhost:8080/api/v1/swagger-ui.html`
+
+**Generating Frontend Types:**
+**Do not** hand-write TypeScript interfaces for API requests/responses. Instead, generate them directly from the backend source of truth:
+1. Ensure the backend is currently running (`docker compose up -d`).
+2. Navigate to the frontend directory.
+3. Run the generation script:
+```bash
+npm run generate:types
+```
+4. This will update `src/api/types.gen.ts`. You can now import your types directly from the `components` namespace.
+
 ## <a name="commit"></a> Commit Message Guidelines
 
 ### Commit Message Format
