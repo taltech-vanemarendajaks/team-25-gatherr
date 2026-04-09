@@ -78,11 +78,11 @@ function RouteComponent() {
 					{event?.summary.users.map(({ user, available }) => {
 						return (
 							<div key={user.id} className="flex flex-row">
-								<div className="size-8 mr-3">
+								<div className="mr-3">
 									{user.profilePicture ? (
-										<img src={user.profilePicture} alt="PP" className="rounded-full" />
+										<img src={user.profilePicture} alt="PP" className="rounded-full size-8" />
 									) : (
-										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full">
+										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full size-8">
 											{user.name.slice(0, 1)}
 										</div>
 									)}
