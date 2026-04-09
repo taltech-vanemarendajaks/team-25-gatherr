@@ -3,6 +3,7 @@ import { LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
+import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
 import { useGetEvent } from "../../hooks/query/useGetEvent";
 import { useGetMe } from "../../hooks/query/useGetMe";
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/e/$shortId")({
 
 function RouteComponent() {
 	const { shortId } = Route.useParams();
-	const { data: event } = useGetEvent(shortId);
+	const { data: event, isLoading } = useGetEvent(shortId);
 	const { data: me } = useGetMe();
 
 	return (
@@ -22,7 +23,11 @@ function RouteComponent() {
 			{/* navbar */}
 			<div className="flex flex-row justify-between mb-12">
 				<div>
-					<p className="text-3xl mb-2">{event?.details.name}</p>
+					{isLoading ? (
+						<Skeleton className="h-9 w-48 mb-2" />
+					) : (
+						<p className="text-3xl mb-2">{event?.details.name}</p>
+					)}
 					<Button size="xs">
 						<LinkIcon className="size-5" />
 					</Button>
@@ -71,12 +76,30 @@ function RouteComponent() {
 							<p className="text-xl">{m.event_participants_title()}</p>
 							<p className="text-info text-sm">{m.event_participants_text()}</p>
 						</div>
-						<p className="text-xl ml-6">{event?.summary.users.length}</p>
+						{isLoading ? (
+							<Skeleton className="h-7 w-6 ml-6" />
+						) : (
+							<p className="text-xl ml-6">{event?.summary.users.length}</p>
+						)}
 					</div>
 				</div>
 				<div className="bg-canvas p-5 rounded-2xl space-y-4">
-					{event?.summary.users.map(({ user, available }) => {
-						return (
+					{isLoading ? (
+						// biome-ignore lint/complexity/noUselessFragments: <this is needed>
+						<>
+							{[...Array(3)].map((_, i) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: <this is just skeleton>
+								<div key={i} className="flex flex-row">
+									<Skeleton className="size-8 rounded-full mr-3 shrink-0" />
+									<div className="flex flex-col gap-1">
+										<Skeleton className="h-7 w-32" />
+										<Skeleton className="h-4 w-20" />
+									</div>
+								</div>
+							))}
+						</>
+					) : (
+						event?.summary.users.map(({ user, available }) => (
 							<div key={user.id} className="flex flex-row">
 								<div className="mr-3">
 									{user.profilePicture ? (
@@ -94,8 +117,8 @@ function RouteComponent() {
 									</p>
 								</div>
 							</div>
-						);
-					})}
+						))
+					)}
 				</div>
 			</div>
 		</main>
