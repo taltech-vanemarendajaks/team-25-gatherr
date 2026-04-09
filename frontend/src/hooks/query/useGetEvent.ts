@@ -19,7 +19,7 @@ const queryFn = async (shortId: string): Promise<ResponseType> => {
 
 export const useGetEvent = (shortId: string) => {
 	return useQuery({
-		queryKey: [`events/${shortId}`],
+		queryKey: ["events", shortId],
 		queryFn: async () => queryFn(shortId),
 	});
 };
