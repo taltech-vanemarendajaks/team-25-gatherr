@@ -31,5 +31,10 @@
     "event_mark_availability_text": "Klõpsa ja lohista alloleval ruudustikul oma saadavuse märkimiseks",
     "event_participants_title": "Osalejad",
     "event_participants_text": "Vali osalejad nende konkreetsete aegade esiletõstmiseks",
-    "event_time_slots": "{count} ajavõimalust"
+    "event_time_slots": "{count} ajavõimalust",
+    "home_hero_title": "Planeeri kogunemine sekunditega",
+    "home_hero_text": "Jaga lihtsalt linki ja lase kõigil oma saadavus märkida. Lihtsaim viis kokku leppida sõprade, pere või kolleegidega.",
+    "home_create_title": "Loo uus üritus",
+    "home_create_input_placeholder": "nt. Meeskonna koosolek, lauamänguõhtu, kohvil käik",
+    "home_create_button": "Loo üritus"
 }

@@ -31,5 +31,10 @@
   "event_mark_availability_text": "Click and drag on the grid below to mark your availability",
   "event_participants_title": "Participants",
   "event_participants_text": "Select participants to highlight their specific times",
-  "event_time_slots": "{count} time slots"
+  "event_time_slots": "{count} time slots",
+  "home_hero_title": "Plan any gathering in seconds",
+  "home_hero_text": "Just share a link and let everyone pick their availability. The simplest way to coordinate with friends, family, or colleagues.",
+  "home_create_title": "Create a new event",
+  "home_create_input_placeholder": "e.g. Team meeting, game night, coffee meet",
+  "home_create_button": "Create event"
 }
