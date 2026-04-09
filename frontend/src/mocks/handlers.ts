@@ -83,7 +83,7 @@ export const handlers = [
 				available: user.available,
 				notAvailable: user.notAvailable,
 				user: {
-					id: user.id,
+					id: user.user.id,
 					name: user.user.name,
 					profilePicture: user.user.profilePicture,
 				},
