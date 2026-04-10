@@ -6,8 +6,13 @@ import type { Event } from "../../mocks/types";
 interface ResponseType extends Event {}
 
 const queryFn = async (): Promise<ResponseType[]> => {
-	const { data } = await GatherrApiClient.get<ResponseType[]>("/events/mine");
-	return data;
+	try {
+		const { data } = await GatherrApiClient.get<ResponseType[]>("/events/mine");
+		return data;
+	} catch (error: any) {
+		if (error?.response?.status === 401) return [];
+		throw error;
+	}
 };
 
 export const useGetMyEvents = () => {

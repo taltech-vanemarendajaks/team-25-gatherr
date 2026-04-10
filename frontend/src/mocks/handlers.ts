@@ -46,15 +46,24 @@ const BASE = "/api/v1";
   }).then(r => console.log('deleted, status:', r.status)))
  */
 
+// ── Auth state ───────────────────────────────────────────────────────────────
+// Starts logged out. POST /auth/google sets this to true.
+let isLoggedIn = false;
+
 // IMPORTANT: MSW matches handlers in registration order.
 // Specific paths (mine, summary, respond) MUST be registered before the
 // generic /:shortId handler, or they'll be shadowed by the param matcher.
 export const handlers = [
+	// ── POST /auth/google ─────────────────────────────────────────────────────
+	http.post(`${BASE}/auth/google`, () => {
+		isLoggedIn = true;
+		return HttpResponse.json(ME);
+	}),
+
 	// ── GET /users/me ─────────────────────────────────────────────────────────
 	http.get(`${BASE}/users/me`, () => {
+		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
 		return HttpResponse.json(ME);
-		// unauthorized
-		// return new HttpResponse(null, { status: 401 });
 	}),
 
 	// ── PATCH /users/me ───────────────────────────────────────────────────────
@@ -66,6 +75,7 @@ export const handlers = [
 
 	// ── GET /events/mine /:shortId ───────────────────────────────────
 	http.get(`${BASE}/events/mine`, () => {
+		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
 		const mine = EVENTS.filter(e => e.creator.id === ME.id && !e.isDeleted);
 		return HttpResponse.json(mine);
 	}),
@@ -162,7 +172,7 @@ export const handlers = [
 			id: EVENTS.length + 1,
 			name: body.name ?? "New Event",
 			description: body.description ?? null,
-			shortId: shortId(),
+			shortId: "cozy-hot-toast-1234",
 			creator: ME,
 			type: body.type ?? "SPECIFIC_DATES",
 			times: body.times ?? [],
