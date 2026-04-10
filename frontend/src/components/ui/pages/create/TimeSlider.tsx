@@ -60,7 +60,7 @@ export const TimeSlider = ({
 	useFullTimeRange = true,
 }: Props) => {
 	const minHour = useFullTimeRange ? 0 : 8;
-	const totalHours = useFullTimeRange ? 24 : 13;
+	const totalHours = useFullTimeRange ? 23 : 13;
 
 	const trackRef = useRef<HTMLDivElement>(null);
 
