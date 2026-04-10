@@ -1,5 +1,8 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <useEffect> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
-import { LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
+import { format } from "date-fns";
+import { CheckIcon, LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
@@ -7,6 +10,8 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
 import { useGetEvent } from "../../hooks/query/useGetEvent";
 import { useGetMe } from "../../hooks/query/useGetMe";
+import { cn } from "../../lib/utils";
+import type { SummarySlot } from "../../mocks/types";
 import { m } from "../../paraglide/messages";
 
 export const Route = createFileRoute("/e/$shortId")({
@@ -17,6 +22,20 @@ function RouteComponent() {
 	const { shortId } = Route.useParams();
 	const { data: event, isLoading } = useGetEvent(shortId);
 	const { data: me } = useGetMe();
+
+	const heatMapTimes = new Set<string>();
+	const heatMapDates = new Set<string>();
+	const heatMapSlots = new Map<string, SummarySlot>();
+
+	for (const time of event?.details.times ?? []) {
+		const [_time, date] = time.split("-");
+		heatMapTimes.add(_time);
+		heatMapDates.add(date);
+	}
+
+	for (const slot of event?.summary.slots ?? []) {
+		heatMapSlots.set(slot.slot, slot);
+	}
 
 	return (
 		<main className="max-w-md m-auto pt-5 px-4 sm:px-0">
@@ -56,7 +75,6 @@ function RouteComponent() {
 				</div>
 			)}
 
-			{/* heatmap */}
 			<div className="mb-6">
 				<div className="flex flex-row items-start">
 					<GradientIcon icon={PenBoxIcon} className="size-6 mr-2.5" />
@@ -65,7 +83,63 @@ function RouteComponent() {
 						<p className="text-info text-sm">{m.event_mark_availability_text()}</p>
 					</div>
 				</div>
-				<div>Heatmap</div>
+			</div>
+
+			{/* heatmap */}
+			<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll mb-12 -ml-6 -mr-20">
+				<div className="flex flex-row">
+					<div className="w-16 shrink-0" />
+					{Array.from(heatMapDates.values()).map(heatMapDate => {
+						const date = new Date(
+							parseInt(heatMapDate.slice(5, 8)),
+							parseInt(heatMapDate.slice(3, 5)) - 1,
+							parseInt(heatMapDate.slice(0, 2)),
+						);
+
+						return (
+							<div className="w-12 mx-0.5 shrink-0" key={heatMapDate}>
+								<p className="text-nowrap text-center">
+									<span className="font-semibold">{format(date, "EEE")}</span>
+									<br /> <span className="text-[#BABABA]">{format(date, "MMM d")}</span>
+								</p>
+							</div>
+						);
+					})}
+				</div>
+				<div>
+					{Array.from(heatMapTimes).map((heatMapTime, index) => (
+						<div key={heatMapTime + index} className="flex flex-row">
+							{/* time on the left */}
+							<p className="text-lg font-semibold absolute -mt-2 z-10 bg-canvas px-2 rounded-2xl">
+								{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
+							</p>
+							{/* line separator between times. will leave it here as i don't know if I will use it */}
+							{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
+							<div className="w-16 shrink-0" />
+							{Array.from(heatMapDates.values()).map(heatMapDate => {
+								const slot = heatMapSlots.get(`${heatMapTime}-${heatMapDate}`);
+								const count = slot?.count ?? 0;
+								return (
+									<div key={slot?.slot} className="relative w-12 h-12 shrink-0 m-0.5">
+										<div
+											className={cn(
+												"absolute inset-0 rounded-xl",
+												count === 0 ? "bg-paint" : "bg-primary",
+											)}
+											style={{
+												opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
+											}}
+										>
+											{me?.name && slot?.users.includes(me?.name) && (
+												<CheckIcon className="absolute inset-0 size-6 m-auto" />
+											)}
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					))}
+				</div>
 			</div>
 			{/* participants */}
 			<div>
