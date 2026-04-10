@@ -119,12 +119,16 @@ function RouteComponent() {
 							{Array.from(heatMapDates.values()).map(heatMapDate => {
 								const slot = heatMapSlots.get(`${heatMapTime}-${heatMapDate}`);
 								const count = slot?.count ?? 0;
+								console.log(count / (event?.summary.users.length || 1));
+
+								const hasMaxVotes = count === event?.summary.users.length;
 								return (
 									<div key={slot?.slot} className="relative w-12 h-12 shrink-0 m-0.5">
 										<div
 											className={cn(
 												"absolute inset-0 rounded-xl",
 												count === 0 ? "bg-paint" : "bg-primary",
+												hasMaxVotes && "border border-amber-300 shadow-sm shadow-amber-300",
 											)}
 											style={{
 												opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
