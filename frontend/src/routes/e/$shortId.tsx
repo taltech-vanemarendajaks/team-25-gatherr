@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <useEffect> */
+/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
@@ -129,6 +130,36 @@ function RouteComponent() {
 					)}
 				</div>
 			</div>
+
+			{/* heatmap info */}
+			{isLoading ? (
+				<Skeleton className="h-12 w-full" />
+			) : (
+				<div className="mb-12 flex flex-row font-semibold">
+					<p className="flex-nowrap shrink-0 mr-2 font-number">
+						0 / {event?.summary.users.length} {m.event_heatmap_info()}
+					</p>
+					{[...Array(event?.summary.users.length! + 1)].map((_, count) => (
+						<div
+							key={count}
+							className={cn(
+								"rounded-lg w-full text-center",
+								count === 0 ? "bg-paint" : "bg-primary",
+								count === event?.summary.users.length &&
+									"border border-amber-300 shadow-sm shadow-amber-300",
+							)}
+							style={{
+								opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
+							}}
+						>
+							<p className="font-number">{count}</p>
+						</div>
+					))}
+					<p className="flex-nowrap shrink-0 ml-2 font-number">
+						{event?.summary.users.length} / {event?.summary.users.length} {m.event_heatmap_info()}
+					</p>
+				</div>
+			)}
 
 			<div className="mb-6">
 				<div className="flex flex-row items-start">
