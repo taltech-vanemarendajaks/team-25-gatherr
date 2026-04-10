@@ -4,6 +4,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { CheckIcon, LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
+import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
@@ -48,9 +49,9 @@ function RouteComponent() {
 					{isLoading ? (
 						<Skeleton className="h-9 w-48 mb-2" />
 					) : (
-						<p className="text-3xl mb-2">{event?.details.name}</p>
+						<p className="text-3xl mb-2 font-viking">{event?.details.name}</p>
 					)}
-					<Button size="xs">
+					<Button size="xs" onClick={() => toast.success("Link copied!")}>
 						<LinkIcon className="size-5" />
 					</Button>
 				</div>
@@ -172,6 +173,14 @@ function RouteComponent() {
 					</div>
 				</div>
 			</div>
+			{me && (
+				<div className="mb-6 flex justify-center">
+					<Button onClick={() => {}} className="px-8">
+						<GoogleIcon className="size-8 mr-3" />
+						Sync with Google Calendar
+					</Button>
+				</div>
+			)}
 
 			{/* heatmap */}
 			<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20">
@@ -219,7 +228,7 @@ function RouteComponent() {
 					{Array.from(heatMapTimes).map((heatMapTime, index) => (
 						<div key={heatMapTime + index} className="flex flex-row">
 							{/* time on the left */}
-							<p className="text-lg font-semibold absolute -mt-2 z-10 bg-canvas px-2 rounded-2xl">
+							<p className="text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl">
 								{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
 							</p>
 							{/* line separator between times. will leave it here as i don't know if I will use it */}
