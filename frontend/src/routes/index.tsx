@@ -30,7 +30,10 @@ function App() {
 					</div>
 				) : (
 					<>
-						<p className="text-4xl font-bold text-center mt-16 mb-10">{m.home_hero_title()}</p>
+						<p className="text-4xl font-bold text-center mt-16 mb-10">
+							{m.home_hero_title()} <br />
+							<span className="text-gradient">{m.home_hero_title_gradient()}</span>
+						</p>
 						<p className="text-info max-w-xs text-center m-auto">{m.home_hero_text()}</p>
 					</>
 				)}
