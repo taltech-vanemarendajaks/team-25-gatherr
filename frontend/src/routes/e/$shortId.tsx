@@ -7,6 +7,7 @@ import { CheckIcon, LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
+import { dateFnsLocale } from "../../components/ui/pages/create/calendar/Calendar";
 import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
 import { useGetEvent } from "../../hooks/query/useGetEvent";
@@ -14,6 +15,7 @@ import { useGetMe } from "../../hooks/query/useGetMe";
 import { cn } from "../../lib/utils";
 import type { SummarySlot } from "../../mocks/types";
 import { m } from "../../paraglide/messages";
+import { getLocale } from "../../paraglide/runtime";
 
 export const Route = createFileRoute("/e/$shortId")({
 	component: RouteComponent,
@@ -185,8 +187,29 @@ function RouteComponent() {
 						return (
 							<div className="w-12 mx-0.5 shrink-0" key={heatMapDate}>
 								<p className="text-nowrap text-center">
-									<span className="font-semibold">{format(date, "EEE")}</span>
-									<br /> <span className="text-[#BABABA]">{format(date, "MMM d")}</span>
+									<span className="font-semibold">
+										{(() => {
+											const dayName = format(date, "EEE", {
+												locale: dateFnsLocale,
+											});
+											return dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase();
+										})()}
+									</span>
+									<br />
+									<span className="text-[#BABABA]">
+										{(() => {
+											const month = format(date, "MMM", {
+												locale: dateFnsLocale,
+											});
+											const day = format(date, "d");
+
+											const shortMonth =
+												month.charAt(0).toUpperCase() +
+												month.slice(1, getLocale() === "et" ? 4 : 3);
+
+											return `${shortMonth} ${day}`;
+										})()}
+									</span>
 								</p>
 							</div>
 						);
