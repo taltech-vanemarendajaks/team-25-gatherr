@@ -252,7 +252,7 @@ function RouteComponent() {
 												opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
 											}}
 										>
-											{me?.name && slot?.users.includes(me?.name) && (
+											{me?.id && slot?.users.some(u => u.id === me.id) && (
 												<CheckIcon className="absolute inset-0 size-6 m-auto" />
 											)}
 										</div>

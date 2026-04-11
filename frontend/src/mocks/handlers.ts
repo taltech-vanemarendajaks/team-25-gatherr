@@ -87,7 +87,7 @@ export const handlers = [
 
 		const userResponses = EVENT_USERS.filter(eu => eu.event.shortId === params.shortId);
 
-		const heatMap: Record<string, { count: number; users: string[] }> = {};
+		const heatMap: Record<string, { count: number; users: { id: number; name: string }[] }> = {};
 		const users = userResponses.map(user => {
 			return {
 				available: user.available,
@@ -104,7 +104,10 @@ export const handlers = [
 			for (const availability of user.available) {
 				heatMap[availability] = {
 					count: (heatMap[availability]?.count ?? 0) + 1,
-					users: [...(heatMap[availability]?.users ?? []), user.user.name],
+					users: [
+						...(heatMap[availability]?.users ?? []),
+						{ id: user.user.id, name: user.user.name },
+					],
 				};
 			}
 		}
