@@ -23,7 +23,7 @@ function generateTimeSlots(startDate: Date, numberOfDays: number, increment: num
 		const mm = String(date.getMonth() + 1).padStart(2, "0");
 		const yyyy = date.getFullYear();
 		const dateStr = `${dd}${mm}${yyyy}`;
-		for (let h = 0; h <= 24; h++) {
+		for (let h = 8; h <= 14; h++) {
 			for (let m = 0; m < 60; m += increment) {
 				slots.push(`${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}-${dateStr}`);
 			}
@@ -78,9 +78,9 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 		id,
 		name: faker.helpers.arrayElement([
 			"Team Standup",
-			"Game nights",
+			"Team Standup",
 			"Birthday party",
-			"Coffee meetup",
+			"Team Standup",
 		]),
 		description: faker.datatype.boolean(0.7) ? faker.lorem.sentences(2) : null,
 		shortId: shortId(),
@@ -107,12 +107,21 @@ export const EVENTS: Event[] = [
 
 // ─── EventUsers (availability responses) ─────────────────────────────────────
 
-function makeEventUser(id: number, event: Event, user: User): EventUser {
+export function makeEventUser(
+	id: number,
+	event: Event,
+	user: User,
+	overrides: { available?: string[]; notAvailable?: string[] } = {},
+): EventUser {
 	// Pick a random subset of event.times as available
+	// Other users get ~70% of slots marked available; ME starts with none
 	const shuffled = faker.helpers.shuffle([...event.times]);
-	const splitAt = faker.number.int({ min: 0, max: shuffled.length });
-	const available = shuffled.slice(0, splitAt);
-	const notAvailable = shuffled.slice(splitAt);
+	const splitAt = faker.number.int({
+		min: Math.floor(shuffled.length * 0.3),
+		max: Math.floor(shuffled.length * 0.7),
+	});
+	const available = overrides.available ?? shuffled.slice(0, splitAt);
+	const notAvailable = overrides.notAvailable ?? shuffled.slice(splitAt);
 
 	return {
 		id,
@@ -131,10 +140,11 @@ function makeEventUser(id: number, event: Event, user: User): EventUser {
 }
 
 export const EVENT_USERS: EventUser[] = [
-	makeEventUser(1, EVENTS[0], ME),
+	makeEventUser(1, EVENTS[0], ME, { available: [], notAvailable: [] }),
 	makeEventUser(2, EVENTS[0], USERS[1]),
 	makeEventUser(3, EVENTS[0], USERS[2]),
-	makeEventUser(4, EVENTS[1], ME),
+	makeEventUser(8, EVENTS[0], USERS[4]),
+	makeEventUser(4, EVENTS[1], ME, { available: [], notAvailable: [] }),
 	makeEventUser(5, EVENTS[1], USERS[3]),
-	makeEventUser(6, EVENTS[3], ME),
+	makeEventUser(6, EVENTS[3], ME, { available: [], notAvailable: [] }),
 ];
