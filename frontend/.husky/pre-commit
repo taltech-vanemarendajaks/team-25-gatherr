@@ -1,2 +1,8 @@
 cd frontend
+
+# Run the type generator from the static schema.json file
+npm run generate:types
+git add src/api/types.gen.ts
+
+# Linting/formatting
 npm run lint-staged

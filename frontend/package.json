@@ -21,7 +21,7 @@
 		"db:studio": "drizzle-kit studio",
 		"lint-staged": "lint-staged",
 		"prepare": "cd .. && husky frontend/.husky",
-		"generate:types": "openapi-typescript http://localhost:8080/api/v1/v3/api-docs -o src/api/types.gen.ts"
+		"generate:types": "openapi-typescript ./schema.json -o src/api/types.gen.ts"
 	},
 	"dependencies": {
 		"@radix-ui/react-dialog": "^1.1.15",
