@@ -33,15 +33,16 @@ public class EventService {
         User creator = userRepository.findById(creatorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + creatorId));
 
-        Event event = new Event();
-        event.setName(dto.getName());
-        event.setDescription(dto.getDescription());
-        event.setType(dto.getType());
-        event.setTimes(dto.getTimes());
-        event.setTimezone(dto.getTimezone());
-        event.setShortId(generateUniqueShortId());
-        event.setCreator(creator);
-
+        Event event = Event.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .type(dto.getType())
+                .times(dto.getTimes())
+                .timezone(dto.getTimezone())
+                .shortId(generateUniqueShortId())
+                .creator(creator)
+                .build();
+        
         Event savedEvent = eventRepository.save(event);
 
         EventUser eventUser = new EventUser();
@@ -73,5 +74,11 @@ public class EventService {
 
         return first + "-" + second + "-" + third + "-" + number;
     }
-}
 
+    public List<EventResponseDto> getMyEvents(Long creatorId) {
+        return eventRepository.findByCreatorIdAndIsDeletedFalse(creatorId)
+            .stream()
+            .map(EventResponseDto::from)
+            .toList();
+    }
+}
