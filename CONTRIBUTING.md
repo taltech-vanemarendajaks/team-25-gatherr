@@ -74,7 +74,7 @@ http://localhost:8080/api/v1/swagger-ui.html
 
 The workflow is designed to be hands-off.
 
-- Backend Auto-Sync: Every time the backend container starts or restarts, it automatically generates a fresh `frontend/schema.json` as soon as the API is healthy.
+- Backend Auto-Sync: Every time the backend container starts or restarts **via `docker compose up`**, it automatically generates a fresh `frontend/schema.json` as soon as the API is healthy.
 - Pre-Commit Safety: A Husky hook has been configured so that when you run `git commit`, the hook automatically:
   - Runs `npm run generate:types` to update `src/api/types.gen.ts`.
   - Stages the updated types files.
