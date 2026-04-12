@@ -6,7 +6,7 @@ public record UserResponseDto (
         String email,
         String profilePicture,
         String timezone,
-        Boolean startOnMonday,
-        Boolean timeFormat24,
+        boolean startOnMonday,
+        boolean timeFormat24,
         String language
 ) {}
