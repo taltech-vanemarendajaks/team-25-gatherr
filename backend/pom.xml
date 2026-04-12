@@ -185,18 +185,10 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
                 <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <apiDocsUrl>http://127.0.0.1:8080/api/v1/v3/api-docs</apiDocsUrl>
                     <outputFileName>schema.json</outputFileName>
-                    <outputDir>${project.basedir}/../frontend</outputDir>
+                    <outputDir>/frontend</outputDir>
                 </configuration>
             </plugin>
         </plugins>
