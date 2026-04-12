@@ -2,20 +2,17 @@ package com.gatherr.backend.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.gatherr.backend.dto.UserResponseDto;
 import com.gatherr.backend.model.User;
 import com.gatherr.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public UserResponseDto getCurrentUser(Long userId) {
 
