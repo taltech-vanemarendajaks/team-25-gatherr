@@ -61,23 +61,26 @@ If you are working on the frontend UI or need to test the actual Google authenti
 5. Copy the exact same **Client ID** into your backend `.env` file (`GOOGLE_CLIENT_ID`). *(Note: You do not need the Client Secret for this architecture).*
 6. Remove `SPRING_PROFILES_ACTIVE=dev` from your `.env` file and restart the backend to re-enable real Google token verification.
 
-### 3. API Documentation & Frontend Types
+### 3. API Documentation & Automated Type Sync
 
-We use OpenAPI (Swagger) to document our REST API and automatically generate TypeScript types for the frontend. This ensures our frontend and backend never drift out of sync.
+We use OpenAPI (Swagger) to document our REST API. To ensure the frontend and backend stay perfectly in sync, we have automated the schema generation process.
 
-**Viewing the API Docs (Swagger UI):**
-While the backend is running via Docker, you can view the interactive API documentation at:
-`http://localhost:8080/api/v1/swagger-ui.html`
+**Viewing the API Docs (Swagger UI)**
 
-**Generating Frontend Types:**
-**Do not** hand-write TypeScript interfaces for API requests/responses. Instead, generate them directly from the backend source of truth:
-1. Ensure the backend is currently running (`docker compose up -d`).
-2. Navigate to the frontend directory.
-3. Run the generation script:
-```bash
-npm run generate:types
-```
-4. This will update `src/api/types.gen.ts`. You can now import your types directly from the `components` namespace.
+While the backend is running, you can view the interactive API documentation at:
+http://localhost:8080/api/v1/swagger-ui.html
+
+**Zero-Touch Type Generation**
+
+The workflow is designed to be hands-off.
+
+- Backend Auto-Sync: Every time the backend container starts or restarts, it automatically generates a fresh `frontend/schema.json` as soon as the API is healthy.
+- Pre-Commit Safety: A Husky hook has been configured so that when you run `git commit`, the hook automatically:
+  - Runs `npm run generate:types` to update `src/api/types.gen.ts`.
+  - Stages the updated types files.
+  - Runs linting and formatting via lint-staged.
+
+Frontend developers can import generated types directly from the `components` namespace.
 
 ## <a name="commit"></a> Commit Message Guidelines
 
