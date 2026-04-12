@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/google").permitAll() // The login endpoint is public so users can actually log in
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Allow OpenAPI and Swagger UI to be accessed publicly
                         .anyRequest().authenticated() // Everything else requires authentication
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

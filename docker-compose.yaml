@@ -23,10 +23,11 @@ services:
       context: backend
       dockerfile: ./Dockerfile.dev
     container_name: gatherr-backend
-    command: ./mvnw spring-boot:run
+    command: bash ./dev-startup.sh
     volumes:
       - ./backend:/app
       - ~/.m2:/root/.m2
+      - ./frontend:/frontend # For openapi-typescript code generation
     ports:
       - "8080:8080"
     env_file:

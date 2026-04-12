@@ -1,2 +1,11 @@
 cd frontend
+
+echo "🚀 Checking for API schema changes..."
+
+# Run the type generator from the static schema.json file
+npm run generate:types && echo "✅ TypeScript types updated from schema.json"
+git add src/api/types.gen.ts
+
+# Linting/formatting
+echo "🧼 Running linting and formatting..."
 npm run lint-staged
