@@ -74,6 +74,7 @@ public class EventService {
         return first + "-" + second + "-" + third + "-" + number;
     }
 
+   @Transactional(readOnly = true)
     public EventResponseDto getEventByShortId(String shortId) {
         Event event = eventRepository.findByShortIdAndDeletedFalse(shortId)
                 .orElseThrow(() -> new ResponseStatusException(
