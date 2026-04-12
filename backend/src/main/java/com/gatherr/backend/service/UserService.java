@@ -19,18 +19,18 @@ public class UserService {
 
     public UserResponseDto getCurrentUser(Long userId) {
 
-        User creator = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + userId));
 
         return new UserResponseDto(
-                creator.getId(),
-                creator.getName(),
-                creator.getEmail(),
-                creator.getProfilePicture(),
-                creator.getTimezone(),
-                creator.isStartOnMonday(),
-                creator.isTimeFormat24(),
-                creator.getLanguage()
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getProfilePicture(),
+                user.getTimezone(),
+                user.isStartOnMonday(),
+                user.isTimeFormat24(),
+                user.getLanguage()
         );
     }
 }
