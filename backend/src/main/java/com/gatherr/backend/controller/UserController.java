@@ -7,16 +7,15 @@ import com.gatherr.backend.dto.UserResponseDto;
 import com.gatherr.backend.service.UserService;
 import com.gatherr.backend.util.SecurityUtils;
 
+import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getCurrentUser() {
