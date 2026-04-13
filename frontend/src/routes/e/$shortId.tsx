@@ -386,10 +386,13 @@ function RouteComponent() {
 						{isSelectMode ? (
 							<>
 								<XIcon className="size-5" />
-								<span className="text-sm font-semibold">{m.event_select_mode()}</span>
+								<span className="text-sm font-semibold">{m.event_enable_scrolling()}</span>
 							</>
 						) : (
-							<PencilIcon className="size-5" />
+							<>
+								<PencilIcon className="size-5" />
+								<span className="text-sm font-semibold">{m.event_enable_dragging()}</span>
+							</>
 						)}
 					</Button>
 				</div>

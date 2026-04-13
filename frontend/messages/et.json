@@ -41,5 +41,6 @@
     "home_create_button": "Loo üritus",
     "event_select_all": "Vali kõik",
     "event_deselect_all": "Tühista valik",
-    "event_select_mode": "Luba kerimine"
+    "event_enable_scrolling": "Luba kerimine",
+    "event_enable_dragging": "Luba tõmbamine"
 }
