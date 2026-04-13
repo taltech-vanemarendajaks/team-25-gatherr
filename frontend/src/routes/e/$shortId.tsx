@@ -4,6 +4,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { CheckIcon, LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
@@ -11,6 +12,7 @@ import { Button } from "../../components/ui/button";
 import { dateFnsLocale } from "../../components/ui/pages/create/calendar/Calendar";
 import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
+import { useLogin } from "../../hooks/mutation/useLogin";
 import { useGetEvent } from "../../hooks/query/useGetEvent";
 import { useGetMe } from "../../hooks/query/useGetMe";
 import { cn } from "../../lib/utils";
@@ -26,6 +28,7 @@ function RouteComponent() {
 	const { shortId } = Route.useParams();
 	const { data: event, isLoading } = useGetEvent(shortId);
 	const { data: me } = useGetMe();
+	const { mutate: login } = useLogin();
 
 	const heatMapTimes = new Set<string>();
 	const heatMapDates = new Set<string>();
@@ -40,6 +43,17 @@ function RouteComponent() {
 	for (const slot of event?.summary.slots ?? []) {
 		heatMapSlots.set(slot.slot, slot);
 	}
+
+	const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+
+	useEffect(() => {
+		if (me) {
+			const currentUserSlots = event?.summary.users.find(user => user.user.id === me.id);
+			if (currentUserSlots) {
+				setSelectedSlots(() => currentUserSlots?.available);
+			}
+		}
+	}, [me, event]);
 
 	return (
 		<main className="max-w-md m-auto pt-5 px-4 sm:px-0">
@@ -69,7 +83,7 @@ function RouteComponent() {
 				<div className="bg-canvas rounded-2xl p-8 flex flex-col items-center mb-8">
 					<p className="text-2xl mb-8">{m.event_sign_in_title()}</p>
 					<div className="mb-8">
-						<Button onClick={() => {}} className="px-8">
+						<Button onClick={() => login()} className="px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>
@@ -117,8 +131,8 @@ function RouteComponent() {
 									{user.profilePicture ? (
 										<img src={user.profilePicture} alt="PP" className="rounded-full size-8" />
 									) : (
-										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full size-8">
-											{user.name.slice(0, 1)}
+										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full text-center size-8">
+											<p className="">{user.name.slice(0, 1)}</p>
 										</div>
 									)}
 								</div>
@@ -173,17 +187,17 @@ function RouteComponent() {
 					</div>
 				</div>
 			</div>
-			{me && (
+			{/* {me && (
 				<div className="mb-6 flex justify-center">
 					<Button onClick={() => {}} className="px-8">
 						<GoogleIcon className="size-8 mr-3" />
 						Sync with Google Calendar
 					</Button>
 				</div>
-			)}
+			)} */}
 
 			{/* heatmap */}
-			<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20">
+			<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20 max-w-min">
 				<div className="flex flex-row">
 					<div className="w-16 shrink-0" />
 					{Array.from(heatMapDates.values()).map(heatMapDate => {
@@ -235,28 +249,52 @@ function RouteComponent() {
 							{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
 							<div className="w-16 shrink-0" />
 							{Array.from(heatMapDates.values()).map(heatMapDate => {
-								const slot = heatMapSlots.get(`${heatMapTime}-${heatMapDate}`);
-								const count = slot?.count ?? 0;
-								console.log(count / (event?.summary.users.length || 1));
+								const realSlot = `${heatMapTime}-${heatMapDate}`;
 
-								const hasMaxVotes = count === event?.summary.users.length;
+								const slot = heatMapSlots.get(realSlot);
+								const count = slot?.count ?? 0;
+
+								const wasInServer = slot?.users.some(u => u.id === me?.id);
+								const isInLocal = selectedSlots?.includes(realSlot);
+
+								const displayCount =
+									count + (isInLocal && !wasInServer ? 1 : 0) - (!isInLocal && wasInServer ? 1 : 0);
+
+								const hasMaxVotes = displayCount === event?.summary.users.length;
 								return (
-									<div key={slot?.slot} className="relative w-12 h-12 shrink-0 m-0.5">
+									<button
+										type="button"
+										key={realSlot}
+										className="relative w-12 h-12 shrink-0 m-0.5"
+										disabled={!me}
+										onClick={() =>
+											setSelectedSlots(prev => {
+												const isAlreadyChecked = prev?.find(prevSlot => prevSlot === realSlot);
+
+												if (isAlreadyChecked) {
+													return prev?.filter(_slot => _slot !== realSlot);
+												}
+
+												return [...prev, realSlot] as string[];
+											})
+										}
+									>
 										<div
 											className={cn(
 												"absolute inset-0 rounded-xl",
-												count === 0 ? "bg-paint" : "bg-primary",
+												displayCount === 0 ? "bg-paint" : "bg-primary",
 												hasMaxVotes && "border border-amber-300 shadow-sm shadow-amber-300",
 											)}
 											style={{
-												opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
+												opacity:
+													displayCount > 0 ? displayCount / (event?.summary.users.length || 1) : 1,
 											}}
 										>
-											{me?.id && slot?.users.some(u => u.id === me.id) && (
+											{me?.id && isInLocal && (
 												<CheckIcon className="absolute inset-0 size-6 m-auto" />
 											)}
 										</div>
-									</div>
+									</button>
 								);
 							})}
 						</div>
