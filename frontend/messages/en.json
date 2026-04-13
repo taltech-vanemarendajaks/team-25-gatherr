@@ -28,7 +28,7 @@
   "update_user_user_updated": "User updated!",
   "event_sign_in_title": "Sign in to add your availability",
   "event_mark_availability_title": "Mark your availability",
-  "event_mark_availability_text": "Click and drag on the grid below to mark your availability",
+  "event_mark_availability_text": "Click and drag on the grid below to mark your availability or press time or date to fill entire row or column",
   "event_participants_title": "Participants",
   "event_participants_text": "Select participants to highlight their specific times",
   "event_time_slots": "{count} time slots",
@@ -38,5 +38,8 @@
   "home_hero_text": "Just share a link and let everyone pick their availability. The simplest way to coordinate with friends, family, or colleagues.",
   "home_create_title": "Create a new event",
   "home_create_input_placeholder": "e.g. Team meeting, game night, coffee meet",
-  "home_create_button": "Create event"
+  "home_create_button": "Create event",
+  "event_select_all": "Select all",
+  "event_deselect_all": "Deselect all",
+  "event_select_mode": "Enable scrolling"
 }

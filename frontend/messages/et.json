@@ -38,5 +38,8 @@
     "home_hero_text": "Jaga lihtsalt linki ja lase kõigil oma saadavus märkida. Lihtsaim viis kokku leppida sõprade, pere või kolleegidega.",
     "home_create_title": "Loo uus üritus",
     "home_create_input_placeholder": "nt. Meeskonna koosolek, lauamänguõhtu, kohvil käik",
-    "home_create_button": "Loo üritus"
+    "home_create_button": "Loo üritus",
+    "event_select_all": "Vali kõik",
+    "event_deselect_all": "Tühista valik",
+    "event_select_mode": "Luba kerimine"
 }

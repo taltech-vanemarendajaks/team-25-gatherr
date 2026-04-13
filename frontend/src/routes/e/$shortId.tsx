@@ -3,8 +3,8 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { CheckIcon, LinkIcon, PenBoxIcon, UsersRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { CheckIcon, LinkIcon, PenBoxIcon, PencilIcon, UsersRound, XIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
@@ -45,6 +45,33 @@ function RouteComponent() {
 	}
 
 	const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+	const [isSelectMode, setIsSelectMode] = useState(false);
+	const isDragging = useRef(false);
+	const visitedSlots = useRef(new Set<string>());
+
+	const toggleRow = (time: string) => {
+		const rowSlots = Array.from(heatMapDates).map(date => `${time}-${date}`);
+		const allSelected = rowSlots.every(slot => selectedSlots.includes(slot));
+		setSelectedSlots(prev =>
+			allSelected
+				? prev.filter(slot => !rowSlots.includes(slot))
+				: [...new Set([...prev, ...rowSlots])],
+		);
+	};
+
+	const toggleColumn = (date: string) => {
+		const colSlots = Array.from(heatMapTimes).map(time => `${time}-${date}`);
+		const allSelected = colSlots.every(slot => selectedSlots.includes(slot));
+		setSelectedSlots(prev =>
+			allSelected
+				? prev.filter(slot => !colSlots.includes(slot))
+				: [...new Set([...prev, ...colSlots])],
+		);
+	};
+
+	const allSlots = event?.details.times ?? [];
+	const handleSelectAll = () => setSelectedSlots(allSlots);
+	const handleDeselectAll = () => setSelectedSlots([]);
 
 	useEffect(() => {
 		if (me) {
@@ -197,7 +224,44 @@ function RouteComponent() {
 			)} */}
 
 			{/* heatmap */}
-			<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20 max-w-min">
+			{me && (
+				<div className="flex flex-row gap-2 mb-3 justify-center">
+					<Button size="xs" onClick={handleSelectAll}>
+						{m.event_select_all()}
+					</Button>
+					<Button size="xs" variant="red" onClick={handleDeselectAll}>
+						{m.event_deselect_all()}
+					</Button>
+				</div>
+			)}
+			<div
+				className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20 max-w-min mb-28"
+				style={{ touchAction: isSelectMode ? "none" : "auto" }}
+				onPointerDown={e => {
+					if (!isSelectMode) return;
+					isDragging.current = true;
+					visitedSlots.current.clear();
+					(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+				}}
+				onPointerMove={e => {
+					if (!isDragging.current || !isSelectMode) return;
+					const el = document.elementFromPoint(e.clientX, e.clientY);
+					const slot = el?.closest("[data-slot]")?.getAttribute("data-slot");
+					if (!slot || visitedSlots.current.has(slot)) return;
+					visitedSlots.current.add(slot);
+					setSelectedSlots(prev =>
+						prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot],
+					);
+				}}
+				onPointerUp={() => {
+					isDragging.current = false;
+					visitedSlots.current.clear();
+				}}
+				onPointerCancel={() => {
+					isDragging.current = false;
+					visitedSlots.current.clear();
+				}}
+			>
 				<div className="flex flex-row">
 					<div className="w-16 shrink-0" />
 					{Array.from(heatMapDates.values()).map(heatMapDate => {
@@ -208,13 +272,19 @@ function RouteComponent() {
 						);
 
 						return (
-							<div className="w-12 mx-0.5 shrink-0" key={heatMapDate}>
+							<button
+								type="button"
+								className={cn(
+									"w-12 mx-0.5 shrink-0",
+									me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
+								)}
+								key={heatMapDate}
+								onClick={() => toggleColumn(heatMapDate)}
+							>
 								<p className="text-nowrap text-center">
 									<span className="font-semibold">
 										{(() => {
-											const dayName = format(date, "EEE", {
-												locale: dateFnsLocale,
-											});
+											const dayName = format(date, "EEE", { locale: dateFnsLocale });
 											return dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase();
 										})()}
 									</span>
@@ -225,16 +295,14 @@ function RouteComponent() {
 												locale: dateFnsLocale,
 											});
 											const day = format(date, "d");
-
 											const shortMonth =
 												month.charAt(0).toUpperCase() +
 												month.slice(1, getLocale() === "et" ? 4 : 3);
-
 											return `${shortMonth} ${day}`;
 										})()}
 									</span>
 								</p>
-							</div>
+							</button>
 						);
 					})}
 				</div>
@@ -242,9 +310,16 @@ function RouteComponent() {
 					{Array.from(heatMapTimes).map((heatMapTime, index) => (
 						<div key={heatMapTime + index} className="flex flex-row">
 							{/* time on the left */}
-							<p className="text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl">
+							<button
+								type="button"
+								className={cn(
+									"text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl",
+									me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
+								)}
+								onClick={() => toggleRow(heatMapTime)}
+							>
 								{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
-							</p>
+							</button>
 							{/* line separator between times. will leave it here as i don't know if I will use it */}
 							{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
 							<div className="w-16 shrink-0" />
@@ -265,6 +340,7 @@ function RouteComponent() {
 									<button
 										type="button"
 										key={realSlot}
+										data-slot={realSlot}
 										className="relative w-12 h-12 shrink-0 m-0.5"
 										disabled={!me}
 										onClick={() =>
@@ -301,6 +377,23 @@ function RouteComponent() {
 					))}
 				</div>
 			</div>
+			{me && (
+				<div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+					<Button
+						onClick={() => setIsSelectMode(prev => !prev)}
+						className="flex flex-row items-center gap-2 shadow-md px-5 py-3 rounded-full"
+					>
+						{isSelectMode ? (
+							<>
+								<XIcon className="size-5" />
+								<span className="text-sm font-semibold">{m.event_select_mode()}</span>
+							</>
+						) : (
+							<PencilIcon className="size-5" />
+						)}
+					</Button>
+				</div>
+			)}
 		</main>
 	);
 }
