@@ -33,7 +33,7 @@ public class EventController {
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<EventResponseDto>> getEvents(
+    public ResponseEntity<List<EventResponseDto>> getMyEvents(
             @AuthenticationPrincipal Jwt jwt
     ) {
         Long creatorId = JwtUtils.extractUserId(jwt);
