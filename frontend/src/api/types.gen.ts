@@ -52,6 +52,22 @@ export interface paths {
 		patch: operations["patchCurrentUser"];
 		trace?: never;
 	};
+	"/events/mine": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["getMyEvents"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -74,7 +90,6 @@ export interface components {
 			creatorId?: number;
 			/** @enum {string} */
 			type?: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
-			times?: string[];
 			timezone?: string;
 		};
 		AuthRequestDto: {
@@ -203,6 +218,26 @@ export interface operations {
 				};
 				content: {
 					"*/*": components["schemas"]["UserResponseDto"];
+				};
+			};
+		};
+	};
+	getMyEvents: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventResponseDto"][];
 				};
 			};
 		};
