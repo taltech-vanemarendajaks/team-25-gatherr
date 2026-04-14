@@ -49,7 +49,7 @@ export interface paths {
 		delete?: never;
 		options?: never;
 		head?: never;
-		patch?: never;
+		patch: operations["patchCurrentUser"];
 		trace?: never;
 	};
 }
@@ -88,6 +88,12 @@ export interface components {
 			name?: string;
 			email?: string;
 			profilePicture?: string;
+		};
+		UpdateUserDto: {
+			timezone?: string;
+			startOnMonday?: boolean;
+			timeFormat24?: boolean;
+			language?: string;
 		};
 		UserResponseDto: {
 			/** Format: int64 */
@@ -165,6 +171,30 @@ export interface operations {
 			cookie?: never;
 		};
 		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["UserResponseDto"];
+				};
+			};
+		};
+	};
+	patchCurrentUser: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UpdateUserDto"];
+			};
+		};
 		responses: {
 			/** @description OK */
 			200: {
