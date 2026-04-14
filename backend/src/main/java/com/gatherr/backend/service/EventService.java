@@ -75,10 +75,10 @@ public class EventService {
         return first + "-" + second + "-" + third + "-" + number;
     }
 
-    public List<EventResponseDto> getMyEvents(Long creatorId) {
-        return eventRepository.findByCreatorIdAndIsDeletedFalse(creatorId)
+    public List<EventResponseDto> getMyEvents(Long userId) {
+        return eventUserRepository.findByUserIdAndEvent_IsDeletedFalse(userId)
             .stream()
-            .map(EventResponseDto::from)
+            .map(eventUser -> EventResponseDto.from(eventUser.getEvent()))
             .toList();
     }
 }
