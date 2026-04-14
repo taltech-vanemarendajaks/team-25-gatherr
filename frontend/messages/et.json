@@ -29,6 +29,8 @@
     "event_sign_in_title": "Logi sisse oma saadavuse lisamiseks",
     "event_mark_availability_title": "Märgi oma saadavus",
     "event_mark_availability_text": "Klõpsa ja lohista alloleval ruudustikul oma saadavuse märkimiseks",
+    "event_group_availability_title": "Vaata grupi saadavust",
+    "event_group_availability_text": "Vajuta ruutudele all pool, et näha inimeste saadavust",
     "event_participants_title": "Osalejad",
     "event_participants_text": "Vali osalejad nende konkreetsete aegade esiletõstmiseks",
     "event_time_slots": "{count} ajavõimalust",
@@ -42,5 +44,8 @@
     "event_select_all": "Vali kõik",
     "event_deselect_all": "Tühista valik",
     "event_enable_scrolling": "Luba kerimine",
-    "event_enable_dragging": "Luba tõmbamine"
+    "event_enable_dragging": "Luba tõmbamine",
+    "event_tab_yours": "Sinu saadavus",
+    "event_tab_group": "Grupi saadavus",
+    "event_save": "Salvesta"
 }

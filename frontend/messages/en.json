@@ -29,6 +29,8 @@
   "event_sign_in_title": "Sign in to add your availability",
   "event_mark_availability_title": "Mark your availability",
   "event_mark_availability_text": "Click and drag on the grid below to mark your availability or press time or date to fill entire row or column",
+  "event_group_availability_title": "See group availability",
+  "event_group_availability_text": "Click on the grid items below to see availability",
   "event_participants_title": "Participants",
   "event_participants_text": "Select participants to highlight their specific times",
   "event_time_slots": "{count} time slots",
@@ -42,5 +44,8 @@
   "event_select_all": "Select all",
   "event_deselect_all": "Deselect all",
   "event_enable_scrolling": "Enable scrolling",
-  "event_enable_dragging": "Enable dragging"
+  "event_enable_dragging": "Enable dragging",
+  "event_tab_yours": "Your availability",
+  "event_tab_group": "Group availability",
+  "event_save": "Save"
 }
