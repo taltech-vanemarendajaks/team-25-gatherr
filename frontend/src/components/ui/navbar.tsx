@@ -1,67 +1,13 @@
-import { UserRound } from "lucide-react";
-import { useState } from "react";
-import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
-import { useGetMe } from "../../hooks/query/useGetMe";
-import { m } from "../../paraglide/messages";
-import { getLocale, setLocale } from "../../paraglide/runtime";
 import { FireplaceIcon } from "../icons/FireplaceIcon";
-import { GradientIcon } from "../icons/GradientIcon";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./select";
-import { ToggleSlider } from "./ToggleSlider";
+import { UserButton } from "./UserButton";
 
 export const Navbar = () => {
-	const { data: me } = useGetMe();
-
-	const { mutate: updateUser } = useUpdateUser();
-
-	const [weekStartsOn, setWeekStartsOn] = useState(
-		me?.startOnMonday === true || me?.startOnMonday === undefined ? 0 : 1,
-	);
-
 	return (
 		<nav className="text-white max-w-lg m-auto">
 			<div className="flex flex-row items-center justify-between mt-6 mx-2">
 				<FireplaceIcon />
 				<span className="font-viking text-5xl">Gatherr</span>
-				<Popover>
-					<PopoverTrigger disabled={!me} className="disabled:opacity-80">
-						<GradientIcon icon={UserRound} className="size-12 cursor-pointer" />
-					</PopoverTrigger>
-					<PopoverContent className="mr-3 mt-3 px-6" align="start">
-						<p className="text-2xl font-semibold mb-5">{m.user_settings_settings()}</p>
-						<div className="flex flex-col items-left mb-4">
-							<p className="ml-1 mb-1 font-semibold">{m.user_settings_week_starts_on()}</p>
-							<ToggleSlider
-								onChange={index => updateUser({ startOnMonday: index === 0 })}
-								options={[m.user_settings_monday(), m.user_settings_sunday()]}
-								selectedIndex={weekStartsOn}
-								setSelectedIndex={setWeekStartsOn}
-							/>
-						</div>
-						<div className="flex flex-col items-left mb-4">
-							<p className="ml-1 mb-1 font-semibold">{m.user_settings_language()}</p>
-							<Select value={getLocale()} onValueChange={(value: "en" | "et") => setLocale(value)}>
-								<SelectTrigger>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectGroup>
-										<SelectItem value="et">Eesti</SelectItem>
-										<SelectItem value="en">English</SelectItem>
-									</SelectGroup>
-								</SelectContent>
-							</Select>
-						</div>
-					</PopoverContent>
-				</Popover>
+				<UserButton />
 			</div>
 		</nav>
 	);

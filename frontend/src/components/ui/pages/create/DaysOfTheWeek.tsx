@@ -17,11 +17,12 @@ export const DaysOfTheWeek = ({ selected, setSelected }: Props) => {
 	});
 
 	const days = Array.from({ length: 7 }, (_, i) => {
-		const localizedDay = format(addDays(firstDayOfCalendarMonth, i), "EEE", {
-			locale: dateFnsLocale,
-		})
-			.slice(0, 3)
-			.toLowerCase();
+		const localizedDay = (day => day.charAt(0).toUpperCase() + day.slice(1, 3).toLowerCase())(
+			format(addDays(firstDayOfCalendarMonth, i), "EEE", {
+				locale: dateFnsLocale,
+			}),
+		);
+
 		const day = format(addDays(firstDayOfCalendarMonth, i), "EEE", {
 			locale: enUS,
 		}).toUpperCase();
