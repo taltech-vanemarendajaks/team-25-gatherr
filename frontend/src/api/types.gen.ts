@@ -59,7 +59,7 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get: operations["getEvents"];
+		get: operations["getMyEvents"];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -90,7 +90,6 @@ export interface components {
 			creatorId?: number;
 			/** @enum {string} */
 			type?: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
-			times?: string[];
 			timezone?: string;
 		};
 		AuthRequestDto: {
@@ -223,7 +222,7 @@ export interface operations {
 			};
 		};
 	};
-	getEvents: {
+	getMyEvents: {
 		parameters: {
 			query?: never;
 			header?: never;
