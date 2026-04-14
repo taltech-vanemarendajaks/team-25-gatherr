@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
-import { EVENT_USERS, EVENTS, ME } from "./data";
-import type { Event, EventUser } from "./types";
+import { EVENT_USERS, EVENTS, ME, makeEventUser, shortId } from "./data";
+import type { Event, EventUser, SummaryResponse, SummarySlot, SummaryUserResponse } from "./types";
 
 const BASE = "/api/v1";
 
@@ -25,6 +25,8 @@ const BASE = "/api/v1";
   fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`).then(r =>
   r.json()).then(console.log))
 
+  fetch(`/api/v1/events/cozy-hot-toast-HmYXfuih`).then(r => r.json()).then(console.log)
+
   // PATCH /events/:shortId
   fetch('/api/v1/events/mine').then(r => r.json()).then(events => fetch(`/api/v1/events/${events[0].shortId}`, { method: 'PATCH',
   headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Renamed Event' }) }).then(r =>
@@ -44,15 +46,24 @@ const BASE = "/api/v1";
   }).then(r => console.log('deleted, status:', r.status)))
  */
 
+// ── Auth state ───────────────────────────────────────────────────────────────
+// Starts logged out. POST /auth/google sets this to true.
+let isLoggedIn = false;
+
 // IMPORTANT: MSW matches handlers in registration order.
 // Specific paths (mine, summary, respond) MUST be registered before the
 // generic /:shortId handler, or they'll be shadowed by the param matcher.
 export const handlers = [
+	// ── POST /auth/google ─────────────────────────────────────────────────────
+	http.post(`${BASE}/auth/google`, () => {
+		isLoggedIn = true;
+		return HttpResponse.json(ME);
+	}),
+
 	// ── GET /users/me ─────────────────────────────────────────────────────────
 	http.get(`${BASE}/users/me`, () => {
+		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
 		return HttpResponse.json(ME);
-		// unauthorized
-		// return new HttpResponse(null, { status: 401 });
 	}),
 
 	// ── PATCH /users/me ───────────────────────────────────────────────────────
@@ -64,6 +75,7 @@ export const handlers = [
 
 	// ── GET /events/mine /:shortId ───────────────────────────────────
 	http.get(`${BASE}/events/mine`, () => {
+		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
 		const mine = EVENTS.filter(e => e.creator.id === ME.id && !e.isDeleted);
 		return HttpResponse.json(mine);
 	}),
@@ -75,17 +87,44 @@ export const handlers = [
 
 		const userResponses = EVENT_USERS.filter(eu => eu.event.shortId === params.shortId);
 
-		const heatMap: Record<string, number> = {};
+		const heatMap: Record<string, { count: number; users: { id: number; name: string }[] }> = {};
+		const users = userResponses.map(user => {
+			return {
+				available: user.available,
+				notAvailable: user.notAvailable,
+				user: {
+					id: user.user.id,
+					name: user.user.name,
+					profilePicture: user.user.profilePicture,
+				},
+			} satisfies SummaryUserResponse;
+		});
 
 		for (const user of userResponses) {
 			for (const availability of user.available) {
-				heatMap[availability] = (heatMap[availability] ?? 0) + 1;
+				heatMap[availability] = {
+					count: (heatMap[availability]?.count ?? 0) + 1,
+					users: [
+						...(heatMap[availability]?.users ?? []),
+						{ id: user.user.id, name: user.user.name },
+					],
+				};
 			}
 		}
 
-		const responseWithHeatmap = {
-			users: userResponses,
-			heatMap,
+		const slots: SummarySlot[] = Object.keys(heatMap).map(slot => {
+			const count = heatMap[slot].count;
+			const users = heatMap[slot].users;
+			return {
+				slot,
+				count,
+				users,
+			};
+		});
+
+		const responseWithHeatmap: SummaryResponse = {
+			users,
+			slots,
 		};
 
 		return HttpResponse.json(responseWithHeatmap);
@@ -136,7 +175,8 @@ export const handlers = [
 			id: EVENTS.length + 1,
 			name: body.name ?? "New Event",
 			description: body.description ?? null,
-			shortId: Math.random().toString(36).slice(2, 10),
+			// shortId: "cozy-hot-toast-1234",
+			shortId: shortId(),
 			creator: ME,
 			type: body.type ?? "SPECIFIC_DATES",
 			times: body.times ?? [],
@@ -147,6 +187,9 @@ export const handlers = [
 			updatedAt: new Date().toISOString(),
 		};
 		EVENTS.push(newEvent);
+		EVENT_USERS.push(
+			makeEventUser(EVENT_USERS.length + 1, newEvent, ME, { available: [], notAvailable: [] }),
+		);
 		return HttpResponse.json(newEvent, { status: 201 });
 	}),
 

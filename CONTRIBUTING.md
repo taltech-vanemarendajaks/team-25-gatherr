@@ -9,12 +9,23 @@ To maintain code quality and a smooth development workflow, please follow these 
 
 ## <a name="development"></a> Development Setup
 
-### IDE Go through these steps
+## IDE Setup
 
-We use **IntelliJ IDEA**. After cloning, configure the JDK:
+We officially support **IntelliJ IDEA** for Java development and **VS Code** for frontend tasks. 
 
-1. `File` → `Project Structure` → `SDK` → select **Java 21**
-2. `Build` → `Rebuild Project`
+### IntelliJ IDEA (Backend)
+
+After cloning the repository, configure your environment:
+
+1. Go to `File` → `Project Structure` → `SDK` and select **Java 21**.
+2. Run `Build` → `Rebuild Project` to sync dependencies.
+
+### VS Code (Frontend)
+
+We provide a `.vscode/settings.json` file to ensure a consistent developer experience.
+
+- **Automatic Formatting:** These settings align with our **BiomeJS** configuration. When you save a `.ts` or `.tsx` file, VS Code will format the code automatically.
+- **Consistency:** This setup ensures your code matches the formatting enforced by our **Husky** pre-commit hooks, preventing "linting fix" commits and CI failures.
 
 #### 1. Running the backend with the dev profile
 

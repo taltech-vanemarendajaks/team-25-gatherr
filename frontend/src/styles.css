@@ -25,6 +25,13 @@
 	--background-image-gradient: linear-gradient(60deg, #f26716, #a62f03);
 }
 
+@layer components {
+	.text-gradient {
+		@apply bg-clip-text text-transparent inline-block;
+		background-image: linear-gradient(#f26716, #a62f03);
+	}
+}
+
 html,
 body {
 	-webkit-tap-highlight-color: transparent;

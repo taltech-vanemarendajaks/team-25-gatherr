@@ -33,6 +33,29 @@ export interface Event {
 	updatedAt: string; // ISO 8601
 }
 
+export interface SummarySlotUser {
+	id: number;
+	name: string;
+}
+
+export interface SummarySlot {
+	/** Format: "HHMM-DDMMYYYY", e.g. "0700-10032026" */
+	slot: string;
+	count: number;
+	users: SummarySlotUser[];
+}
+
+export interface SummaryUserResponse {
+	user: Pick<User, "id" | "name" | "profilePicture">;
+	available: string[];
+	notAvailable: string[];
+}
+
+export interface SummaryResponse {
+	users: SummaryUserResponse[];
+	slots: SummarySlot[];
+}
+
 export interface EventUser {
 	id: number;
 	event: Pick<Event, "id" | "shortId" | "name">;

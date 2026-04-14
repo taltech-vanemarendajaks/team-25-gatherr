@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import toast from "react-hot-toast";
 import { GatherrApiClient } from "../../lib/axios";
 import type { Event } from "../../mocks/types";
 
@@ -23,7 +22,6 @@ export const useCreateEvent = () => {
 	return useMutation({
 		mutationFn,
 		onSuccess: ({ shortId }) => {
-			toast.success("Event created");
 			if (shortId) {
 				navigate({ to: `/e/${shortId}` });
 			}

@@ -6,6 +6,7 @@ import com.gatherr.backend.service.UserService;
 import com.gatherr.backend.util.JwtUtils;
 
 import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
