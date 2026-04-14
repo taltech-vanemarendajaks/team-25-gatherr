@@ -30,4 +30,13 @@ public class EventController {
         EventResponseDto response = eventService.createEvent(creatorId, createEventDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("/{shortId}")
+    public ResponseEntity<EventResponseDto> getEventByShortId(
+            @PathVariable String shortId
+    ) {
+        EventResponseDto response = eventService.getEventByShortId(shortId);
+        return ResponseEntity.ok(response);
+    }
+
 }
