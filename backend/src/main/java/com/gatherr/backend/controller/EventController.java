@@ -3,6 +3,8 @@ package com.gatherr.backend.controller;
 import com.gatherr.backend.dto.CreateEventDto;
 import com.gatherr.backend.dto.EventResponseDto;
 import com.gatherr.backend.service.EventService;
+import com.gatherr.backend.util.JwtUtils;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateEventDto createEventDto
     ) {
-        Long creatorId = Long.parseLong(jwt.getSubject());
+        Long creatorId = JwtUtils.extractUserId(jwt);
         EventResponseDto response = eventService.createEvent(creatorId, createEventDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
