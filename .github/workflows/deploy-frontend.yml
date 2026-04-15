@@ -30,9 +30,6 @@ jobs:
         env:
           VITE_API_URL: https://api.gatherr.alber.ee/api/v1
 
-      - name: Rename shell to index
-        run: cp dist/client/_shell.html dist/client/index.html
-
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
