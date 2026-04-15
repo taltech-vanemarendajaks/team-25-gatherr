@@ -37,7 +37,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.gatherr.rule=Host(`gatherr.alber.ee`)"
+      - "traefik.http.routers.gatherr.rule=Host(`api.gatherr.alber.ee`)"
       - "traefik.http.routers.gatherr.entrypoints=websecure"
       - "traefik.http.routers.gatherr.tls.certresolver=letsencrypt"
       - "traefik.http.services.gatherr.loadbalancer.server.port=8080"
