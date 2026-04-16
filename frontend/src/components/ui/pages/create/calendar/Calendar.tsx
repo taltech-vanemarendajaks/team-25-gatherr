@@ -13,7 +13,7 @@ import {
 import { enUS, et, type Locale } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, type Variants } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGetMe } from "../../../../../hooks/query/useGetMe";
 import { cn } from "../../../../../lib/utils";
 import { getLocale } from "../../../../../paraglide/runtime";
@@ -28,8 +28,6 @@ const dateFnsLocales: Record<string, Locale> = {
 };
 
 export const dateFnsLocale = dateFnsLocales[getLocale()] ?? enUS;
-// @todo
-// draggable grid
 
 const removeImmediately: Variants = {
 	exit: { visibility: "hidden" },
@@ -43,6 +41,10 @@ interface Props {
 
 export const Calendar = ({ selected, setSelected }: Props) => {
 	const { data: me } = useGetMe();
+
+	const isDragging = useRef(false);
+	const visitedDates = useRef(new Set<string>());
+	const dragMode = useRef<"add" | "remove">("add");
 
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
@@ -156,7 +158,43 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 				))}
 			</div>
 			<motion.div variants={animations.calendar.view} custom={direction}>
-				<div className="grid grid-rows-5 gap-0.5">
+				<div
+					className="grid grid-rows-5 gap-0.5"
+					style={{ touchAction: "none" }}
+					onPointerDown={e => {
+						const el = document.elementFromPoint(e.clientX, e.clientY);
+						if (!el?.closest("[data-date]")) return;
+						isDragging.current = true;
+						visitedDates.current.clear();
+						(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+					}}
+					onPointerMove={e => {
+						if (!isDragging.current) return;
+						const el = document.elementFromPoint(e.clientX, e.clientY);
+						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");
+						if (!dateStr || visitedDates.current.has(dateStr)) return;
+						if (visitedDates.current.size === 0) {
+							dragMode.current = selected.some(d => d.toISOString() === dateStr) ? "remove" : "add";
+						}
+						visitedDates.current.add(dateStr);
+						const date = new Date(dateStr);
+						setSelected(prev => {
+							const isSelected = prev.some(d => d.getTime() === date.getTime());
+							if (dragMode.current === "add" && !isSelected) return [...prev, date];
+							if (dragMode.current === "remove" && isSelected)
+								return prev.filter(d => d.getTime() !== date.getTime());
+							return prev;
+						});
+					}}
+					onPointerUp={() => {
+						isDragging.current = false;
+						visitedDates.current.clear();
+					}}
+					onPointerCancel={() => {
+						isDragging.current = false;
+						visitedDates.current.clear();
+					}}
+				>
 					{weeks.map(week => {
 						const daysForWeek = eachDayOfInterval({
 							start: startOfWeek(week, { weekStartsOn }),
