@@ -326,8 +326,8 @@ function Create() {
 				</Button>
 			</div>
 
-			<Dialog open={isLoginModalOpen}>
-				<DialogContent className="max-w-sm" showCloseButton={false}>
+			<Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
+				<DialogContent className="max-w-sm" showCloseButton={true}>
 					<DialogHeader>
 						<User className="text-amber-500 mb-8 size-12" />
 						<DialogTitle className="font-medium text-2xl mb-8">
