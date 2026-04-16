@@ -6,13 +6,14 @@ import { cn } from "../../lib/utils";
 export const buttonVariantColors = {
 	orange: ["text-content bg-primary border-[#894822]", "active:border-primary"],
 	red: ["text-content bg-secondary border-[#752102]", "active:border-secondary"],
+	dark: ["text-content bg-paint border-[#130E0A]", "active:border-paint"],
 };
 
 export const buttonVariants = cva(
 	[
 		"inline-flex items-center justify-center cursor-pointer",
 		"m-0 border-b-[6px] text-center font-medium tracking-wider font-sans whitespace-nowrap",
-		"transition-all duration-300 hover:-translate-y-[0.15rem]",
+		"transition-all duration-500 hover:-translate-y-[0.15rem]",
 		"active:translate-y-[0.2rem] active:duration-75",
 		"touch-manipulation",
 		"disabled:opacity-50 disabled:cursor-not-allowed",
