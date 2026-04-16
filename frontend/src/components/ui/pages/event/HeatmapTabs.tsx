@@ -188,8 +188,8 @@ export const HeatmapTabs = ({
 							}}
 						>
 							{/* date headers */}
-							<div className="flex flex-row">
-								<div className="w-16 shrink-0" />
+							<div className="flex flex-row mb-6">
+								<div className="w-16 shrink-0 mb-6" />
 								{Array.from(heatMapDates.values()).map(heatMapDate => {
 									const date = new Date(
 										parseInt(heatMapDate.slice(5, 8)),
@@ -197,8 +197,10 @@ export const HeatmapTabs = ({
 										parseInt(heatMapDate.slice(0, 2)),
 									);
 									return (
-										<button
+										<Button
+											variant="dark"
 											type="button"
+											size="xs"
 											className={cn(
 												"w-12 mx-0.5 shrink-0",
 												me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
@@ -207,7 +209,7 @@ export const HeatmapTabs = ({
 											onClick={() => toggleColumn(heatMapDate)}
 										>
 											<p className="text-nowrap text-center">
-												<span className="font-semibold">
+												<span className="font-semibold text-md">
 													{(() => {
 														const dayName = format(date, "EEE", { locale: dateFnsLocale });
 														return (
@@ -216,7 +218,7 @@ export const HeatmapTabs = ({
 													})()}
 												</span>
 												<br />
-												<span className="text-[#BABABA]">
+												<span className="text-[#BABABA] text-xs">
 													{(() => {
 														const month = format(date, "MMM", { locale: dateFnsLocale });
 														const day = format(date, "d");
@@ -227,7 +229,7 @@ export const HeatmapTabs = ({
 													})()}
 												</span>
 											</p>
-										</button>
+										</Button>
 									);
 								})}
 							</div>
@@ -237,16 +239,18 @@ export const HeatmapTabs = ({
 								{Array.from(heatMapTimes).map((heatMapTime, index) => (
 									<div key={heatMapTime + index} className="flex flex-row">
 										{/* time on the left */}
-										<button
+										<Button
+											variant="dark"
 											type="button"
+											size="xs"
 											className={cn(
-												"text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl",
+												"absolute -mt-3! px-2 py-1 rounded-2xl z-50",
 												me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
 											)}
 											onClick={() => toggleRow(heatMapTime)}
 										>
 											{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
-										</button>
+										</Button>
 										{/* line separator between times. will leave it here as i don't know if I will use it */}
 										{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
 										<div className="w-16 shrink-0" />
