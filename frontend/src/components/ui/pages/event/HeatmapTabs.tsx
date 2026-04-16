@@ -61,7 +61,7 @@ export const HeatmapTabs = ({
 	const { data: me } = useGetMe();
 
 	const { isMobile } = useIsMobile();
-	const [selectedIndex, setSelectedIndex] = useState(1);
+	const [selectedIndex, setSelectedIndex] = useState(me ? 0 : 1);
 	const [isSelectMode, setIsSelectMode] = useState(false);
 	const canDrag = !isMobile || isSelectMode;
 	const [openSlot, setOpenSlot] = useState<string | null>(null);
@@ -156,133 +156,143 @@ export const HeatmapTabs = ({
 						</div>
 					)}
 
-					<div
-						className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20 max-w-min mb-28"
-						style={{ touchAction: isSelectMode && isMobile ? "none" : "auto" }}
-						onPointerDown={e => {
-							if (!canDrag) return;
-							const el = document.elementFromPoint(e.clientX, e.clientY);
-							if (!el?.closest("[data-slot]")) return;
-							isDragging.current = true;
-							visitedSlots.current.clear();
-							(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-						}}
-						onPointerMove={e => {
-							if (!isDragging.current || !canDrag) return;
-							const el = document.elementFromPoint(e.clientX, e.clientY);
-							const slot = el?.closest("[data-slot]")?.getAttribute("data-slot");
-							if (!slot || visitedSlots.current.has(slot)) return;
-							visitedSlots.current.add(slot);
-							setSelectedSlots(prev =>
-								prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot],
-							);
-						}}
-						onPointerUp={() => {
-							isDragging.current = false;
-							visitedSlots.current.clear();
-						}}
-						onPointerCancel={() => {
-							isDragging.current = false;
-							visitedSlots.current.clear();
-						}}
-					>
-						{/* date headers */}
-						<div className="flex flex-row">
-							<div className="w-16 shrink-0" />
-							{Array.from(heatMapDates.values()).map(heatMapDate => {
-								const date = new Date(
-									parseInt(heatMapDate.slice(5, 8)),
-									parseInt(heatMapDate.slice(3, 5)) - 1,
-									parseInt(heatMapDate.slice(0, 2)),
+					<div className="overflow-x-auto w-full mb-28">
+						<div
+							className="p-4 bg-canvas rounded-2xl w-max mx-auto"
+							style={{ touchAction: isSelectMode && isMobile ? "none" : "auto" }}
+							onPointerDown={e => {
+								if (!canDrag) return;
+								const el = document.elementFromPoint(e.clientX, e.clientY);
+								if (!el?.closest("[data-slot]")) return;
+								isDragging.current = true;
+								visitedSlots.current.clear();
+								(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+							}}
+							onPointerMove={e => {
+								if (!isDragging.current || !canDrag) return;
+								const el = document.elementFromPoint(e.clientX, e.clientY);
+								const slot = el?.closest("[data-slot]")?.getAttribute("data-slot");
+								if (!slot || visitedSlots.current.has(slot)) return;
+								visitedSlots.current.add(slot);
+								setSelectedSlots(prev =>
+									prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot],
 								);
-								return (
-									<button
-										type="button"
-										className={cn(
-											"w-12 mx-0.5 shrink-0",
-											me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
-										)}
-										key={heatMapDate}
-										onClick={() => toggleColumn(heatMapDate)}
-									>
-										<p className="text-nowrap text-center">
-											<span className="font-semibold">
-												{(() => {
-													const dayName = format(date, "EEE", { locale: dateFnsLocale });
-													return (
-														dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase()
-													);
-												})()}
-											</span>
-											<br />
-											<span className="text-[#BABABA]">
-												{(() => {
-													const month = format(date, "MMM", { locale: dateFnsLocale });
-													const day = format(date, "d");
-													const shortMonth =
-														month.charAt(0).toUpperCase() +
-														month.slice(1, getLocale() === "et" ? 4 : 3);
-													return `${shortMonth} ${day}`;
-												})()}
-											</span>
-										</p>
-									</button>
-								);
-							})}
-						</div>
+							}}
+							onPointerUp={() => {
+								isDragging.current = false;
+								visitedSlots.current.clear();
+							}}
+							onPointerCancel={() => {
+								isDragging.current = false;
+								visitedSlots.current.clear();
+							}}
+						>
+							{/* date headers */}
+							<div className="flex flex-row">
+								<div className="w-16 shrink-0" />
+								{Array.from(heatMapDates.values()).map(heatMapDate => {
+									const date = new Date(
+										parseInt(heatMapDate.slice(5, 8)),
+										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(0, 2)),
+									);
+									return (
+										<button
+											type="button"
+											className={cn(
+												"w-12 mx-0.5 shrink-0",
+												me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
+											)}
+											key={heatMapDate}
+											onClick={() => toggleColumn(heatMapDate)}
+										>
+											<p className="text-nowrap text-center">
+												<span className="font-semibold">
+													{(() => {
+														const dayName = format(date, "EEE", { locale: dateFnsLocale });
+														return (
+															dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase()
+														);
+													})()}
+												</span>
+												<br />
+												<span className="text-[#BABABA]">
+													{(() => {
+														const month = format(date, "MMM", { locale: dateFnsLocale });
+														const day = format(date, "d");
+														const shortMonth =
+															month.charAt(0).toUpperCase() +
+															month.slice(1, getLocale() === "et" ? 4 : 3);
+														return `${shortMonth} ${day}`;
+													})()}
+												</span>
+											</p>
+										</button>
+									);
+								})}
+							</div>
 
-						{/* time rows */}
-						<div>
-							{Array.from(heatMapTimes).map((heatMapTime, index) => (
-								<div key={heatMapTime + index} className="flex flex-row">
-									{/* time on the left */}
-									<button
-										type="button"
-										className={cn(
-											"text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl",
-											me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
-										)}
-										onClick={() => toggleRow(heatMapTime)}
-									>
-										{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
-									</button>
-									{/* line separator between times. will leave it here as i don't know if I will use it */}
-									{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
-									<div className="w-16 shrink-0" />
-									{Array.from(heatMapDates.values()).map(heatMapDate => {
-										const realSlot = `${heatMapTime}-${heatMapDate}`;
-										const isInLocal = selectedSlots.includes(realSlot);
+							{/* time rows */}
+							<div>
+								{Array.from(heatMapTimes).map((heatMapTime, index) => (
+									<div key={heatMapTime + index} className="flex flex-row">
+										{/* time on the left */}
+										<button
+											type="button"
+											className={cn(
+												"text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl",
+												me ? "cursor-pointer" : "cursor-default pointer-events-none opacity-50",
+											)}
+											onClick={() => toggleRow(heatMapTime)}
+										>
+											{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
+										</button>
+										{/* line separator between times. will leave it here as i don't know if I will use it */}
+										{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
+										<div className="w-16 shrink-0" />
+										{Array.from(heatMapDates.values()).map(heatMapDate => {
+											const realSlot = `${heatMapTime}-${heatMapDate}`;
+											const isInLocal = selectedSlots.includes(realSlot);
 
-										return (
-											<button
-												type="button"
-												key={realSlot}
-												data-slot={realSlot}
-												className="relative w-12 h-12 shrink-0 m-0.5"
-												disabled={!me}
-												onClick={() =>
-													setSelectedSlots(prev =>
-														prev.includes(realSlot)
-															? prev.filter(s => s !== realSlot)
-															: [...prev, realSlot],
-													)
-												}
-											>
-												<div
-													className={cn(
-														"absolute inset-0 rounded-xl",
-														isInLocal ? "bg-primary" : "bg-paint",
-													)}
+											return (
+												<button
+													type="button"
+													key={realSlot}
+													data-slot={realSlot}
+													className="relative w-12 h-12 shrink-0 m-0.5 overflow-hidden rounded-xl"
+													disabled={!me}
+													onClick={() =>
+														setSelectedSlots(prev =>
+															prev.includes(realSlot)
+																? prev.filter(s => s !== realSlot)
+																: [...prev, realSlot],
+														)
+													}
 												>
+													<div className="absolute inset-0 rounded-xl bg-paint" />
+													<motion.span
+														initial={false}
+														animate={{
+															scale: isInLocal ? 1.5 : 0,
+															opacity: isInLocal ? 1 : 0,
+														}}
+														transition={{
+															type: "spring",
+															stiffness: 300,
+															damping: 30,
+														}}
+														className="absolute inset-0 pointer-events-none rounded-xl bg-primary"
+														style={{ originX: 0.5, originY: 0.5 }}
+													/>
 													{me?.id && isInLocal && (
-														<CheckIcon className="absolute inset-0 size-6 m-auto" />
+														<CheckIcon className="absolute inset-0 size-6 m-auto z-10" />
 													)}
-												</div>
-											</button>
-										);
-									})}
-								</div>
-							))}
+												</button>
+											);
+										})}
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</TabsContent>
@@ -299,116 +309,120 @@ export const HeatmapTabs = ({
 						</div>
 					</div>
 
-					<div className="p-4 bg-canvas rounded-2xl overflow-x-scroll -ml-6 -mr-20 max-w-min mb-6">
-						{/* date headers */}
-						<div className="flex flex-row">
-							<div className="w-16 shrink-0" />
-							{Array.from(heatMapDates.values()).map(heatMapDate => {
-								const date = new Date(
-									parseInt(heatMapDate.slice(5, 8)),
-									parseInt(heatMapDate.slice(3, 5)) - 1,
-									parseInt(heatMapDate.slice(0, 2)),
-								);
-								return (
-									<div className="w-12 mx-0.5 shrink-0" key={heatMapDate}>
-										<p className="text-nowrap text-center">
-											<span className="font-semibold">
-												{(() => {
-													const dayName = format(date, "EEE", { locale: dateFnsLocale });
-													return (
-														dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase()
-													);
-												})()}
-											</span>
-											<br />
-											<span className="text-[#BABABA]">
-												{(() => {
-													const month = format(date, "MMM", { locale: dateFnsLocale });
-													const day = format(date, "d");
-													const shortMonth =
-														month.charAt(0).toUpperCase() +
-														month.slice(1, getLocale() === "et" ? 4 : 3);
-													return `${shortMonth} ${day}`;
-												})()}
-											</span>
+					<div className="overflow-x-auto w-full mb-6">
+						<div className="p-4 bg-canvas rounded-2xl w-max mx-auto">
+							{/* date headers */}
+							<div className="flex flex-row">
+								<div className="w-16 shrink-0" />
+								{Array.from(heatMapDates.values()).map(heatMapDate => {
+									const date = new Date(
+										parseInt(heatMapDate.slice(5, 8)),
+										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(0, 2)),
+									);
+									return (
+										<div className="w-12 mx-0.5 shrink-0" key={heatMapDate}>
+											<p className="text-nowrap text-center">
+												<span className="font-semibold">
+													{(() => {
+														const dayName = format(date, "EEE", { locale: dateFnsLocale });
+														return (
+															dayName.charAt(0).toUpperCase() + dayName.slice(1, 3).toLowerCase()
+														);
+													})()}
+												</span>
+												<br />
+												<span className="text-[#BABABA]">
+													{(() => {
+														const month = format(date, "MMM", { locale: dateFnsLocale });
+														const day = format(date, "d");
+														const shortMonth =
+															month.charAt(0).toUpperCase() +
+															month.slice(1, getLocale() === "et" ? 4 : 3);
+														return `${shortMonth} ${day}`;
+													})()}
+												</span>
+											</p>
+										</div>
+									);
+								})}
+							</div>
+
+							{/* time rows */}
+							<div>
+								{Array.from(heatMapTimes).map((heatMapTime, index) => (
+									<div key={heatMapTime + index} className="flex flex-row">
+										<p className="text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl">
+											{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
 										</p>
-									</div>
-								);
-							})}
-						</div>
+										<div className="w-16 shrink-0" />
+										{Array.from(heatMapDates.values()).map(heatMapDate => {
+											const realSlot = `${heatMapTime}-${heatMapDate}`;
+											const slot = heatMapSlots.get(realSlot);
+											const count = slot?.count ?? 0;
+											const hasMaxVotes = count === event?.summary.users.length;
 
-						{/* time rows */}
-						<div>
-							{Array.from(heatMapTimes).map((heatMapTime, index) => (
-								<div key={heatMapTime + index} className="flex flex-row">
-									<p className="text-lg font-semibold absolute -mt-1 z-10 bg-canvas px-2 rounded-2xl">
-										{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)}
-									</p>
-									<div className="w-16 shrink-0" />
-									{Array.from(heatMapDates.values()).map(heatMapDate => {
-										const realSlot = `${heatMapTime}-${heatMapDate}`;
-										const slot = heatMapSlots.get(realSlot);
-										const count = slot?.count ?? 0;
-										const hasMaxVotes = count === event?.summary.users.length;
-
-										return (
-											<Popover
-												key={realSlot}
-												open={openSlot === realSlot}
-												onOpenChange={open => setOpenSlot(open ? realSlot : null)}
-											>
-												<PopoverTrigger asChild>
-													<button
-														type="button"
-														className="relative w-12 h-12 shrink-0 m-0.5"
-														onClick={() =>
-															setOpenSlot(prev => (prev === realSlot ? null : realSlot))
-														}
-													>
-														<div
-															className={cn(
-																"absolute inset-0 rounded-xl",
-																count === 0 ? "bg-paint" : "bg-primary",
-																hasMaxVotes && "border border-amber-300 shadow-sm shadow-amber-300",
+											return (
+												<Popover
+													key={realSlot}
+													open={openSlot === realSlot}
+													onOpenChange={open => setOpenSlot(open ? realSlot : null)}
+												>
+													<PopoverTrigger asChild>
+														<button
+															type="button"
+															className="relative w-12 h-12 shrink-0 m-0.5"
+															onClick={() =>
+																setOpenSlot(prev => (prev === realSlot ? null : realSlot))
+															}
+														>
+															<div
+																className={cn(
+																	"absolute inset-0 rounded-xl",
+																	count === 0 ? "bg-paint" : "bg-primary",
+																	hasMaxVotes &&
+																		"border border-amber-300 shadow-sm shadow-amber-300",
+																)}
+																style={{
+																	opacity:
+																		count > 0 ? count / (event?.summary.users.length || 1) : 1,
+																}}
+															/>
+														</button>
+													</PopoverTrigger>
+													<PopoverContent className="w-auto min-w-28 p-4">
+														<p className="text-lg font-semibold mb-1 text-center">
+															{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)},{" "}
+															{format(
+																new Date(
+																	parseInt(heatMapDate.slice(5, 8)),
+																	parseInt(heatMapDate.slice(3, 5)) - 1,
+																	parseInt(heatMapDate.slice(0, 2)),
+																),
+																"EEEE",
+																{ locale: dateFnsLocale },
 															)}
-															style={{
-																opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
-															}}
-														/>
-													</button>
-												</PopoverTrigger>
-												<PopoverContent className="w-auto min-w-28 p-4">
-													<p className="text-lg font-semibold mb-1 text-center">
-														{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)},{" "}
-														{format(
-															new Date(
-																parseInt(heatMapDate.slice(5, 8)),
-																parseInt(heatMapDate.slice(3, 5)) - 1,
-																parseInt(heatMapDate.slice(0, 2)),
-															),
-															"EEEE",
-															{ locale: dateFnsLocale },
+														</p>
+														<p className="flex-nowrap shrink-0 ml-2 font-number font-semibold text-center mb-4">
+															{slot?.users.length || 0} / {event?.summary.users.length}{" "}
+															{m.event_heatmap_info()}
+														</p>
+														{slot && slot.users.length > 0 && (
+															<div className="flex flex-col gap-1 text-center">
+																{slot.users.map(user => (
+																	<p key={user.id} className="text-sm">
+																		{user.name}
+																	</p>
+																))}
+															</div>
 														)}
-													</p>
-													<p className="flex-nowrap shrink-0 ml-2 font-number font-semibold text-center mb-4">
-														{slot?.users.length || 0} / {event?.summary.users.length}{" "}
-														{m.event_heatmap_info()}
-													</p>
-													{slot && slot.users.length > 0 && (
-														<div className="flex flex-col gap-1 text-center">
-															{slot.users.map(user => (
-																<p key={user.id} className="text-sm">
-																	{user.name}
-																</p>
-															))}
-														</div>
-													)}
-												</PopoverContent>
-											</Popover>
-										);
-									})}
-								</div>
-							))}
+													</PopoverContent>
+												</Popover>
+											);
+										})}
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</TabsContent>
