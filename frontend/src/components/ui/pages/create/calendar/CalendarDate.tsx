@@ -13,10 +13,12 @@ interface Props {
 
 export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
 	const isSelected = selected.some(_date => _date.getTime() === date.getTime());
+	const isDisabled = isBefore(date, subDays(new Date(), 1));
 
 	return (
 		<motion.button
 			type="button"
+			data-date={isDisabled ? undefined : date.toISOString()}
 			className={cn(
 				"relative w-full h-full m-auto rounded-lg overflow-hidden transition-colors duration-300",
 				isSelected && "text-content!",
