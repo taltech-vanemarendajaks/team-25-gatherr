@@ -10,7 +10,7 @@ export const buttonVariantColors = {
 
 export const buttonVariants = cva(
 	[
-		"inline-flex items-center justify-center",
+		"inline-flex items-center justify-center cursor-pointer",
 		"m-0 border-b-[6px] text-center font-medium tracking-wider font-sans whitespace-nowrap",
 		"transition-all duration-300 hover:-translate-y-[0.15rem]",
 		"active:translate-y-[0.2rem] active:duration-75",
