@@ -49,10 +49,14 @@ function RouteComponent() {
 		}
 	}, [me, event]);
 
+	if (!event) {
+		return <p>Not found</p>;
+	}
+
 	return (
 		<main className="max-w-md m-auto pt-5 px-4 sm:px-0">
 			{/* navbar */}
-			<div className="flex flex-row justify-between mb-12">
+			<div className="flex flex-row justify-between mb-12 mx-4">
 				<div>
 					{isLoading ? (
 						<Skeleton className="h-9 w-48 mb-2" />
