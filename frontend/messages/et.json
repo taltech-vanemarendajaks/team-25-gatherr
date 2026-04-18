@@ -47,5 +47,13 @@
     "event_enable_dragging": "Luba tõmbamine",
     "event_tab_yours": "Sinu saadavus",
     "event_tab_group": "Grupi saadavus",
-    "event_save": "Salvesta"
+    "event_save": "Salvesta",
+    "home_event_creator": "Looja",
+    "home_event_joined": "Liitunud",
+    "home_event_waiting": "Ootab vastuseid",
+    "home_event_responded": "{count} inimest vastas",
+    "home_event_update": "Muuda",
+    "home_event_delete": "Kustuta",
+    "home_event_deleted": "Üritus kustutatud",
+    "home_event_coming_soon": "Tulemas"
 }
