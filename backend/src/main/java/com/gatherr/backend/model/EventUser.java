@@ -39,6 +39,9 @@ public class EventUser {
     @Column(name = "not_available", columnDefinition = "jsonb", nullable = false)
     private List<String> notAvailable;
 
+    @Column(name = "timezone")
+    private String timezone;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;

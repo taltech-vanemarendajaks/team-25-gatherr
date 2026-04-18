@@ -229,3 +229,15 @@ databaseChangeLog:
                   defaultValueNumeric: 30
                   constraints:
                     nullable: false
+
+  # 6. ADD TIMEZONE TO EVENT_USER
+  - changeSet:
+      id: 006-add-timezone-to-event-user
+      author: gatherr
+      changes:
+        - addColumn:
+            tableName: event_user
+            columns:
+              - column:
+                  name: timezone
+                  type: VARCHAR(255)
