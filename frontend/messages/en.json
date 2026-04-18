@@ -55,5 +55,6 @@
   "home_event_update": "Update",
   "home_event_delete": "Delete",
   "home_event_deleted": "Event deleted",
-  "home_event_coming_soon": "Coming soon"
+  "home_event_coming_soon": "Coming soon",
+  "user_settings_sign_in_to_save": "Sign in to save your preferences"
 }

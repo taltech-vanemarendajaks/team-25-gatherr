@@ -1,5 +1,6 @@
 import { UserRound, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useLogin } from "../../hooks/mutation/useLogin";
 import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
 import { useGetMe } from "../../hooks/query/useGetMe";
@@ -43,7 +44,13 @@ export const UserButton = () => {
 				<div className="flex flex-col mb-4">
 					<p className="ml-1 mb-1 font-semibold">{m.user_settings_week_starts_on()}</p>
 					<ToggleSlider
-						onChange={index => updateUser({ startOnMonday: index === 0 })}
+						onChange={index => {
+							if (me) {
+								updateUser({ startOnMonday: index === 0 });
+							} else {
+								toast.error(m.user_settings_sign_in_to_save());
+							}
+						}}
 						options={[m.user_settings_monday(), m.user_settings_sunday()]}
 						selectedIndex={weekStartsOn}
 						setSelectedIndex={setWeekStartsOn}
