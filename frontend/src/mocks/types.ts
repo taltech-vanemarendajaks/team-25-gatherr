@@ -29,6 +29,7 @@ export interface Event {
 	timeIncrement: number;
 	timezone: string;
 	isDeleted: boolean;
+	respondedCount: number;
 	createdAt: string; // ISO 8601
 	updatedAt: string; // ISO 8601
 }
