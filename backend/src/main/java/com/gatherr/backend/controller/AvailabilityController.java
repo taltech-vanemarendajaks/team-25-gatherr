@@ -1,5 +1,6 @@
 package com.gatherr.backend.controller;
 
+import com.gatherr.backend.dto.EventSummaryDto;
 import com.gatherr.backend.dto.RespondDto;
 import com.gatherr.backend.service.AvailabilityService;
 import com.gatherr.backend.util.JwtUtils;
@@ -25,5 +26,10 @@ public class AvailabilityController {
         Long userId = JwtUtils.extractUserId(jwt);
         availabilityService.respond(userId, shortId, dto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{shortId}/summary")
+    public ResponseEntity<EventSummaryDto> summary(@PathVariable String shortId) {
+        return ResponseEntity.ok(availabilityService.getSummary(shortId));
     }
 }
