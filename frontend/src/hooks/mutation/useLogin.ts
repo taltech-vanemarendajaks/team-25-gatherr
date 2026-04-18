@@ -12,6 +12,7 @@ export const useLogin = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["/users/me"] });
+			queryClient.invalidateQueries({ queryKey: ["/events/mine"] });
 		},
 	});
 };
