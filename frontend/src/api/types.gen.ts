@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+	"/events/{shortId}/respond": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put: operations["respond"];
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	"/events": {
 		parameters: {
 			query?: never;
@@ -52,10 +68,31 @@ export interface paths {
 		patch: operations["patchCurrentUser"];
 		trace?: never;
 	};
+	"/events/{shortId}/summary": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["summary"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
+		RespondDto: {
+			available?: string[];
+			notAvailable?: string[];
+			timezone?: string;
+		};
 		CreateEventDto: {
 			name: string;
 			description?: string;
@@ -106,6 +143,32 @@ export interface components {
 			timeFormat24?: boolean;
 			language?: string;
 		};
+		EventSummaryDto: {
+			users?: components["schemas"]["EventUserDto"][];
+			slots?: components["schemas"]["SlotSummaryDto"][];
+		};
+		EventUserDto: {
+			user?: components["schemas"]["UserInfo"];
+			available?: string[];
+			notAvailable?: string[];
+		};
+		SlotSummaryDto: {
+			slot?: string;
+			/** Format: int32 */
+			count?: number;
+			users?: components["schemas"]["SlotUserDto"][];
+		};
+		SlotUserDto: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+		};
+		UserInfo: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+			profilePicture?: string;
+		};
 	};
 	responses: never;
 	parameters: never;
@@ -115,6 +178,30 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+	respond: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["RespondDto"];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+		};
+	};
 	createEvent: {
 		parameters: {
 			query?: never;
@@ -203,6 +290,28 @@ export interface operations {
 				};
 				content: {
 					"*/*": components["schemas"]["UserResponseDto"];
+				};
+			};
+		};
+	};
+	summary: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventSummaryDto"];
 				};
 			};
 		};
