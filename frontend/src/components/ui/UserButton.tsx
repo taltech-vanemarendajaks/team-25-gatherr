@@ -1,10 +1,13 @@
-import { UserRound } from "lucide-react";
+import { UserRound, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
+import { useLogin } from "../../hooks/mutation/useLogin";
 import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
 import { useGetMe } from "../../hooks/query/useGetMe";
 import { m } from "../../paraglide/messages";
 import { getLocale, setLocale } from "../../paraglide/runtime";
+import { GoogleIcon } from "../icons/GoogleIcon";
 import { GradientIcon } from "../icons/GradientIcon";
+import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
 	Select,
@@ -20,6 +23,7 @@ export const UserButton = () => {
 	const { data: me } = useGetMe();
 
 	const { mutate: updateUser } = useUpdateUser();
+	const { mutate: login } = useLogin();
 
 	const [weekStartsOn, setWeekStartsOn] = useState(
 		me?.startOnMonday === true || me?.startOnMonday === undefined ? 0 : 1,
@@ -27,12 +31,16 @@ export const UserButton = () => {
 
 	return (
 		<Popover>
-			<PopoverTrigger disabled={!me} className="disabled:opacity-80">
-				<GradientIcon icon={UserRound} className="size-12 cursor-pointer" />
+			<PopoverTrigger className="disabled:opacity-80">
+				{me ? (
+					<GradientIcon icon={UserRoundCheck} className="size-12 cursor-pointer" />
+				) : (
+					<GradientIcon icon={UserRound} className="size-12 cursor-pointer" />
+				)}
 			</PopoverTrigger>
 			<PopoverContent className="mr-3 mt-3 px-6" align="start">
 				<p className="text-2xl font-semibold mb-5">{m.user_settings_settings()}</p>
-				<div className="flex flex-col items-left mb-4">
+				<div className="flex flex-col mb-4">
 					<p className="ml-1 mb-1 font-semibold">{m.user_settings_week_starts_on()}</p>
 					<ToggleSlider
 						onChange={index => updateUser({ startOnMonday: index === 0 })}
@@ -41,7 +49,7 @@ export const UserButton = () => {
 						setSelectedIndex={setWeekStartsOn}
 					/>
 				</div>
-				<div className="flex flex-col items-left mb-4">
+				<div className="flex flex-col mb-4">
 					<p className="ml-1 mb-1 font-semibold">{m.user_settings_language()}</p>
 					<Select value={getLocale()} onValueChange={(value: "en" | "et") => setLocale(value)}>
 						<SelectTrigger>
@@ -55,6 +63,12 @@ export const UserButton = () => {
 						</SelectContent>
 					</Select>
 				</div>
+				{!me && (
+					<Button onClick={() => login()} className="mb-8 px-4 text-sm">
+						<GoogleIcon className="size-5.5 mr-2" />
+						{m.create_continue_with_google()}
+					</Button>
+				)}
 			</PopoverContent>
 		</Popover>
 	);
