@@ -89,6 +89,7 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 		times,
 		timeIncrement: increment,
 		timezone: creator.timezone,
+		respondedCount: faker.number.int({ min: 0, max: 5 }),
 		isDeleted: false,
 		createdAt: faker.date.past({ years: 0.5 }).toISOString(),
 		updatedAt: isoNow(),

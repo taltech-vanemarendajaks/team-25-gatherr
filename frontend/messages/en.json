@@ -47,5 +47,14 @@
   "event_enable_dragging": "Enable dragging",
   "event_tab_yours": "Your availability",
   "event_tab_group": "Group availability",
-  "event_save": "Save"
+  "event_save": "Save",
+  "home_event_creator": "Creator",
+  "home_event_joined": "Joined",
+  "home_event_waiting": "Waiting for responses",
+  "home_event_responded": "{count} people responded",
+  "home_event_update": "Update",
+  "home_event_delete": "Delete",
+  "home_event_deleted": "Event deleted",
+  "home_event_coming_soon": "Coming soon",
+  "user_settings_sign_in_to_save": "Sign in to save your preferences"
 }

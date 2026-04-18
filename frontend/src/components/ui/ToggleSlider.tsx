@@ -42,7 +42,7 @@ interface Props {
 
 export const ToggleSlider = ({ options, selectedIndex, setSelectedIndex, onChange }: Props) => {
 	return (
-		<div className="bg-canvas rounded-xl max-w-xl m-auto">
+		<div className="bg-canvas rounded-xl">
 			<div
 				className={cn(
 					"flex flex-row relative px-1 w-full flex-1 bg-canvas rounded-xl",
@@ -60,7 +60,7 @@ export const ToggleSlider = ({ options, selectedIndex, setSelectedIndex, onChang
 								onChange?.(index);
 							}}
 							className={cn(
-								"z-10 w-full my-auto text-center ring-offset-background rounded-xl mx-[0.2rem] font-normal px-1 py-2 opacity-20 inline-flex items-center justify-center whitespace-nowrap",
+								"z-10 w-full my-auto text-center ring-offset-background rounded-xl mx-[0.2rem] font-normal px-5 py-2 opacity-20 inline-flex items-center justify-center whitespace-nowrap",
 								"hover:opacity-100 data-[state=active]:text-foreground",
 								"disabled:pointer-events-none disabled:opacity-50",
 								"touch-manipulation",

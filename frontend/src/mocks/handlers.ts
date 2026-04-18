@@ -76,10 +76,12 @@ export const handlers = [
 	// ── GET /events/mine /:shortId ───────────────────────────────────
 	http.get(`${BASE}/events/mine`, () => {
 		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
-		const mine = EVENTS.filter(e => e.creator.id === ME.id && !e.isDeleted);
+		const myEventIds = new Set(
+			EVENT_USERS.filter(eu => eu.user.id === ME.id).map(eu => eu.event.id),
+		);
+		const mine = EVENTS.filter(e => myEventIds.has(e.id) && !e.isDeleted);
 		return HttpResponse.json(mine);
 	}),
-
 	// ── GET /events/:shortId/summary ──────────────────────
 	http.get(`${BASE}/events/:shortId/summary`, ({ params }) => {
 		const event = EVENTS.find(e => e.shortId === params.shortId && !e.isDeleted);
@@ -183,6 +185,7 @@ export const handlers = [
 			timeIncrement: body.timeIncrement ?? 30,
 			timezone: body.timezone ?? ME.timezone,
 			isDeleted: false,
+			respondedCount: 0,
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 		};
