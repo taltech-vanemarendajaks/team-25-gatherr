@@ -1,4 +1,4 @@
-package com.gatherr;
+package com.gatherr.backend;
 
 import com.gatherr.backend.model.Event;
 import com.gatherr.backend.model.EventUser;

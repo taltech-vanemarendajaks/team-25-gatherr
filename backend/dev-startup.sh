@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🌱 Starting Gatherr Backend..."
-./mvnw spring-boot:run &
+./mvnw spring-boot:run -q &
 
 echo "🔍 Waiting for API docs to be available..."
 until curl -s http://127.0.0.1:8080/api/v1/v3/api-docs > /dev/null; do
@@ -9,7 +9,7 @@ until curl -s http://127.0.0.1:8080/api/v1/v3/api-docs > /dev/null; do
 done
 
 echo "📝 API is UP! Generating frontend/schema.json..."
-./mvnw springdoc-openapi:generate -Dspringdoc.outputFileName=schema.json -Dspringdoc.outputDir=/frontend
+./mvnw springdoc-openapi:generate -q -Dspringdoc.outputFileName=schema.json -Dspringdoc.outputDir=/frontend
 
 if [ $? -eq 0 ]; then
     echo "✅ Success: frontend/schema.json has been updated"
