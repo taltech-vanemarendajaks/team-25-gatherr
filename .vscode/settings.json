@@ -12,5 +12,6 @@
 	},
 	"[javascriptreact]": {
 		"editor.defaultFormatter": "biomejs.biome"
-	}
+	},
+	"java.compile.nullAnalysis.mode": "automatic"
 }

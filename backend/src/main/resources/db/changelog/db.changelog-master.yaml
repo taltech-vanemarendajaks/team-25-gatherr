@@ -241,3 +241,53 @@ databaseChangeLog:
               - column:
                   name: timezone
                   type: VARCHAR(255)
+
+  # 7. USER GOOGLE TOKENS TABLE
+  - changeSet:
+      id: 007-create-user-google-tokens
+      author: gatherr
+      changes:
+        - createTable:
+            tableName: user_google_tokens
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: user_google_tokens_user_id_unique
+                    foreignKeyName: user_google_tokens_user_fk
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: access_token
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: refresh_token
+                  type: TEXT
+              - column:
+                  name: expires_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
