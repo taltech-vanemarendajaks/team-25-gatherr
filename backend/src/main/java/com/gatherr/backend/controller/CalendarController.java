@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -114,5 +115,17 @@ public class CalendarController {
         Long userId = JwtUtils.extractUserId(jwt);
         calendarService.revokeAccess(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    // CalendarController — add this
+    @GetMapping("/auth/google/calendar/url")
+    public ResponseEntity<Map<String, String>> getCalendarAuthUrl(@AuthenticationPrincipal Jwt jwt) {
+        try {
+            String url = calendarService.buildAuthorizationUrl();
+            return ResponseEntity.ok(Map.of("url", url));
+        } catch (Exception e) {
+            log.error("[CalendarController] Failed to get calendar auth URL", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
