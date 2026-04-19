@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as CalendarConnectRouteImport } from './routes/calendar-connect'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EShortIdRouteImport } from './routes/e/$shortId'
 
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarConnectRoute = CalendarConnectRouteImport.update({
+  id: '/calendar-connect',
+  path: '/calendar-connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +37,34 @@ const EShortIdRoute = EShortIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calendar-connect': typeof CalendarConnectRoute
   '/create': typeof CreateRoute
   '/e/$shortId': typeof EShortIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calendar-connect': typeof CalendarConnectRoute
   '/create': typeof CreateRoute
   '/e/$shortId': typeof EShortIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calendar-connect': typeof CalendarConnectRoute
   '/create': typeof CreateRoute
   '/e/$shortId': typeof EShortIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/e/$shortId'
+  fullPaths: '/' | '/calendar-connect' | '/create' | '/e/$shortId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/e/$shortId'
-  id: '__root__' | '/' | '/create' | '/e/$shortId'
+  to: '/' | '/calendar-connect' | '/create' | '/e/$shortId'
+  id: '__root__' | '/' | '/calendar-connect' | '/create' | '/e/$shortId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalendarConnectRoute: typeof CalendarConnectRoute
   CreateRoute: typeof CreateRoute
   EShortIdRoute: typeof EShortIdRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/create'
       fullPath: '/create'
       preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar-connect': {
+      id: '/calendar-connect'
+      path: '/calendar-connect'
+      fullPath: '/calendar-connect'
+      preLoaderRoute: typeof CalendarConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalendarConnectRoute: CalendarConnectRoute,
   CreateRoute: CreateRoute,
   EShortIdRoute: EShortIdRoute,
 }
