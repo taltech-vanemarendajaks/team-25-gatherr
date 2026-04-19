@@ -325,6 +325,7 @@ function Create() {
 					{m.create_event_button()}
 				</Button>
 			</div>
+			<div id="google-signin-btn" />
 
 			<Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
 				<DialogContent className="max-w-sm" showCloseButton={true}>

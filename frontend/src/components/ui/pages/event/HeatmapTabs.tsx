@@ -192,8 +192,8 @@ export const HeatmapTabs = ({
 								<div className="w-16 shrink-0 mb-6" />
 								{Array.from(heatMapDates.values()).map(heatMapDate => {
 									const date = new Date(
-										parseInt(heatMapDate.slice(5, 8)),
-										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(4, 8)),
+										parseInt(heatMapDate.slice(2, 4)) - 1,
 										parseInt(heatMapDate.slice(0, 2)),
 									);
 									return (
@@ -320,8 +320,8 @@ export const HeatmapTabs = ({
 								<div className="w-16 shrink-0" />
 								{Array.from(heatMapDates.values()).map(heatMapDate => {
 									const date = new Date(
-										parseInt(heatMapDate.slice(5, 8)),
-										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(4, 8)),
+										parseInt(heatMapDate.slice(2, 4)) - 1,
 										parseInt(heatMapDate.slice(0, 2)),
 									);
 									return (
@@ -399,8 +399,8 @@ export const HeatmapTabs = ({
 															{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)},{" "}
 															{format(
 																new Date(
-																	parseInt(heatMapDate.slice(5, 8)),
-																	parseInt(heatMapDate.slice(3, 5)) - 1,
+																	parseInt(heatMapDate.slice(4, 8)),
+																	parseInt(heatMapDate.slice(2, 4)) - 1,
 																	parseInt(heatMapDate.slice(0, 2)),
 																),
 																"EEEE",
