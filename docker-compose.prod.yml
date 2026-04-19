@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: gatherr-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+    restart: unless-stopped
+
+  backend:
+    image: ${DOCKERHUB_USERNAME}/gatherr-backend:latest
+    container_name: gatherr-backend
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gatherr.rule=Host(`api.gatherr.alber.ee`)"
+      - "traefik.http.routers.gatherr.entrypoints=websecure"
+      - "traefik.http.routers.gatherr.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gatherr.loadbalancer.server.port=8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  proxy:
+    external: true

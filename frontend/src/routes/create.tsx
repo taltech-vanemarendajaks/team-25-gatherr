@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
 import { format, setMinutes, startOfDay } from "date-fns";
 import { User } from "lucide-react";
@@ -25,6 +26,7 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { useCreateEvent } from "../hooks/mutation/useCreateEvent";
+import { useLogin } from "../hooks/mutation/useLogin";
 import { useGetMe } from "../hooks/query/useGetMe";
 import type { EventType } from "../mocks/types";
 import * as m from "../paraglide/messages";
@@ -68,12 +70,29 @@ function clearDraft() {
 function Create() {
 	const { name } = Route.useSearch();
 
-	const { mutate } = useCreateEvent();
+	const { mutate: createEvent } = useCreateEvent();
+	const { mutate: login } = useLogin();
 	const { data: user } = useGetMe();
 
-	// @todo: after login modal completes and user becomes defined,
-	// auto-trigger the create with creator (pendingCreate flag + useEffect)
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+	const [pendingCreate, setPendingCreate] = useState(false);
+
+	useEffect(() => {
+		if (user && pendingCreate) {
+			setPendingCreate(false);
+			setIsLoginModalOpen(false);
+			createEvent(
+				{
+					name,
+					type: eventType,
+					times: calculateTimes(),
+					timeIncrement,
+					timezone,
+				},
+				{ onSuccess: clearDraft },
+			);
+		}
+	}, [user, pendingCreate]);
 
 	const draft = loadDraft();
 
@@ -276,7 +295,7 @@ function Create() {
 					}
 				/>
 			</div>
-			<div className="flex justify-center mt-16">
+			<div className="flex justify-center mt-16 mb-12">
 				<Button
 					disabled={
 						!name.trim() ||
@@ -287,18 +306,17 @@ function Create() {
 					}
 					onClick={() => {
 						if (!user) {
-							// draft already persisted by useEffect
+							setPendingCreate(true);
 							setIsLoginModalOpen(true);
 							return;
 						}
-						mutate(
+						createEvent(
 							{
 								name,
 								type: eventType,
 								times: calculateTimes(),
 								timeIncrement,
 								timezone,
-								creator: user,
 							},
 							{ onSuccess: clearDraft },
 						);
@@ -308,14 +326,14 @@ function Create() {
 				</Button>
 			</div>
 
-			<Dialog open={isLoginModalOpen}>
-				<DialogContent className="max-w-sm" showCloseButton={false}>
+			<Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
+				<DialogContent className="max-w-sm" showCloseButton={true}>
 					<DialogHeader>
 						<User className="text-amber-500 mb-8 size-12" />
 						<DialogTitle className="font-medium text-2xl mb-8">
 							{m.create_sign_in_title()}
 						</DialogTitle>
-						<Button onClick={() => setIsLoginModalOpen(false)} className="mb-8 px-8">
+						<Button onClick={() => login()} className="mb-8 px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>

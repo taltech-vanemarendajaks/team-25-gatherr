@@ -61,7 +61,6 @@ export const Accordion = ({ title, body }: Props) => {
 						? {
 								height: "auto",
 								opacity: 1,
-								display: "block",
 								transition: {
 									height: {
 										duration: 0.4,
@@ -77,14 +76,11 @@ export const Accordion = ({ title, body }: Props) => {
 								opacity: 0,
 								transition: {
 									height: {
-										duration: 0.4,
+										duration: 0.6,
 									},
 									opacity: {
-										duration: 0.25,
+										duration: 0.4,
 									},
-								},
-								transitionEnd: {
-									display: "none",
 								},
 							}
 				}

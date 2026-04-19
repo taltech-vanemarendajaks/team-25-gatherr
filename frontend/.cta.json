@@ -5,11 +5,6 @@
   "packageManager": "npm",
   "includeExamples": true,
   "tailwind": true,
-  "addOnOptions": {
-    "drizzle": {
-      "database": "postgresql"
-    }
-  },
   "envVarValues": {},
   "git": false,
   "routerOnly": false,
@@ -20,7 +15,6 @@
     "nitro",
     "sentry",
     "compiler",
-    "drizzle",
     "form",
     "paraglide",
     "shadcn",

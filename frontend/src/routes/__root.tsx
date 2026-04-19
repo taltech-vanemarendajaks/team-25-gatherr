@@ -33,7 +33,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				name: "viewport",
-				content: "width=device-width, initial-scale=1",
+				content: "width=device-width, initial-scale=1, maximum-scale=1",
 			},
 			{
 				title: SITE_TITLE,
@@ -52,10 +52,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function useMswReady(): boolean {
 	"use no memo"; // opt out of React Compiler — async .then() chains in useEffect are not safe to memoize
 	// In production or SSR: always ready
-	const [ready, setReady] = useState(!import.meta.env.DEV || typeof window === "undefined");
+	const [ready, setReady] = useState(
+		(!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) || typeof window === "undefined",
+	);
 
 	useEffect(() => {
-		if (!import.meta.env.DEV) return;
+		if (!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) return;
 		import("../mocks/index").then(({ enableMocking }) =>
 			enableMocking().then(() => setReady(true)),
 		);

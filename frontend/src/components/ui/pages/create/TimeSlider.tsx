@@ -60,7 +60,7 @@ export const TimeSlider = ({
 	useFullTimeRange = true,
 }: Props) => {
 	const minHour = useFullTimeRange ? 0 : 8;
-	const totalHours = useFullTimeRange ? 24 : 13;
+	const totalHours = useFullTimeRange ? 23 : 13;
 
 	const trackRef = useRef<HTMLDivElement>(null);
 
@@ -130,7 +130,7 @@ export const TimeSlider = ({
 
 	return (
 		<div className="flex flex-col items-center mb-12">
-			<div className="flex-row flex justify-center font-medium font-number mb-7 text-2xl">
+			<div className="flex-row flex justify-center font-semibold font-number mb-10 text-2xl">
 				<p>{format(setHours(startOfDay(new Date()), startTime), "HH:mm")}</p>
 				<p>-</p>
 				<p>{format(setHours(startOfDay(new Date()), endTime), "HH:mm")}</p>
