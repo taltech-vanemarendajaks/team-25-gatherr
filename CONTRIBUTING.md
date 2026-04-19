@@ -93,6 +93,29 @@ The workflow is designed to be hands-off.
 
 Frontend developers can import generated types directly from the `components` namespace.
 
+### 4. Seeding the database with mock data
+
+The DataSeeder automatically populates empty databases when the dev profile is active (e.g., via `docker compose up -d`). It is idempotent and safely skips if data already exists.
+
+**What gets seeded**
+
+| Entity | Count | Notes |
+|---|---|---|
+| `User` | 5 | One is the "me" user (`dev@gatherr.com`), matching the dev bypass login |
+| `Event` | 6 | Mix of near-future and far-future `SPECIFIC_DATES` events |
+| `EventUser` | 30 (5 users × 6 events) | "Me" has no slots marked; others have 30–70 % of slots marked available |
+
+**Running it**
+
+Seeding happens automatically on every `docker compose up -d` when `SPRING_PROFILES_ACTIVE=dev` is set in your `.env`.
+If you want to re-seed from scratch, clear the relevant tables and restart:
+
+```sql
+TRUNCATE event_user, events, users RESTART IDENTITY CASCADE;
+```
+
+Then `docker compose restart backend`.
+
 ## <a name="commit"></a> Commit Message Guidelines
 
 ### Commit Message Format
