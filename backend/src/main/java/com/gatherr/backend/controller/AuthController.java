@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.jwt.JwtException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-
 public class AuthController {
     private final AuthService authService;
 
