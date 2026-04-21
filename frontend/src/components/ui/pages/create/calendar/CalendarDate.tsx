@@ -3,6 +3,7 @@ import { format, isBefore, subDays } from "date-fns";
 import { motion } from "motion/react";
 import { cn } from "../../../../../lib/utils";
 import { getTextColorForCalendarDate } from "./utils";
+import toast from "react-hot-toast";
 
 interface Props {
 	date: Date;
@@ -26,6 +27,9 @@ export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
 			)}
 			disabled={isBefore(date, subDays(new Date(), 1))}
 			onClick={() => {
+				if (isDisabled) {
+					toast.error(m.create_event_calendar_date_disabled());
+				}
 				if (isSelected) {
 					setSelected(prev => prev.filter(_date => _date.getTime() !== date.getTime()));
 				} else {
