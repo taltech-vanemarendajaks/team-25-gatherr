@@ -56,5 +56,6 @@
     "home_event_delete": "Kustuta",
     "home_event_deleted": "Üritus kustutatud",
     "home_event_coming_soon": "Tulemas",
-    "user_settings_sign_in_to_save": "Logi sisse seadete salvestamiseks"
+    "user_settings_sign_in_to_save": "Logi sisse seadete salvestamiseks",
+    "create_time_increment_hint": "nt. iga 15, 30 või 60 min"
 }

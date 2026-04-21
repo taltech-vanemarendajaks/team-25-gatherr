@@ -214,7 +214,12 @@ function Create() {
 						<div className="px-6 mb-2">
 							{/* start of time increment */}
 							<div className="flex flex-row items-center mb-4">
+								<div className="flex flex-col">
 								<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
+								<p className="text-sm text-info max-w-xs">
+										{m.create_time_increment_hint()}
+								</p>
+								</div>
 								<Select
 									value={timeIncrement.toString()}
 									onValueChange={value => setTimeIncrement(parseInt(value))}
@@ -231,7 +236,8 @@ function Create() {
 									</SelectContent>
 								</Select>
 							</div>
-
+					
+							
 							{/* start of time range button */}
 							<div className="flex flex-col justify-start mb-4">
 								{eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES" ? (
