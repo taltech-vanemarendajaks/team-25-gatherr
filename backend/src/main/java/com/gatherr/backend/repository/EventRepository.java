@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
         boolean existsByShortId(String shortId);
-        Optional<Event> findByShortIdAndDeletedFalse(String shortId);
+        Optional<Event> findByShortIdAndIsDeletedFalse(String shortId);
     }
 
