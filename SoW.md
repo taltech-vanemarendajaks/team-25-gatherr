@@ -631,6 +631,7 @@ CREATE TABLE "event_user" (
     "user_id"       BIGINT NOT NULL,
     "available"     JSONB NOT NULL,
     "not_available" JSONB NOT NULL,
+    "timezone"      VARCHAR(255) NULL,
     "created_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at"    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "event_user_unique" UNIQUE ("event_id", "user_id"),
@@ -872,6 +873,18 @@ databaseChangeLog:
                   defaultValueNumeric: 30
                   constraints:
                     nullable: false
+
+  # 6. ADD TIMEZONE TO EVENT_USER
+  - changeSet:
+      id: 006-add-timezone-to-event-user
+      author: gatherr
+      changes:
+        - addColumn:
+            tableName: event_user
+            columns:
+              - column:
+                  name: timezone
+                  type: VARCHAR(255)
 ```
 
 ---
@@ -913,3 +926,9 @@ databaseChangeLog:
 ### 23.03.2026
 
 #### Added time_increment to schema
+
+---
+
+### 22.04.2026
+
+#### Added timezone to event_user table
