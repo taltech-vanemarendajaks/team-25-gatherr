@@ -1,0 +1,29 @@
+info:
+  name: Google Login
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/auth/google"
+  body:
+    type: json
+    data: |-
+      {
+        "idToken": "your-google-token",
+        "timezone": "Europe/Tallinn"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Exchanges a Google ID token for an app JWT.
+
+  In dev profile (`app.auth.skip-google-verification=true`), the ID token is not validated against Google. The backend signs in the configured dev user (`app.auth.dev-user-email`). Any non-empty string in `idToken` works locally.
+
+  Copy `token` from the response into the `AUTH_TOKEN` environment variable to use the authenticated requests below.

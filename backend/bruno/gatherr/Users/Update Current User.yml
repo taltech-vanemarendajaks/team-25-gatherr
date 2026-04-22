@@ -1,0 +1,28 @@
+info:
+  name: Update Current User
+  type: http
+  seq: 2
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/users/me"
+  body:
+    type: json
+    data: |-
+      {
+        "timezone": "Europe/Tallinn",
+        "startOnMonday": false,
+        "timeFormat24": true,
+        "language": "et"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: All fields are nullable - send only the keys you want to update.

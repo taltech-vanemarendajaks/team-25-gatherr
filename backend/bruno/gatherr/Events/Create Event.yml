@@ -1,0 +1,40 @@
+info:
+  name: Create Event
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/events"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Team sync",
+        "description": "Kickoff meeting for the spring planning round.",
+        "type": "SPECIFIC_DATES_AND_TIMES",
+        "times": [
+          "0900-05052026",
+          "1000-05052026",
+          "0900-06052026"
+        ],
+        "timezone": "Europe/Tallinn"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  The response includes `shortId` — copy it into the path param for Respond and Summary requests.
+
+  Slot formats by type:
+    SPECIFIC_DATES_AND_TIMES → "HHmm-DDMMyyyy"  e.g. "0900-05052026"
+    SPECIFIC_DATES           → "DDMMyyyy"        e.g. "05052026"
+    WEEKDAYS_AND_TIMES       → "HHmm-DDD"        e.g. "0900-MON"
+    WEEKDAYS                 → "DDD"             e.g. "MON"

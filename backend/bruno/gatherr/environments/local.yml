@@ -1,0 +1,6 @@
+name: local
+variables:
+  - name: BASE_URL
+    value: http://localhost:8080/api/v1
+  - secret: true
+    name: token

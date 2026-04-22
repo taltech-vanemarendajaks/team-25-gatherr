@@ -1,0 +1,41 @@
+info:
+  name: Respond to Event
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{BASE_URL}}/events/:shortId/respond"
+  params:
+    - name: shortId
+      value: ""
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "available": [
+          "0900-05052026",
+          "0900-06052026"
+        ],
+        "notAvailable": [
+          "2025-06-01T09:00:00Z"
+        ],
+        "timezone": "Europe/Tallinn"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Set the `shortId` path param to the event's short ID (returned by Create Event).
+
+  Use the exact slot strings from the event's `times` array — same format as Create Event.
+  Both `available` and `notAvailable` are optional; omitting one is treated as an empty list.
+  Calling this endpoint again for the same user overwrites the previous response.
