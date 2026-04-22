@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
+import { CopyLinkButton } from "../../components/ui/CopyLinkButton";
 import { HeatmapTabs } from "../../components/ui/pages/event/HeatmapTabs";
 import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
@@ -63,9 +64,8 @@ function RouteComponent() {
 					) : (
 						<p className="text-3xl mb-2 font-viking">{event?.details.name}</p>
 					)}
-					<Button size="xs" onClick={() => toast.success("Link copied!")}>
-						<LinkIcon className="size-5" />
-					</Button>
+
+					<CopyLinkButton shortId={shortId} />
 				</div>
 				<div>
 					<UserButton />

@@ -58,5 +58,6 @@
   "home_event_deleted": "Event deleted",
   "home_event_coming_soon": "Coming soon",
   "user_settings_sign_in_to_save": "Sign in to save your preferences",
-  "create_event_calendar_date_disabled": "You cannot select a date in the past"
+  "create_event_calendar_date_disabled": "You cannot select a date in the past",
+  "copy_link_copied": "Link copied!"
 }
