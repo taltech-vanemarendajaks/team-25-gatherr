@@ -16,6 +16,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.web.client.RestClientException;
 import java.util.Map;
 
 @Service
@@ -86,18 +88,22 @@ public class AuthService {
         return new AuthResponseDto(appToken, user.getId(), user.getName(), user.getEmail(), user.getProfilePicture());
     }
 
-    @SuppressWarnings("unchecked")
     private AuthResponseDto loginWithAccessToken(String accessToken, String timezone) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(
-                "https://www.googleapis.com/oauth2/v3/userinfo",
-                HttpMethod.GET,
-                entity,
-                Map.class
-        );
+        ResponseEntity<Map<String, Object>> response;
+        try {
+            response = restTemplate.exchange(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+        } catch (RestClientException e) {
+            throw new BadJwtException("Failed to verify Google access token: " + e.getMessage());
+        }
 
         Map<String, Object> userInfo = response.getBody();
         if (userInfo == null) {
