@@ -163,9 +163,20 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 					style={{ touchAction: "none" }}
 					onPointerDown={e => {
 						const el = document.elementFromPoint(e.clientX, e.clientY);
-						if (!el?.closest("[data-date]")) return;
+						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");
+						if (!dateStr) return;
 						isDragging.current = true;
 						visitedDates.current.clear();
+						visitedDates.current.add(dateStr);
+						const date = new Date(dateStr);
+						dragMode.current = selected.some(d => d.toISOString() === dateStr) ? "remove" : "add";
+						setSelected(prev => {
+							const isAlreadySelected = prev.some(d => d.getTime() === date.getTime());
+							if (dragMode.current === "add" && !isAlreadySelected) return [...prev, date];
+							if (dragMode.current === "remove" && isAlreadySelected)
+								return prev.filter(d => d.getTime() !== date.getTime());
+							return prev;
+						});
 						(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 					}}
 					onPointerMove={e => {
@@ -173,9 +184,6 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 						const el = document.elementFromPoint(e.clientX, e.clientY);
 						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");
 						if (!dateStr || visitedDates.current.has(dateStr)) return;
-						if (visitedDates.current.size === 0) {
-							dragMode.current = selected.some(d => d.toISOString() === dateStr) ? "remove" : "add";
-						}
 						visitedDates.current.add(dateStr);
 						const date = new Date(dateStr);
 						setSelected(prev => {
