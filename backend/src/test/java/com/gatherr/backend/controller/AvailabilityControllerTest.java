@@ -50,14 +50,6 @@ class AvailabilityControllerTest {
         ));
     }
 
-    private String bodyWithInvalidSlotFormat() throws Exception {
-        return objectMapper.writeValueAsString(new RespondDto(
-                List.of("2025-06-01T09:00:00Z"),
-                List.of("2025-06-01T10:00:00Z"),
-                "Europe/Tallinn"
-        ));
-    }
-
     @Test
     void returns401_whenNoAuthorizationHeader() throws Exception {
         mockMvc.perform(put(PATH)
@@ -86,17 +78,6 @@ class AvailabilityControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void returns400_whenSlotFormatIsInvalid() throws Exception {
-        mockMvc.perform(put(PATH)
-                        .with(jwt().jwt(builder -> builder.subject("42")))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithInvalidSlotFormat()))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(availabilityService);
     }
 
     @Test

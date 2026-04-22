@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -121,8 +122,12 @@ public class AvailabilityService {
     }
 
     private static String normalizeSlot(String slot, ZoneId from, ZoneId to) {
-        LocalDateTime local = LocalDateTime.parse(slot, SLOT_FORMAT);
-        ZonedDateTime converted = local.atZone(from).withZoneSameInstant(to);
-        return converted.format(SLOT_FORMAT);
+        try {
+            LocalDateTime local = LocalDateTime.parse(slot, SLOT_FORMAT);
+            ZonedDateTime converted = local.atZone(from).withZoneSameInstant(to);
+            return converted.format(SLOT_FORMAT);
+        } catch (DateTimeParseException e) {
+            return slot;
+        }
     }
 }

@@ -59,8 +59,8 @@ class AvailabilityServiceTest {
         user.setId(USER_ID);
 
         dto = new RespondDto(
-                List.of("2025-06-01T09:00"),
-                List.of("2025-06-01T10:00"),
+                List.of("0900-01062025"),
+                List.of("1000-01062025"),
                 "Europe/Tallinn"
         );
     }
@@ -354,5 +354,31 @@ class AvailabilityServiceTest {
 
         assertThat(summary.slots().get(0).count()).isZero();
         assertThat(summary.slots().get(0).users()).isEmpty();
+    }
+
+    @Test
+    void getSummary_passesDateSlotsThroughUnchanged() {
+        event.setTimezone("Europe/Tallinn");
+        event.setTimes(List.of("31032026"));
+
+        User u = new User();
+        u.setId(7L);
+        u.setName("Date Only User");
+
+        EventUser eu = new EventUser();
+        eu.setUser(u);
+        eu.setTimezone("Europe/Amsterdam");
+        eu.setAvailable(List.of("31032026"));
+        eu.setNotAvailable(Collections.emptyList());
+
+        when(eventRepository.findByShortId(SHORT_ID)).thenReturn(Optional.of(event));
+        when(eventUserRepository.findByEventShortId(SHORT_ID)).thenReturn(List.of(eu));
+
+        EventSummaryDto summary = availabilityService.getSummary(SHORT_ID);
+
+        assertThat(summary.slots()).hasSize(1);
+        assertThat(summary.slots().get(0).slot()).isEqualTo("31032026");
+        assertThat(summary.slots().get(0).count()).isEqualTo(1);
+        assertThat(summary.slots().get(0).users()).extracting("id").containsExactly(7L);
     }
 }
