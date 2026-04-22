@@ -4,6 +4,7 @@
   "create_pick_time_range_text": "Press and drag to select",
   "create_advanced": "Advanced",
   "create_time_increment_label": "Time increment:",
+  "create_time_increment_description": "Controls the spacing between selectable time slots",
   "create_remove_time_ranges_hint": "If you wish to only have dates press this",
   "create_remove_time_ranges": "Remove time ranges",
   "create_add_time_ranges_hint": "If you wish to also have times press this",

@@ -4,6 +4,7 @@
     "create_pick_time_range_text": "Vajuta ja lohista valimiseks",
     "create_advanced": "Täpsemalt",
     "create_time_increment_label": "Ajasamm:",
+    "create_time_increment_description": "Määrab valitavate ajavahemike vahelise sammu",
     "create_remove_time_ranges_hint": "Kui soovid ainult kuupäevi, vajuta seda",
     "create_remove_time_ranges": "Eemalda kellajad",
     "create_add_time_ranges_hint": "Kui soovid lisada kellajad, vajuta seda",

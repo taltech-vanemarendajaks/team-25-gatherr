@@ -213,23 +213,26 @@ function Create() {
 					body={
 						<div className="px-6 mb-2">
 							{/* start of time increment */}
-							<div className="flex flex-row items-center mb-4">
-								<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
-								<Select
-									value={timeIncrement.toString()}
-									onValueChange={value => setTimeIncrement(parseInt(value))}
-								>
-									<SelectTrigger>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											<SelectItem value="15">15 min</SelectItem>
-											<SelectItem value="30">30 min</SelectItem>
-											<SelectItem value="60">60 min</SelectItem>
-										</SelectGroup>
-									</SelectContent>
-								</Select>
+							<div className="mb-4">
+								<div className="flex flex-row items-center mb-1">
+									<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
+									<Select
+										value={timeIncrement.toString()}
+										onValueChange={value => setTimeIncrement(parseInt(value))}
+									>
+										<SelectTrigger>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												<SelectItem value="15">15 min</SelectItem>
+												<SelectItem value="30">30 min</SelectItem>
+												<SelectItem value="60">60 min</SelectItem>
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								</div>
+								<p className="text-sm text-info">{m.create_time_increment_description()}</p>
 							</div>
 
 							<div>
