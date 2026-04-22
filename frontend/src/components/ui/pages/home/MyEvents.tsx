@@ -4,8 +4,10 @@ import { useDeleteEvent } from "../../../../hooks/mutation/useDeleteEvent";
 import { useGetMe } from "../../../../hooks/query/useGetMe";
 import { useGetMyEvents } from "../../../../hooks/query/useGetMyEvents";
 import { cn } from "../../../../lib/utils";
+import { shortId } from "../../../../mocks/data";
 import { m } from "../../../../paraglide/messages";
 import { Button } from "../../button";
+import { CopyLinkButton } from "../../CopyLinkButton";
 import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
 
 export const MyEvents = () => {
@@ -65,13 +67,7 @@ export const MyEvents = () => {
 												</button>
 											</PopoverContent>
 										</Popover>
-										<Button
-											size="xs"
-											className="px-2 py-1"
-											onClick={() => toast.success("Link copied!")}
-										>
-											<LinkIcon className="size-4" />
-										</Button>
+										<CopyLinkButton shortId={event.shortId} className="px-2 py-1" />
 									</div>
 								</div>
 							</div>

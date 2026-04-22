@@ -1,7 +1,9 @@
 import { format, isBefore, subDays } from "date-fns";
 
 import { motion } from "motion/react";
+import toast from "react-hot-toast";
 import { cn } from "../../../../../lib/utils";
+import * as m from "../../../../../paraglide/messages";
 import { getTextColorForCalendarDate } from "./utils";
 
 interface Props {
@@ -10,7 +12,6 @@ interface Props {
 	selected: Date[];
 	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
-
 export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
 	const isSelected = selected.some(_date => _date.getTime() === date.getTime());
 	const isDisabled = isBefore(date, subDays(new Date(), 1));
@@ -18,18 +19,20 @@ export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
 	return (
 		<motion.button
 			type="button"
+			aria-disabled={isDisabled}
 			data-date={isDisabled ? undefined : date.toISOString()}
 			className={cn(
 				"relative w-full h-full m-auto rounded-lg overflow-hidden transition-colors duration-300",
 				isSelected && "text-content!",
 				getTextColorForCalendarDate({ date, month }),
+				isDisabled && "opacity-50 cursor-not-allowed",
 			)}
-			disabled={isBefore(date, subDays(new Date(), 1))}
 			onClick={() => {
-				if (isSelected) {
-					setSelected(prev => prev.filter(_date => _date.getTime() !== date.getTime()));
-				} else {
-					setSelected(prev => [...prev, date]);
+				if (isDisabled) {
+					toast.error(m.create_event_calendar_date_disabled(), {
+						id: "create_event_calendar_date_disabled",
+					});
+					return;
 				}
 			}}
 		>

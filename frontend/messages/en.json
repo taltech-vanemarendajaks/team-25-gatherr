@@ -4,6 +4,7 @@
   "create_pick_time_range_text": "Press and drag to select",
   "create_advanced": "Advanced",
   "create_time_increment_label": "Time increment:",
+  "create_time_increment_description": "Controls the spacing between selectable time slots",
   "create_remove_time_ranges_hint": "If you wish to only have dates press this",
   "create_remove_time_ranges": "Remove time ranges",
   "create_add_time_ranges_hint": "If you wish to also have times press this",
@@ -14,10 +15,11 @@
   "create_google_calendar_hint_1": "This also allows you to get",
   "create_google_calendar_hint_2": "your google calendar events",
   "create_timezone": "Timezone",
+  "development": "This functionality is in development",
   "choose_event_type_dates_and_times": "Dates and times",
   "choose_event_type_weekdays": "Weekdays",
   "choose_event_type_dates_title": "What dates might work?",
-  "choose_event_type_dates_text": "Press to select",
+  "choose_event_type_dates_text": "Press or drag to select days",
   "choose_event_type_days_title": "What days might work?",
   "choose_event_type_days_text": "Press to select",
   "user_settings_language": "Language",
@@ -56,5 +58,7 @@
   "home_event_delete": "Delete",
   "home_event_deleted": "Event deleted",
   "home_event_coming_soon": "Coming soon",
-  "user_settings_sign_in_to_save": "Sign in to save your preferences"
+  "user_settings_sign_in_to_save": "Sign in to save your preferences",
+  "create_event_calendar_date_disabled": "You cannot select a date in the past",
+  "copy_link_copied": "Link copied!"
 }

@@ -170,9 +170,14 @@ export const HeatmapTabs = ({
 							onPointerDown={e => {
 								if (!canDrag) return;
 								const el = document.elementFromPoint(e.clientX, e.clientY);
-								if (!el?.closest("[data-slot]")) return;
+								const slot = el?.closest("[data-slot]")?.getAttribute("data-slot");
+								if (!slot) return;
 								isDragging.current = true;
 								visitedSlots.current.clear();
+								visitedSlots.current.add(slot);
+								setSelectedSlots(prev =>
+									prev.includes(slot) ? prev.filter(s => s !== slot) : [...prev, slot],
+								);
 								(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 							}}
 							onPointerMove={e => {
@@ -272,13 +277,6 @@ export const HeatmapTabs = ({
 													data-slot={realSlot}
 													className="relative w-12 h-12 shrink-0 m-0.5 overflow-hidden rounded-xl"
 													disabled={!me}
-													onClick={() =>
-														setSelectedSlots(prev =>
-															prev.includes(realSlot)
-																? prev.filter(s => s !== realSlot)
-																: [...prev, realSlot],
-														)
-													}
 												>
 													<div className="absolute inset-0 rounded-xl bg-paint" />
 													<motion.span
