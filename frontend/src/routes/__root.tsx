@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
@@ -5,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { env } from "../env";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
 import { SITE_TITLE } from "../lib/site";
@@ -76,7 +78,9 @@ function RootDocument({ children }: { children: ReactNode }) {
 			</head>
 			<body className="font-main bg-surface text-content touch-manipulation">
 				<TanStackQueryProvider>
-					{mswReady ? children : null}
+					<GoogleOAuthProvider clientId={env.VITE_GOOGLE_CLIENT_ID ?? ""}>
+						{mswReady ? children : null}
+					</GoogleOAuthProvider>
 					<TanStackDevtools
 						config={{ position: "bottom-right" }}
 						plugins={[

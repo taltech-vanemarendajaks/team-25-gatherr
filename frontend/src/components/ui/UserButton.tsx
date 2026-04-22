@@ -1,7 +1,10 @@
+import { useGoogleLogin } from "@react-oauth/google";
 import { UserRound, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { env } from "../../env";
 import { useLogin } from "../../hooks/mutation/useLogin";
+import { useLogout } from "../../hooks/mutation/useLogout";
 import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
 import { useGetMe } from "../../hooks/query/useGetMe";
 import { m } from "../../paraglide/messages";
@@ -25,6 +28,11 @@ export const UserButton = () => {
 
 	const { mutate: updateUser } = useUpdateUser();
 	const { mutate: login } = useLogin();
+	const logout = useLogout();
+	const googleLogin = useGoogleLogin({
+		onSuccess: ({ access_token }) => login(access_token),
+		onError: () => toast.error("Google sign-in failed"),
+	});
 
 	const [weekStartsOn, setWeekStartsOn] = useState(
 		me?.startOnMonday === true || me?.startOnMonday === undefined ? 0 : 1,
@@ -70,8 +78,16 @@ export const UserButton = () => {
 						</SelectContent>
 					</Select>
 				</div>
+				{me && (
+					<Button variant="dark" onClick={logout} className="mb-8 px-4 text-sm w-full">
+						Sign out
+					</Button>
+				)}
 				{!me && (
-					<Button onClick={() => login(undefined)} className="mb-8 px-4 text-sm">
+					<Button
+						onClick={() => (env.VITE_GOOGLE_CLIENT_ID ? googleLogin() : login(undefined))}
+						className="mb-8 px-4 text-sm"
+					>
 						<GoogleIcon className="size-5.5 mr-2" />
 						{m.create_continue_with_google()}
 					</Button>
