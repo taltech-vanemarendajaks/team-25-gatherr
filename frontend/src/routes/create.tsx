@@ -232,46 +232,6 @@ function Create() {
 								</Select>
 							</div>
 
-							{/* start of time range button */}
-							<div className="flex flex-col justify-start mb-4">
-								{eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES" ? (
-									<>
-										<p className="text-info text-sm mb-2">{m.create_remove_time_ranges_hint()}</p>
-										<Button
-											className="self-start"
-											onClick={() => {
-												if (eventType === "SPECIFIC_DATES_AND_TIMES") {
-													setEventType("SPECIFIC_DATES");
-												} else if (eventType === "WEEKDAYS_AND_TIMES") {
-													setEventType("WEEKDAYS");
-												}
-											}}
-											variant="red"
-											size="xs"
-										>
-											{m.create_remove_time_ranges()}
-										</Button>
-									</>
-								) : (
-									<>
-										<p className="text-info text-sm mb-2">{m.create_add_time_ranges_hint()}</p>
-										<Button
-											onClick={() => {
-												if (eventType === "SPECIFIC_DATES") {
-													setEventType("SPECIFIC_DATES_AND_TIMES");
-												} else if (eventType === "WEEKDAYS") {
-													setEventType("WEEKDAYS_AND_TIMES");
-												}
-											}}
-											variant="red"
-											size="xs"
-										>
-											{m.create_add_time_ranges()}
-										</Button>
-									</>
-								)}
-							</div>
-
 							<div>
 								<p className="mb-2 text-lg font-semibold">{m.create_timezone()}</p>
 								<Select value={timezone} onValueChange={value => setTimezone(value)}>

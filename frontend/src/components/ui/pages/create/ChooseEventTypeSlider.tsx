@@ -1,5 +1,6 @@
 import { motion, type Variants } from "motion/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { cn } from "../../../../lib/utils";
 import type { EventType } from "../../../../mocks/types";
 import * as m from "../../../../paraglide/messages";
@@ -57,24 +58,24 @@ export const ChooseEventTypeSlider = ({
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	return (
 		<Tabs
-			defaultValue="dates-and-times"
+			value={selectedIndex === 0 ? "dates-and-times" : "days-of-the-week"}
 			className={cn()}
 			onValueChange={value => {
-				if (value === "dates-and-times") {
-					setSelectedIndex(0);
-					setEventType("SPECIFIC_DATES_AND_TIMES");
-					setSelected([]);
-				} else {
-					setSelectedIndex(1);
-					setEventType("WEEKDAYS_AND_TIMES");
-					setSelectedDays([]);
+				if (value === "days-of-the-week") {
+					toast.error(m.development(), { id: "days-of-week-disabled" });
+					return;
 				}
+				setSelectedIndex(0);
+				setEventType("SPECIFIC_DATES_AND_TIMES");
+				setSelected([]);
 			}}
 		>
 			<div className="bg-canvas p-2 rounded-xl max-w-xl m-auto">
 				<TabsList>
 					<TabsTrigger value="dates-and-times">{m.choose_event_type_dates_and_times()}</TabsTrigger>
-					<TabsTrigger value="days-of-the-week">{m.choose_event_type_weekdays()}</TabsTrigger>
+					<TabsTrigger value="days-of-the-week" className="opacity-50 cursor-not-allowed">
+						{m.choose_event_type_weekdays()}
+					</TabsTrigger>
 					<TwoElementMovingBox selectedIndex={selectedIndex} />
 				</TabsList>
 			</div>
