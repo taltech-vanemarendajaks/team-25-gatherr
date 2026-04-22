@@ -68,19 +68,26 @@ export const HeatmapTabs = ({
 	const isDragging = useRef(false);
 	const visitedSlots = useRef(new Set<string>());
 
-	const heatMapTimes = new Set<string>();
-	const heatMapDates = new Set<string>();
+	const uniqueTimes = new Set<string>();
+	const uniqueDates = new Set<string>();
 	const heatMapSlots = new Map<string, SummarySlot>();
 
 	for (const time of event?.details.times ?? []) {
 		const [_time, date] = time.split("-");
-		heatMapTimes.add(_time);
-		heatMapDates.add(date);
+		uniqueTimes.add(_time);
+		uniqueDates.add(date);
 	}
 
 	for (const slot of event?.summary.slots ?? []) {
 		heatMapSlots.set(slot.slot, slot);
 	}
+
+	const heatMapTimes = Array.from(uniqueTimes).sort();
+	const heatMapDates = Array.from(uniqueDates).sort((a, b) => {
+		const sortableA = a.slice(4, 8) + a.slice(2, 4) + a.slice(0, 2);
+		const sortableB = b.slice(4, 8) + b.slice(2, 4) + b.slice(0, 2);
+		return sortableA.localeCompare(sortableB);
+	});
 
 	const toggleRow = (time: string) => {
 		const rowSlots = Array.from(heatMapDates).map(date => `${time}-${date}`);
@@ -197,8 +204,8 @@ export const HeatmapTabs = ({
 								<div className="w-16 shrink-0 mb-6" />
 								{Array.from(heatMapDates.values()).map(heatMapDate => {
 									const date = new Date(
-										parseInt(heatMapDate.slice(5, 8)),
-										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(4, 8)),
+										parseInt(heatMapDate.slice(2, 4)) - 1,
 										parseInt(heatMapDate.slice(0, 2)),
 									);
 									return (
@@ -318,8 +325,8 @@ export const HeatmapTabs = ({
 								<div className="w-16 shrink-0" />
 								{Array.from(heatMapDates.values()).map(heatMapDate => {
 									const date = new Date(
-										parseInt(heatMapDate.slice(5, 8)),
-										parseInt(heatMapDate.slice(3, 5)) - 1,
+										parseInt(heatMapDate.slice(4, 8)),
+										parseInt(heatMapDate.slice(2, 4)) - 1,
 										parseInt(heatMapDate.slice(0, 2)),
 									);
 									return (
@@ -397,8 +404,8 @@ export const HeatmapTabs = ({
 															{heatMapTime.slice(0, 2)}:{heatMapTime.slice(2, 4)},{" "}
 															{format(
 																new Date(
-																	parseInt(heatMapDate.slice(5, 8)),
-																	parseInt(heatMapDate.slice(3, 5)) - 1,
+																	parseInt(heatMapDate.slice(4, 8)),
+																	parseInt(heatMapDate.slice(2, 4)) - 1,
 																	parseInt(heatMapDate.slice(0, 2)),
 																),
 																"EEEE",
