@@ -213,63 +213,26 @@ function Create() {
 					body={
 						<div className="px-6 mb-2">
 							{/* start of time increment */}
-							<div className="flex flex-row items-center mb-4">
-								<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
-								<Select
-									value={timeIncrement.toString()}
-									onValueChange={value => setTimeIncrement(parseInt(value))}
-								>
-									<SelectTrigger>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											<SelectItem value="15">15 min</SelectItem>
-											<SelectItem value="30">30 min</SelectItem>
-											<SelectItem value="60">60 min</SelectItem>
-										</SelectGroup>
-									</SelectContent>
-								</Select>
-							</div>
-
-							{/* start of time range button */}
-							<div className="flex flex-col justify-start mb-4">
-								{eventType === "SPECIFIC_DATES_AND_TIMES" || eventType === "WEEKDAYS_AND_TIMES" ? (
-									<>
-										<p className="text-info text-sm mb-2">{m.create_remove_time_ranges_hint()}</p>
-										<Button
-											className="self-start"
-											onClick={() => {
-												if (eventType === "SPECIFIC_DATES_AND_TIMES") {
-													setEventType("SPECIFIC_DATES");
-												} else if (eventType === "WEEKDAYS_AND_TIMES") {
-													setEventType("WEEKDAYS");
-												}
-											}}
-											variant="red"
-											size="xs"
-										>
-											{m.create_remove_time_ranges()}
-										</Button>
-									</>
-								) : (
-									<>
-										<p className="text-info text-sm mb-2">{m.create_add_time_ranges_hint()}</p>
-										<Button
-											onClick={() => {
-												if (eventType === "SPECIFIC_DATES") {
-													setEventType("SPECIFIC_DATES_AND_TIMES");
-												} else if (eventType === "WEEKDAYS") {
-													setEventType("WEEKDAYS_AND_TIMES");
-												}
-											}}
-											variant="red"
-											size="xs"
-										>
-											{m.create_add_time_ranges()}
-										</Button>
-									</>
-								)}
+							<div className="mb-4">
+								<div className="flex flex-row items-center mb-1">
+									<p className="mr-3 text-lg font-semibold">{m.create_time_increment_label()}</p>
+									<Select
+										value={timeIncrement.toString()}
+										onValueChange={value => setTimeIncrement(parseInt(value))}
+									>
+										<SelectTrigger>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												<SelectItem value="15">15 min</SelectItem>
+												<SelectItem value="30">30 min</SelectItem>
+												<SelectItem value="60">60 min</SelectItem>
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								</div>
+								<p className="text-sm text-info">{m.create_time_increment_description()}</p>
 							</div>
 
 							<div>
