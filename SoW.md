@@ -24,7 +24,13 @@
 
 ## High-level description
 
-Gatherr is a SaaS platform designed to solve the "when are we all free?" problem. It allows users to create events, propose multiple time slots, and visualize group availability through an aggregated heatmap.
+| | |
+|---|---|
+| **Problem** | The complexity and significant time cost of finding shared free time between people (friend groups, teams, organizations). |
+| **Affects** | Everyone who needs to coordinate meetings, gatherings, or events with multiple participants. |
+| **Impact** | Inefficient communication, endless back-and-forth messaging trying to align schedules, and the potential for meetings falling through due to conflicting calendars. |
+| **A successful solution enables** | Easily creating events, proposing multiple time slots, and visualizing all participants' availability through an aggregated interactive heatmap. Additionally, the system eliminates the hassle of managing passwords by using only Google login, while offering users a convenient overview of their events. |
+| | |
 
 ## High-level steps
 
@@ -39,27 +45,46 @@ order are carried out? These should be each 10-30h of work. -->
 
 ## Scopes
 
-### Scope 1: The Core (Deadline: 04.04)
+*Find the link to the **user story map** in Miro [here](https://miro.com/app/board/uXjVJC_HDu8=/?share_link_id=12787197284) and the descriptions of **epics** and **features** [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
-*Focus: Google auth, event flow, and basic database interaction.*
+### ✅ Scope 1 (pre-MVP): Figma Prototype Demo (Deadline: 04.04) 
+
+*Focus: Figma high-fidelity wireframe/prototype covering the basic MVP user flow.*
+
+* [Link to prototype](https://www.figma.com/proto/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-948&p=f&t=Hlr5b9izTN32UbAD-1&scaling=min-zoom&content-scaling=fixed&page-id=69%3A769&starting-point-node-id=69%3A770)
+
+### Scope 2: MVP (Deadline: 03.05)
+
+*Focus: Google auth, event flow, basic database interaction, and heatmap visualization, deployment.*
 
 * **Google Sign-In:** Implementation of Google OAuth2 for all users (creators and participants).
 * **Basic Submission:** The grid UI allows a user to click slots and save them to the database.
 * **Initial API:** All CRUD endpoints for `User` and `Event` are functional.
-* **Design Implementation:** Implementing the Figma design in the frontend
-* **Event Lifecycle:** Ability to create an event, generate a `short_id`, and share the link.
-* **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
-* **Multi Language Support:** FE structure to enable multi language application
-
-### Scope 2: The Platform (Deadline: 03.05)
-
-*Focus: Deployment, App, Ads, and third-party integrations.*
-
-* **Google Calendar Sync:** Fetching `calendarList` and busy calendar times.
+* **Design Implementation:** Implementing the Figma design in the frontend.
+* **Event Lifecycle:** Ability to create an event, select multiple time slot candidates, generate a `short_id`, and share the invite link.
 * **Email notifications:** Send notifications about event times to users and allow them to add the time to google calendar with one button click.
-* **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, support estonian language).
+* **Aggregated Heatmap:** Logic to fetch all participant data and calculate the visual "density" for the group view.
 * **Deployment:** Moving from local development to a live production environment.
-* **App:** Simple expo webview app for mobile.
+
+### Scope 3: The Platform Enhancements (Deadline: TBD)
+
+*Focus: Automations, user experience improvements, and third-party integrations.*
+
+* **Dashboard:** Personal event overview showing events the user created and events they were invited to.
+* **Google Calendar Sync:** Fetching `calendarList` and busy calendar times to auto-populate availability.
+* **Invite by Email:** When creating an event, the organizer can input participant e-mail addresses to send invites directly.
+* **Auto-select Best Time:** After the event deadline, the system automatically selects the time that suits the most participants.
+* **ICS File Export:** Send an official calendar file (.ics) for the selected time to all participants — even those who did not submit availability.
+* **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, Estonian language support).
+* **Multi Language Support:** FE structure to enable multi-language application.
+* **App:** Simple Expo WebView app for mobile.
+
+### Scope 4: Additional Capabilities (Deadline: TBD)
+
+*Focus: Automated notifications.*
+
+* **Automated Event Notifications:** The system automatically sends an e-mail after participants have chosen suitable timeslots for themselves to keep track of progress.
+* **Other User Requests:** TBD.
 
 ---
 
@@ -67,100 +92,9 @@ order are carried out? These should be each 10-30h of work. -->
 
 [Figma design](https://www.figma.com/design/Qal5WkR5TMyEXpqycciRwa/Gatherr?node-id=69-769&p=f&t=f4oHycjedvlD1cTR-0)
 
-## User stories ordered by importance
+## User stories & acceptance criteria
 
-### 1. Event Creation (Organizer Flow)
-
-#### Story: Event Initialization
-
-> **As a** user,
-> **I want** to define the name and potential time slots for an event and then sign in with Google,
-> **So that** I can share a specific link of the event with my group.
->
-> * **Acceptance Criteria:**
-> * User fills in event name and selects time slots on the creation screen.
-> * Clicking "Create Event" triggers the Google Sign-In modal if not already authenticated.
-> * After successful sign-in, the event is created and linked to the authenticated user.
-> * System generates a unique `short_id` for the event URL.
-> * The creator is automatically added to the `event_user` table as the first participant.
->
->
->
->
-
----
-
-### 2. Event Joining (Participant Flow)
-
-#### Story: Availability Submission
-
-> **As a** participant,
-> **I want** to select my available time slots on a grid and save them,
-> **So that** the other users can see when I am free.
->
-> * **Acceptance Criteria:**
-> * Clicking on the timetable triggers the Google Sign-In modal if not already authenticated.
-> * Availability is sent as a JSON list to the `POST /api/events/{shortId}/available` endpoint.
-> * The `event_user` record is updated or created.
-> * The heatmap refreshes to show the updated group availability.
->
->
->
->
-
----
-
-### 3. Technical / System Stories
-
-#### Story: Real-time Heatmap Visibility
-
-> **As a** participant,
-> **I want** the event heatmap to update for everyone once I save my times,
-> **So that** the group can reach a consensus in real-time.
->
-> * **Acceptance Criteria:**
-> * The backend must aggregate all `event_user` JSONB records for a specific `event_id`.
-> * The API returns a count of participants per time slot.
->
->
->
->
-
----
-
-### 4. Calendar Selection
-
-#### Story: Calendar Discovery
-
-> **As a** user with multiple calendars,
-> **I want** to see a list of my Google Calendars after granting calendar access,
-> **So that** I can choose exactly which schedules should affect my availability for this event.
->
-> * **Acceptance Criteria:**
-> * FE requests calendar scope and calls Google `calendarList.list` endpoint.
-> * A selection interface (checkboxes) appears for all returned calendars.
-> * Primary calendar is selected by default.
->
->
->
->
-
-#### Story: Smart Time Overlay
-
-> **As a** participant,
-> **I want** the system to fetch busy data only from my selected calendars,
-> **So that** my availability grid is pre-populated with all the "busy" times. But i must be able to overwrite these busy times.
->
-> * **Acceptance Criteria:**
-> * User gets available calendars
-> * Then selects calendars and gets busy times
-> * The FE grid marks all busy times.
->
->
->
->
-
----
+*Find the link to the **user stories** and **acceptance criteria** [here](https://docs.google.com/spreadsheets/d/1f844HUPM9E4NWakyvCns_9bq4ZNSDYBC/edit?usp=sharing&ouid=110624334815444723249&rtpof=true&sd=true).*
 
 ## Functionalities
 
