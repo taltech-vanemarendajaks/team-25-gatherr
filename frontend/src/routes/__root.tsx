@@ -53,11 +53,11 @@ function useMswReady(): boolean {
 	"use no memo"; // opt out of React Compiler — async .then() chains in useEffect are not safe to memoize
 	// In production or SSR: always ready
 	const [ready, setReady] = useState(
-		(!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) || typeof window === "undefined",
+		import.meta.env.VITE_ENABLE_MOCK !== "true" || typeof window === "undefined",
 	);
 
 	useEffect(() => {
-		if (!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) return;
+		if (import.meta.env.VITE_ENABLE_MOCK !== "true") return;
 		import("../mocks/index").then(({ enableMocking }) =>
 			enableMocking().then(() => setReady(true)),
 		);
