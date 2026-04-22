@@ -71,7 +71,7 @@ export const UserButton = () => {
 					</Select>
 				</div>
 				{!me && (
-					<Button onClick={() => login()} className="mb-8 px-4 text-sm">
+					<Button onClick={() => login(undefined)} className="mb-8 px-4 text-sm">
 						<GoogleIcon className="size-5.5 mr-2" />
 						{m.create_continue_with_google()}
 					</Button>

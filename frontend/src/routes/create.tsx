@@ -296,7 +296,7 @@ function Create() {
 						<DialogTitle className="font-medium text-2xl mb-8">
 							{m.create_sign_in_title()}
 						</DialogTitle>
-						<Button onClick={() => login()} className="mb-8 px-8">
+						<Button onClick={() => login(undefined)} className="mb-8 px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>
