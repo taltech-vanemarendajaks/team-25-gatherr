@@ -1,11 +1,11 @@
 name: Deploy Backend
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
-      - 'docker-compose.prod.yml'
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'backend/**'
+  #     - 'docker-compose.prod.yml'
   workflow_dispatch:
 
 jobs:
