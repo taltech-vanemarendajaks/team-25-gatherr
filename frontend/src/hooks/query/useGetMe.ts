@@ -19,5 +19,6 @@ export const useGetMe = () => {
 	return useQuery({
 		queryKey: ["/users/me"],
 		queryFn,
+		enabled: !!localStorage.getItem("token"),
 	});
 };
