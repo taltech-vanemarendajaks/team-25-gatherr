@@ -28,8 +28,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # VITE_API_URL: https://api.gatherr.alber.ee/api/v1
-          VITE_ENABLE_MOCK: true
+          VITE_API_URL: https://api.gatherr.alber.ee/api/v1
+          # VITE_ENABLE_MOCK: true
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
