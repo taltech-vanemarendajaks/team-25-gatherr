@@ -12,7 +12,7 @@ import { CopyLinkButton } from "../../components/ui/CopyLinkButton";
 import { HeatmapTabs } from "../../components/ui/pages/event/HeatmapTabs";
 import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
-import { useLogin } from "../../hooks/mutation/useLogin";
+import { useGoogleAuth } from "../../hooks/mutation/useGoogleAuth";
 import { useRespondToEvent } from "../../hooks/mutation/useRespondToEvent";
 import { useGetEvent } from "../../hooks/query/useGetEvent";
 import { useGetMe } from "../../hooks/query/useGetMe";
@@ -27,7 +27,7 @@ function RouteComponent() {
 	const { shortId } = Route.useParams();
 	const { data: event, isLoading } = useGetEvent(shortId);
 	const { data: me } = useGetMe();
-	const { mutate: login } = useLogin();
+	const handleLogin = useGoogleAuth();
 	const { mutate: respond, isPending: isSaving } = useRespondToEvent(shortId);
 
 	const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
@@ -81,7 +81,7 @@ function RouteComponent() {
 				<div className="bg-canvas rounded-2xl p-8 flex flex-col items-center mb-8">
 					<p className="text-2xl mb-8">{m.event_sign_in_title()}</p>
 					<div className="mb-8">
-						<Button onClick={() => login(undefined)} className="px-8">
+						<Button onClick={handleLogin} className="px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>
