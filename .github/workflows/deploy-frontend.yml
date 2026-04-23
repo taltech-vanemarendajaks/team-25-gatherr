@@ -29,6 +29,7 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: https://api.gatherr.alber.ee/api/v1
+          VITE_GOOGLE_CLIENT_ID: 970783511567-b86m10blbnv9k9nfk9ds11g3m9ufh5d9.apps.googleusercontent.com
           # VITE_ENABLE_MOCK: true
 
       - name: Deploy to Cloudflare Pages
