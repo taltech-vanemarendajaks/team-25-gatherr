@@ -1,1 +1,338 @@
-{"openapi":"3.0.1","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://127.0.0.1:8080/api/v1","description":"Generated server url"}],"paths":{"/events/{shortId}/respond":{"put":{"tags":["availability-controller"],"operationId":"respond","parameters":[{"name":"shortId","in":"path","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/RespondDto"}}},"required":true},"responses":{"200":{"description":"OK"}}}},"/events":{"post":{"tags":["event-controller"],"operationId":"createEvent","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CreateEventDto"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/EventResponseDto"}}}}}}},"/auth/google":{"post":{"tags":["auth-controller"],"operationId":"googleAuth","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AuthRequestDto"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/AuthResponseDto"}}}}}}},"/users/me":{"get":{"tags":["user-controller"],"operationId":"getCurrentUser","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponseDto"}}}}}},"patch":{"tags":["user-controller"],"operationId":"patchCurrentUser","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UpdateUserDto"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponseDto"}}}}}}}},"components":{"schemas":{"RespondDto":{"type":"object","properties":{"available":{"type":"array","items":{"type":"string"}},"notAvailable":{"type":"array","items":{"type":"string"}},"timezone":{"type":"string"}}},"CreateEventDto":{"required":["name","times","timezone","type"],"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"},"type":{"type":"string","enum":["SPECIFIC_DATES_AND_TIMES","SPECIFIC_DATES","WEEKDAYS","WEEKDAYS_AND_TIMES"]},"times":{"type":"array","items":{"type":"string"}},"timezone":{"type":"string"}}},"EventResponseDto":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"},"description":{"type":"string"},"shortId":{"type":"string"},"creatorId":{"type":"integer","format":"int64"},"type":{"type":"string","enum":["SPECIFIC_DATES_AND_TIMES","SPECIFIC_DATES","WEEKDAYS","WEEKDAYS_AND_TIMES"]},"times":{"type":"array","items":{"type":"string"}},"timezone":{"type":"string"}}},"AuthRequestDto":{"type":"object","properties":{"idToken":{"type":"string"},"timezone":{"type":"string"}}},"AuthResponseDto":{"type":"object","properties":{"token":{"type":"string"},"id":{"type":"integer","format":"int64"},"name":{"type":"string"},"email":{"type":"string"},"profilePicture":{"type":"string"}}},"UpdateUserDto":{"type":"object","properties":{"timezone":{"maxLength":100,"minLength":0,"type":"string"},"startOnMonday":{"type":"boolean"},"timeFormat24":{"type":"boolean"},"language":{"maxLength":10,"minLength":0,"type":"string"}}},"UserResponseDto":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"},"email":{"type":"string"},"profilePicture":{"type":"string"},"timezone":{"type":"string"},"startOnMonday":{"type":"boolean"},"timeFormat24":{"type":"boolean"},"language":{"type":"string"}}}}}}
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8080/api/v1",
+            "description": "Generated server url"
+        }
+    ],
+    "paths": {
+        "/events/{shortId}/respond": {
+            "put": {
+                "tags": [
+                    "availability-controller"
+                ],
+                "operationId": "respond",
+                "parameters": [
+                    {
+                        "name": "shortId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RespondDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/events": {
+            "post": {
+                "tags": [
+                    "event-controller"
+                ],
+                "operationId": "createEvent",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateEventDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EventResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/google": {
+            "post": {
+                "tags": [
+                    "auth-controller"
+                ],
+                "operationId": "googleAuth",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "getCurrentUser",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "user-controller"
+                ],
+                "operationId": "patchCurrentUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RespondDto": {
+                "type": "object",
+                "properties": {
+                    "available": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "notAvailable": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateEventDto": {
+                "required": [
+                    "name",
+                    "times",
+                    "timezone",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "SPECIFIC_DATES_AND_TIMES",
+                            "SPECIFIC_DATES",
+                            "WEEKDAYS",
+                            "WEEKDAYS_AND_TIMES"
+                        ]
+                    },
+                    "times": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EventResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "shortId": {
+                        "type": "string"
+                    },
+                    "creatorId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "SPECIFIC_DATES_AND_TIMES",
+                            "SPECIFIC_DATES",
+                            "WEEKDAYS",
+                            "WEEKDAYS_AND_TIMES"
+                        ]
+                    },
+                    "times": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AuthRequestDto": {
+                "type": "object",
+                "properties": {
+                    "idToken": {
+                        "type": "string"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AuthResponseDto": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "profilePicture": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdateUserDto": {
+                "type": "object",
+                "properties": {
+                    "timezone": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "startOnMonday": {
+                        "type": "boolean"
+                    },
+                    "timeFormat24": {
+                        "type": "boolean"
+                    },
+                    "language": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "UserResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "profilePicture": {
+                        "type": "string"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "startOnMonday": {
+                        "type": "boolean"
+                    },
+                    "timeFormat24": {
+                        "type": "boolean"
+                    },
+                    "language": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

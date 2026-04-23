@@ -36,7 +36,11 @@ The fastest way to work on the UI — no backend needed.
    ```bash
    cd frontend && npm run dev
    ```
+   ```bash
+   cp .env.example .env.local
+   ```
 3. MSW intercepts all API calls in the browser — clicking the login button auto-logs you in without a Google popup.
+
 
 > **Important:** `VITE_ENABLE_MOCK=false` does **not** disable mocking. Only omitting the variable or leaving it blank disables it.
 
