@@ -38,4 +38,13 @@ public class EventController {
         List<EventResponseDto> response = eventService.getMyEvents(creatorId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{shortId}")
+    public ResponseEntity<EventResponseDto> getEventByShortId(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable String shortId
+    ) {
+        EventResponseDto response = eventService.getEventByShortId(shortId);
+        return ResponseEntity.ok(response);
+    }
 }
