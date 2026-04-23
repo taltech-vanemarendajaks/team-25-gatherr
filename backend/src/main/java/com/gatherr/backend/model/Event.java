@@ -36,6 +36,9 @@ public class Event {
     @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private User creator;
 
+    @OneToMany(mappedBy = "event")
+    private List<EventUser> eventUsers;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private com.gatherr.backend.model.enums.EventType type;

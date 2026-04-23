@@ -12,12 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
-
 public class EventController {
     private final EventService eventService;
 
@@ -29,5 +28,14 @@ public class EventController {
         Long creatorId = JwtUtils.extractUserId(jwt);
         EventResponseDto response = eventService.createEvent(creatorId, createEventDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<List<EventResponseDto>> getMyEvents(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        Long creatorId = JwtUtils.extractUserId(jwt);
+        List<EventResponseDto> response = eventService.getMyEvents(creatorId);
+        return ResponseEntity.ok(response);
     }
 }
