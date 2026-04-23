@@ -5,6 +5,8 @@ import com.gatherr.backend.dto.AuthResponseDto;
 import com.gatherr.backend.repository.UserRepository;
 import com.gatherr.backend.model.User;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -22,6 +24,8 @@ import java.util.Map;
 
 @Service
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -49,6 +53,10 @@ public class AuthService {
         if (this.skipGoogleVerification && (this.devUserEmail == null || this.devUserEmail.isBlank())) {
             throw new IllegalStateException("FATAL: Google Auth bypass is enabled, but 'app.auth.dev-user-email' is missing in your properties/env.");
         }
+
+        if (this.skipGoogleVerification) {
+            log.warn("SECURITY: Google authentication verification is DISABLED. Dev bypass is active — all login requests will authenticate as '{}'.", this.devUserEmail);
+        }
     }
 
     @Transactional
@@ -63,6 +71,9 @@ public class AuthService {
         if (request.accessToken() != null && !request.accessToken().isBlank()) {
             return loginWithAccessToken(request.accessToken(), timezone);
         } else {
+            if (request.idToken() == null || request.idToken().isBlank()) {
+                throw new BadJwtException("No authentication token provided.");
+            }
             return loginWithIdToken(request.idToken(), timezone);
         }
     }
@@ -80,7 +91,7 @@ public class AuthService {
         String picture = jwt.getClaimAsString("picture");
 
         String locale = jwt.getClaimAsString("locale");
-        String language = (locale != null) ? locale.substring(0, 2).toUpperCase() : "EN";
+        String language = (locale != null && locale.length() >= 2) ? locale.substring(0, 2).toUpperCase() : "EN";
 
         User user = getOrCreateUser(email, name, picture, language, timezone);
         String appToken = jwtService.generateToken(user.getId(), email);
@@ -102,7 +113,8 @@ public class AuthService {
                     new ParameterizedTypeReference<Map<String, Object>>() {}
             );
         } catch (RestClientException e) {
-            throw new BadJwtException("Failed to verify Google access token: " + e.getMessage());
+            log.warn("Failed to verify Google access token via userinfo endpoint: {}", e.getMessage());
+            throw new BadJwtException("Failed to verify Google access token.");
         }
 
         Map<String, Object> userInfo = response.getBody();
@@ -119,7 +131,7 @@ public class AuthService {
         String name = (String) userInfo.get("name");
         String picture = (String) userInfo.get("picture");
         String locale = (String) userInfo.get("locale");
-        String language = (locale != null) ? locale.substring(0, 2).toUpperCase() : "EN";
+        String language = (locale != null && locale.length() >= 2) ? locale.substring(0, 2).toUpperCase() : "EN";
 
         User user = getOrCreateUser(email, name, picture, language, timezone);
         String appToken = jwtService.generateToken(user.getId(), email);

@@ -81,8 +81,9 @@ export const handlers = [
 	}),
 
 	// ── GET /events/mine /:shortId ───────────────────────────────────
-	http.get(`${BASE}/events/mine`, () => {
-		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
+	http.get(`${BASE}/events/mine`, ({ request }) => {
+		const auth = request.headers.get("Authorization");
+		if (!isLoggedIn && auth !== "Bearer mock-token") return new HttpResponse(null, { status: 401 });
 		const myEventIds = new Set(
 			EVENT_USERS.filter(eu => eu.user.id === ME.id).map(eu => eu.event.id),
 		);
