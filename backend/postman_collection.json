@@ -18,7 +18,7 @@
       "name": "Auth",
       "item": [
         {
-          "name": "POST /auth/google",
+          "name": "POST /auth/google (Dev Bypass)",
           "request": {
             "method": "POST",
             "header": [
@@ -39,7 +39,33 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"idToken\": \"paste-google-id-token-here\"\n}"
+              "raw": "{\n  \"idToken\": \"bypass\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /auth/google (Real Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accessToken\": \"paste-google-access-token-here\"\n}"
             }
           }
         }

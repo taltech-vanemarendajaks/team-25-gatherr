@@ -1,16 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GatherrApiClient } from "../../lib/axios";
-import type { User } from "../../mocks/types";
+
+interface AuthResponse {
+	token: string;
+	id: number;
+	name: string;
+	email: string;
+	profilePicture: string;
+}
 
 export const useLogin = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async () => {
-			const { data } = await GatherrApiClient.post<User>("/auth/google");
+		mutationFn: async (accessToken?: string) => {
+			const { data } = await GatherrApiClient.post<AuthResponse>("/auth/google", {
+				accessToken,
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+			});
 			return data;
 		},
-		onSuccess: () => {
+		onSuccess: data => {
+			localStorage.setItem("token", data.token);
 			queryClient.invalidateQueries({ queryKey: ["/users/me"] });
 			queryClient.invalidateQueries({ queryKey: ["/events/mine"] });
 		},

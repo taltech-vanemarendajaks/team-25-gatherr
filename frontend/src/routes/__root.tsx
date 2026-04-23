@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
@@ -5,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { env } from "../env";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
 import { SITE_TITLE } from "../lib/site";
@@ -53,11 +55,17 @@ function useMswReady(): boolean {
 	"use no memo"; // opt out of React Compiler — async .then() chains in useEffect are not safe to memoize
 	// In production or SSR: always ready
 	const [ready, setReady] = useState(
-		(!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) || typeof window === "undefined",
+		import.meta.env.VITE_ENABLE_MOCK !== "true" || typeof window === "undefined",
 	);
 
 	useEffect(() => {
-		if (!import.meta.env.DEV && !import.meta.env.VITE_ENABLE_MOCK) return;
+		if (import.meta.env.VITE_ENABLE_MOCK !== "true") {
+			// Unregister any leftover MSW service worker so it doesn't intercept real requests
+			navigator.serviceWorker?.getRegistrations().then(registrations => {
+				for (const r of registrations) r.unregister();
+			});
+			return;
+		}
 		import("../mocks/index").then(({ enableMocking }) =>
 			enableMocking().then(() => setReady(true)),
 		);
@@ -76,7 +84,9 @@ function RootDocument({ children }: { children: ReactNode }) {
 			</head>
 			<body className="font-main bg-surface text-content touch-manipulation">
 				<TanStackQueryProvider>
-					{mswReady ? children : null}
+					<GoogleOAuthProvider clientId={env.VITE_GOOGLE_CLIENT_ID ?? ""}>
+						{mswReady ? children : null}
+					</GoogleOAuthProvider>
 					<TanStackDevtools
 						config={{ position: "bottom-right" }}
 						plugins={[

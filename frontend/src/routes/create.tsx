@@ -26,7 +26,7 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { useCreateEvent } from "../hooks/mutation/useCreateEvent";
-import { useLogin } from "../hooks/mutation/useLogin";
+import { useGoogleAuth } from "../hooks/mutation/useGoogleAuth";
 import { useGetMe } from "../hooks/query/useGetMe";
 import type { EventType } from "../mocks/types";
 import * as m from "../paraglide/messages";
@@ -71,7 +71,7 @@ function Create() {
 	const { name } = Route.useSearch();
 
 	const { mutate: createEvent } = useCreateEvent();
-	const { mutate: login } = useLogin();
+	const handleLogin = useGoogleAuth();
 	const { data: user } = useGetMe();
 
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -296,7 +296,7 @@ function Create() {
 						<DialogTitle className="font-medium text-2xl mb-8">
 							{m.create_sign_in_title()}
 						</DialogTitle>
-						<Button onClick={() => login()} className="mb-8 px-8">
+						<Button onClick={handleLogin} className="mb-8 px-8">
 							<GoogleIcon className="size-8 mr-3" />
 							{m.create_continue_with_google()}
 						</Button>

@@ -57,12 +57,19 @@ export const handlers = [
 	// ── POST /auth/google ─────────────────────────────────────────────────────
 	http.post(`${BASE}/auth/google`, () => {
 		isLoggedIn = true;
-		return HttpResponse.json(ME);
+		return HttpResponse.json({
+			token: "mock-token",
+			id: ME.id,
+			name: ME.name,
+			email: ME.email,
+			profilePicture: ME.profilePicture,
+		});
 	}),
 
 	// ── GET /users/me ─────────────────────────────────────────────────────────
-	http.get(`${BASE}/users/me`, () => {
-		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
+	http.get(`${BASE}/users/me`, ({ request }) => {
+		const auth = request.headers.get("Authorization");
+		if (!isLoggedIn && auth !== "Bearer mock-token") return new HttpResponse(null, { status: 401 });
 		return HttpResponse.json(ME);
 	}),
 
@@ -74,8 +81,9 @@ export const handlers = [
 	}),
 
 	// ── GET /events/mine /:shortId ───────────────────────────────────
-	http.get(`${BASE}/events/mine`, () => {
-		if (!isLoggedIn) return new HttpResponse(null, { status: 401 });
+	http.get(`${BASE}/events/mine`, ({ request }) => {
+		const auth = request.headers.get("Authorization");
+		if (!isLoggedIn && auth !== "Bearer mock-token") return new HttpResponse(null, { status: 401 });
 		const myEventIds = new Set(
 			EVENT_USERS.filter(eu => eu.user.id === ME.id).map(eu => eu.event.id),
 		);

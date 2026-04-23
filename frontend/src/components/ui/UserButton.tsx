@@ -1,7 +1,8 @@
 import { UserRound, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useLogin } from "../../hooks/mutation/useLogin";
+import { useGoogleAuth } from "../../hooks/mutation/useGoogleAuth";
+import { useLogout } from "../../hooks/mutation/useLogout";
 import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
 import { useGetMe } from "../../hooks/query/useGetMe";
 import { m } from "../../paraglide/messages";
@@ -24,7 +25,8 @@ export const UserButton = () => {
 	const { data: me } = useGetMe();
 
 	const { mutate: updateUser } = useUpdateUser();
-	const { mutate: login } = useLogin();
+	const handleLogin = useGoogleAuth();
+	const logout = useLogout();
 
 	const [weekStartsOn, setWeekStartsOn] = useState(
 		me?.startOnMonday === true || me?.startOnMonday === undefined ? 0 : 1,
@@ -70,8 +72,13 @@ export const UserButton = () => {
 						</SelectContent>
 					</Select>
 				</div>
+				{me && (
+					<Button variant="dark" onClick={logout} className="mb-3 mt-4 px-4 text-sm w-full">
+						Sign out
+					</Button>
+				)}
 				{!me && (
-					<Button onClick={() => login()} className="mb-8 px-4 text-sm">
+					<Button onClick={handleLogin} className="mb-8 px-4 text-sm">
 						<GoogleIcon className="size-5.5 mr-2" />
 						{m.create_continue_with_google()}
 					</Button>

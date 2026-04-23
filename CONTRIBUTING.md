@@ -27,7 +27,24 @@ We provide a `.vscode/settings.json` file to ensure a consistent developer exper
 - **Automatic Formatting:** These settings align with our **BiomeJS** configuration. When you save a `.ts` or `.tsx` file, VS Code will format the code automatically.
 - **Consistency:** This setup ensures your code matches the formatting enforced by our **Husky** pre-commit hooks, preventing "linting fix" commits and CI failures.
 
-#### 1. Running the backend with the dev profile
+#### 1. Frontend-only development (Mock API)
+
+The fastest way to work on the UI — no backend needed.
+
+1. Add `VITE_ENABLE_MOCK=true` to `frontend/.env.local`
+2. Run the frontend:
+   ```bash
+   cd frontend && npm run dev
+   ```
+   ```bash
+   cp .env.example .env.local
+   ```
+3. MSW intercepts all API calls in the browser — clicking the login button auto-logs you in without a Google popup.
+
+
+> **Important:** `VITE_ENABLE_MOCK=false` does **not** disable mocking. Only omitting the variable or leaving it blank disables it.
+
+#### 2. Running the backend with the dev profile
 
 The `dev` profile disables Google token verification so you can get a JWT instantly without a real Google account.
 
@@ -44,7 +61,7 @@ The `dev` profile disables Google token verification so you can get a JWT instan
    docker compose up -d
    ```
 
-### 2. Getting a token in Postman (Using the Dev Google Login Bypass)
+### 3. Getting a token in Postman (Using the Dev Google Login Bypass)
 
 1. Import `postman_collection.json` from the repo root into Postman
 2. Create a `POST` request to `http://localhost:8080/api/v1/auth/google`.
@@ -67,12 +84,13 @@ If you are working on the frontend UI or need to test the actual Google authenti
 2. Go to [Google Auth Clients](https://console.cloud.google.com/auth/clients) and create a new client.
 3. Add the following details:
     - **Name:** Gatherr Local Dev (or similar)
-    - **Authorized JavaScript origins:** `http://localhost:8080`
+    - **Authorized JavaScript origins:** `http://localhost:3000`
 4. Copy the generated **Client ID** into your frontend `.env.local` file (`VITE_GOOGLE_CLIENT_ID`).
-5. Copy the exact same **Client ID** into your backend `.env` file (`GOOGLE_CLIENT_ID`). *(Note: You do not need the Client Secret for this architecture).*
-6. Remove `SPRING_PROFILES_ACTIVE=dev` from your `.env` file and restart the backend to re-enable real Google token verification.
+5. Ensure `VITE_ENABLE_MOCK` is not set or is empty in `frontend/.env.local` (mock mode takes precedence).
+6. Copy the exact same **Client ID** into your backend `.env` file (`GOOGLE_CLIENT_ID`). *(Note: You do not need the Client Secret for this architecture).*
+7. Remove `SPRING_PROFILES_ACTIVE=dev` from your `.env` file and restart the backend to re-enable real Google token verification.
 
-### 3. API Documentation & Automated Type Sync
+### 4. API Documentation & Automated Type Sync
 
 We use OpenAPI (Swagger) to document our REST API. To ensure the frontend and backend stay perfectly in sync, we have automated the schema generation process.
 
