@@ -59,7 +59,13 @@ function useMswReady(): boolean {
 	);
 
 	useEffect(() => {
-		if (import.meta.env.VITE_ENABLE_MOCK !== "true") return;
+		if (import.meta.env.VITE_ENABLE_MOCK !== "true") {
+			// Unregister any leftover MSW service worker so it doesn't intercept real requests
+			navigator.serviceWorker?.getRegistrations().then(registrations => {
+				for (const r of registrations) r.unregister();
+			});
+			return;
+		}
 		import("../mocks/index").then(({ enableMocking }) =>
 			enableMocking().then(() => setReady(true)),
 		);
