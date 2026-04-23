@@ -1,5 +1,6 @@
 import { UserRound, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useGoogleAuth } from "../../hooks/mutation/useGoogleAuth";
 import { useLogout } from "../../hooks/mutation/useLogout";
 import { useUpdateUser } from "../../hooks/mutation/useUpdateUser";
@@ -72,7 +73,7 @@ export const UserButton = () => {
 					</Select>
 				</div>
 				{me && (
-					<Button variant="dark" onClick={logout} className="mb-8 px-4 text-sm w-full">
+					<Button variant="dark" onClick={logout} className="mb-3 mt-4 px-4 text-sm w-full">
 						Sign out
 					</Button>
 				)}
