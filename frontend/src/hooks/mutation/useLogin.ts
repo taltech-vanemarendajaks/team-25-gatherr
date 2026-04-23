@@ -22,7 +22,12 @@ export const useLogin = () => {
 		},
 		onSuccess: data => {
 			localStorage.setItem("token", data.token);
-			queryClient.invalidateQueries({ queryKey: ["/users/me"] });
+			queryClient.setQueryData(["/users/me"], {
+				id: data.id,
+				name: data.name,
+				email: data.email,
+				profilePicture: data.profilePicture,
+			});
 			queryClient.invalidateQueries({ queryKey: ["/events/mine"] });
 		},
 	});
