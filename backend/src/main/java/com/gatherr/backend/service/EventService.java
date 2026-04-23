@@ -84,7 +84,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public EventResponseDto getEventByShortId(String shortId) {
-        Event event = eventRepository.findByShortIdAnd_IsDeletedFalse(shortId)
+        Event event = eventRepository.findByShortIdAndIsDeletedFalse(shortId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Event not found: " + shortId
                 ));
