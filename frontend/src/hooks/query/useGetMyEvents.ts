@@ -19,6 +19,6 @@ export const useGetMyEvents = () => {
 	return useQuery({
 		queryKey: ["/events/mine"],
 		queryFn,
-		enabled: !!localStorage.getItem("token"),
+		enabled: typeof window !== "undefined" && !!localStorage.getItem("token"),
 	});
 };

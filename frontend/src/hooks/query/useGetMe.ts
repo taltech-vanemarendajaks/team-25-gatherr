@@ -19,6 +19,6 @@ export const useGetMe = () => {
 	return useQuery({
 		queryKey: ["/users/me"],
 		queryFn,
-		enabled: !!localStorage.getItem("token"),
+		enabled: typeof window !== "undefined" && !!localStorage.getItem("token"),
 	});
 };
