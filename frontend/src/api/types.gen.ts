@@ -4,252 +4,392 @@
  */
 
 export interface paths {
-    "/events/{shortId}/respond": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["respond"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createEvent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/google": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["googleAuth"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["patchCurrentUser"];
-        trace?: never;
-    };
+	"/events/{shortId}/respond": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put: operations["respond"];
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/events": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post: operations["createEvent"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/auth/google": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post: operations["googleAuth"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/users/me": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["getCurrentUser"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch: operations["patchCurrentUser"];
+		trace?: never;
+	};
+	"/events/{shortId}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["getEventByShortId"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/events/{shortId}/summary": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["summary"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/events/mine": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get: operations["getMyEvents"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        RespondDto: {
-            available?: string[];
-            notAvailable?: string[];
-            timezone?: string;
-        };
-        CreateEventDto: {
-            name: string;
-            description?: string;
-            /** @enum {string} */
-            type: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
-            times: string[];
-            timezone: string;
-        };
-        EventResponseDto: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            description?: string;
-            shortId?: string;
-            /** Format: int64 */
-            creatorId?: number;
-            /** @enum {string} */
-            type?: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
-            times?: string[];
-            timezone?: string;
-        };
-        AuthRequestDto: {
-            idToken?: string;
-            timezone?: string;
-        };
-        AuthResponseDto: {
-            token?: string;
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            email?: string;
-            profilePicture?: string;
-        };
-        UpdateUserDto: {
-            timezone?: string;
-            startOnMonday?: boolean;
-            timeFormat24?: boolean;
-            language?: string;
-        };
-        UserResponseDto: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            email?: string;
-            profilePicture?: string;
-            timezone?: string;
-            startOnMonday?: boolean;
-            timeFormat24?: boolean;
-            language?: string;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+	schemas: {
+		RespondDto: {
+			available?: string[];
+			notAvailable?: string[];
+			timezone?: string;
+		};
+		CreateEventDto: {
+			name: string;
+			description?: string;
+			/** @enum {string} */
+			type: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
+			times: string[];
+			timezone: string;
+		};
+		EventResponseDto: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+			description?: string;
+			shortId?: string;
+			/** Format: int64 */
+			creatorId?: number;
+			/** @enum {string} */
+			type?: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
+			timezone?: string;
+			/** Format: int32 */
+			respondedCount?: number;
+		};
+		AuthRequestDto: {
+			idToken?: string;
+			accessToken?: string;
+			timezone?: string;
+		};
+		AuthResponseDto: {
+			token?: string;
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+			email?: string;
+			profilePicture?: string;
+		};
+		UpdateUserDto: {
+			timezone?: string;
+			startOnMonday?: boolean;
+			timeFormat24?: boolean;
+			language?: string;
+		};
+		UserResponseDto: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+			email?: string;
+			profilePicture?: string;
+			timezone?: string;
+			startOnMonday?: boolean;
+			timeFormat24?: boolean;
+			language?: string;
+		};
+		EventSummaryDto: {
+			users?: components["schemas"]["EventUserDto"][];
+			slots?: components["schemas"]["SlotSummaryDto"][];
+		};
+		EventUserDto: {
+			user?: components["schemas"]["UserInfo"];
+			available?: string[];
+			notAvailable?: string[];
+		};
+		SlotSummaryDto: {
+			slot?: string;
+			/** Format: int32 */
+			count?: number;
+			users?: components["schemas"]["SlotUserDto"][];
+		};
+		SlotUserDto: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+		};
+		UserInfo: {
+			/** Format: int64 */
+			id?: number;
+			name?: string;
+			profilePicture?: string;
+		};
+	};
+	responses: never;
+	parameters: never;
+	requestBodies: never;
+	headers: never;
+	pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    respond: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                shortId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RespondDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createEvent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateEventDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["EventResponseDto"];
-                };
-            };
-        };
-    };
-    googleAuth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AuthRequestDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["AuthResponseDto"];
-                };
-            };
-        };
-    };
-    getCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["UserResponseDto"];
-                };
-            };
-        };
-    };
-    patchCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["UserResponseDto"];
-                };
-            };
-        };
-    };
+	respond: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["RespondDto"];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+		};
+	};
+	createEvent: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["CreateEventDto"];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventResponseDto"];
+				};
+			};
+		};
+	};
+	googleAuth: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AuthRequestDto"];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["AuthResponseDto"];
+				};
+			};
+		};
+	};
+	getCurrentUser: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["UserResponseDto"];
+				};
+			};
+		};
+	};
+	patchCurrentUser: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UpdateUserDto"];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["UserResponseDto"];
+				};
+			};
+		};
+	};
+	getEventByShortId: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventResponseDto"];
+				};
+			};
+		};
+	};
+	summary: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventSummaryDto"];
+				};
+			};
+		};
+	};
+	getMyEvents: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"*/*": components["schemas"]["EventResponseDto"][];
+				};
+			};
+		};
+	};
 }

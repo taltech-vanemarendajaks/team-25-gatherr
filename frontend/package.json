@@ -16,6 +16,7 @@
 		"check": "biome check",
 		"lint-staged": "lint-staged",
 		"prepare": "cd .. && husky frontend/.husky",
+		"generate:schema": "curl -s http://localhost:8080/api/v1/v3/api-docs -o schema.json",
 		"generate:types": "openapi-typescript ./schema.json -o src/api/types.gen.ts"
 	},
 	"dependencies": {
