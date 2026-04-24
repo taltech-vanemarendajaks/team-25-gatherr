@@ -145,6 +145,9 @@ export interface components {
 			creatorId?: number;
 			/** @enum {string} */
 			type?: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
+			times?: string[];
+			/** Format: int32 */
+			timeIncrement?: number;
 			timezone?: string;
 			/** Format: int32 */
 			respondedCount?: number;
