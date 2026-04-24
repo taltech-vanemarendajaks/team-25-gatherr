@@ -2,7 +2,6 @@ package com.gatherr.backend.controller;
 
 import com.gatherr.backend.dto.CreateEventDto;
 import com.gatherr.backend.dto.EventResponseDto;
-import com.gatherr.backend.dto.UpdateEventDto;
 import com.gatherr.backend.service.EventService;
 import com.gatherr.backend.util.JwtUtils;
 
@@ -47,16 +46,5 @@ public class EventController {
     ) {
         EventResponseDto response = eventService.getEventByShortId(shortId);
         return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{shortId}")
-    public ResponseEntity<EventResponseDto>getEventByShortId(
-            @AuthenticationPrincipal Jwt jwt,
-            @PathVariable String shortId,
-            @RequestBody UpdateEventDto updateEventDto
-    ) {
-    Long creatorId = JwtUtils.extractUserId(jwt);
-    EventResponseDto updatedEvent = eventService.updateEvent(creatorId, shortId, updateEventDto);
-        return ResponseEntity.ok(updatedEvent);
     }
 }
