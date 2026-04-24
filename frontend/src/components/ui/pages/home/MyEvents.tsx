@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+import { Link } from "@tanstack/react-router";
 import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDeleteEvent } from "../../../../hooks/mutation/useDeleteEvent";
@@ -21,7 +24,12 @@ export const MyEvents = () => {
 						const isCreator = me?.id === event.creatorId;
 
 						return (
-							<div key={event.id} className="bg-paint p-3 rounded-xl">
+							<Link
+								key={event.id}
+								to="/e/$shortId"
+								params={{ shortId: event.shortId ?? "" }}
+								className="bg-paint p-3 rounded-xl"
+							>
 								<div className="flex flex-row justify-between items-center">
 									<div className="flex flex-col">
 										<p className="text-xl">{event.name}</p>
@@ -41,7 +49,7 @@ export const MyEvents = () => {
 										<span>{isCreator ? m.home_event_creator() : m.home_event_joined()}</span>
 									</div>
 
-									<div className="flex flex-col items-center">
+									<div className="flex flex-col items-center" onClick={e => e.preventDefault()}>
 										<Popover>
 											<PopoverTrigger>
 												<EllipsisIcon className="size-6 text-white mb-4 cursor-pointer" />
@@ -68,7 +76,7 @@ export const MyEvents = () => {
 										<CopyLinkButton shortId={event.shortId ?? ""} className="px-2 py-1" />
 									</div>
 								</div>
-							</div>
+							</Link>
 						);
 					})}
 				</div>
