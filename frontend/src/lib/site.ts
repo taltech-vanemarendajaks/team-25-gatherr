@@ -1,4 +1,3 @@
 export const SITE_TITLE = "Gatherr";
-export const SITE_DESCRIPTION =
-	"A tropical, breathable app starter with full-document SSR, server functions, streaming, and type-safe routing.";
-export const SITE_URL = "https://example.com";
+export const SITE_DESCRIPTION = "Plan any gathering in seconds";
+export const SITE_URL = "https://gatherr.alber.ee";
