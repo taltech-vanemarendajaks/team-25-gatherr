@@ -216,7 +216,6 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 										date={day}
 										month={month}
 										selected={selected}
-										setSelected={setSelected}
 									/>
 								))}
 							</div>
