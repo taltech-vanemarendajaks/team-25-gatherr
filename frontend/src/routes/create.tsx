@@ -85,7 +85,7 @@ function Create() {
 				{
 					name,
 					type: eventType,
-					times: calculateTimes(),
+					times: calculateTimes() ?? [],
 					timeIncrement,
 					timezone,
 				},
@@ -277,7 +277,7 @@ function Create() {
 							{
 								name,
 								type: eventType,
-								times: calculateTimes(),
+								times: calculateTimes() ?? [],
 								timeIncrement,
 								timezone,
 							},

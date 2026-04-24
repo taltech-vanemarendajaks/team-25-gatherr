@@ -4,10 +4,10 @@ import { format } from "date-fns";
 import { CheckIcon, PenBoxIcon, PencilIcon, XIcon } from "lucide-react";
 import { motion, type Variants } from "motion/react";
 import { useRef, useState } from "react";
+import type { components } from "../../../../api/types.gen";
 import { useGetEvent } from "../../../../hooks/query/useGetEvent";
 import { useGetMe } from "../../../../hooks/query/useGetMe";
 import { cn } from "../../../../lib/utils";
-import type { SummarySlot } from "../../../../mocks/types";
 import { m } from "../../../../paraglide/messages";
 import { getLocale } from "../../../../paraglide/runtime";
 import { GradientIcon } from "../../../icons/GradientIcon";
@@ -70,16 +70,16 @@ export const HeatmapTabs = ({
 
 	const uniqueTimes = new Set<string>();
 	const uniqueDates = new Set<string>();
-	const heatMapSlots = new Map<string, SummarySlot>();
+	const heatMapSlots = new Map<string, components["schemas"]["SlotSummaryDto"]>();
 
 	for (const time of event?.details.times ?? []) {
 		const [_time, date] = time.split("-");
 		uniqueTimes.add(_time);
-		uniqueDates.add(date);
+		uniqueDates.add(date ?? "");
 	}
 
 	for (const slot of event?.summary.slots ?? []) {
-		heatMapSlots.set(slot.slot, slot);
+		if (slot.slot) heatMapSlots.set(slot.slot, slot);
 	}
 
 	const heatMapTimes = Array.from(uniqueTimes).sort();
@@ -369,7 +369,7 @@ export const HeatmapTabs = ({
 											const realSlot = `${heatMapTime}-${heatMapDate}`;
 											const slot = heatMapSlots.get(realSlot);
 											const count = slot?.count ?? 0;
-											const hasMaxVotes = count === event?.summary.users.length;
+											const hasMaxVotes = count === event?.summary.users?.length;
 
 											return (
 												<Popover
@@ -394,7 +394,7 @@ export const HeatmapTabs = ({
 																)}
 																style={{
 																	opacity:
-																		count > 0 ? count / (event?.summary.users.length || 1) : 1,
+																		count > 0 ? count / (event?.summary.users?.length || 1) : 1,
 																}}
 															/>
 														</button>
@@ -413,12 +413,12 @@ export const HeatmapTabs = ({
 															)}
 														</p>
 														<p className="flex-nowrap shrink-0 ml-2 font-number font-semibold text-center mb-4">
-															{slot?.users.length || 0} / {event?.summary.users.length}{" "}
+															{slot?.users?.length || 0} / {event?.summary.users?.length}{" "}
 															{m.event_heatmap_info()}
 														</p>
-														{slot && slot.users.length > 0 && (
+														{slot && (slot.users?.length ?? 0) > 0 && (
 															<div className="flex flex-col gap-1 text-center">
-																{slot.users.map(user => (
+																{slot.users?.map(user => (
 																	<p key={user.id} className="text-sm">
 																		{user.name}
 																	</p>

@@ -2,9 +2,8 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
-import { LinkIcon, UsersRound } from "lucide-react";
+import { UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
@@ -37,15 +36,15 @@ function RouteComponent() {
 		respond({
 			shortId,
 			available: selectedSlots,
-			notAvailable: allTimes.filter(t => !selectedSlots.includes(t)),
+			notAvailable: allTimes.filter((time: string) => !selectedSlots.includes(time)),
 		});
 	};
 
 	useEffect(() => {
 		if (me) {
-			const currentUserSlots = event?.summary.users.find(user => user.user.id === me.id);
+			const currentUserSlots = event?.summary.users?.find(user => user.user?.id === me.id);
 			if (currentUserSlots) {
-				setSelectedSlots(() => currentUserSlots?.available);
+				setSelectedSlots(currentUserSlots.available ?? []);
 			}
 		}
 	}, [me, event]);
@@ -103,7 +102,7 @@ function RouteComponent() {
 						{isLoading ? (
 							<Skeleton className="h-7 w-6 ml-6" />
 						) : (
-							<p className="text-xl ml-6">{event?.summary.users.length}</p>
+							<p className="text-xl ml-6">{event?.summary.users?.length}</p>
 						)}
 					</div>
 				</div>
@@ -123,21 +122,21 @@ function RouteComponent() {
 							))}
 						</>
 					) : (
-						event?.summary.users.map(({ user, available }) => (
-							<div key={user.id} className="flex flex-row">
+						event?.summary.users?.map(({ user, available }) => (
+							<div key={user?.id} className="flex flex-row">
 								<div className="mr-3">
-									{user.profilePicture ? (
+									{user?.profilePicture ? (
 										<img src={user.profilePicture} alt="PP" className="rounded-full size-8" />
 									) : (
 										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full text-center size-8">
-											<p className="">{user.name.slice(0, 1)}</p>
+											<p className="">{user?.name?.slice(0, 1)}</p>
 										</div>
 									)}
 								</div>
 								<div>
-									<p className="text-xl">{user.name}</p>
+									<p className="text-xl">{user?.name}</p>
 									<p className="text-sm text-info">
-										{m.event_time_slots({ count: available.length })}
+										{m.event_time_slots({ count: available?.length ?? 0 })}
 									</p>
 								</div>
 							</div>
@@ -152,26 +151,26 @@ function RouteComponent() {
 			) : (
 				<div className="mb-12 flex flex-row font-semibold">
 					<p className="flex-nowrap shrink-0 mr-2 font-number">
-						0 / {event?.summary.users.length} {m.event_heatmap_info()}
+						0 / {event?.summary.users?.length} {m.event_heatmap_info()}
 					</p>
-					{[...Array(event?.summary.users.length! + 1)].map((_, count) => (
+					{[...Array(event?.summary.users?.length! + 1)].map((_, count) => (
 						<div
 							key={count}
 							className={cn(
 								"rounded-lg w-full text-center",
 								count === 0 ? "bg-paint" : "bg-primary",
-								count === event?.summary.users.length &&
+								count === event?.summary.users?.length &&
 									"border border-amber-300 shadow-sm shadow-amber-300",
 							)}
 							style={{
-								opacity: count > 0 ? count / (event?.summary.users.length || 1) : 1,
+								opacity: count > 0 ? count / (event?.summary.users?.length || 1) : 1,
 							}}
 						>
 							<p className="font-number">{count}</p>
 						</div>
 					))}
 					<p className="flex-nowrap shrink-0 ml-2 font-number">
-						{event?.summary.users.length} / {event?.summary.users.length} {m.event_heatmap_info()}
+						{event?.summary.users?.length} / {event?.summary.users?.length} {m.event_heatmap_info()}
 					</p>
 				</div>
 			)}

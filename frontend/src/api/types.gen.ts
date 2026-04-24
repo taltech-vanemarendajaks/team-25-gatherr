@@ -132,6 +132,8 @@ export interface components {
 			type: "SPECIFIC_DATES_AND_TIMES" | "SPECIFIC_DATES" | "WEEKDAYS" | "WEEKDAYS_AND_TIMES";
 			times: string[];
 			timezone: string;
+			/** Format: int32 */
+			timeIncrement: number;
 		};
 		EventResponseDto: {
 			/** Format: int64 */
