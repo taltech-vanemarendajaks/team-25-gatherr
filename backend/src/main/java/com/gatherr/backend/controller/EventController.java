@@ -47,4 +47,14 @@ public class EventController {
         EventResponseDto response = eventService.getEventByShortId(shortId);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{shortId}")
+    public ResponseEntity<Void> deleteEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable String shortId
+    ) {
+        Long creatorId = JwtUtils.extractUserId(jwt);
+        eventService.deleteEvent(creatorId, shortId);
+        return ResponseEntity.noContent().build();
+    }
 }
