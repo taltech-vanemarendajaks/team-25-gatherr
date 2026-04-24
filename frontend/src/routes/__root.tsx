@@ -65,6 +65,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "website",
 			},
 			{
+				property: "og:image",
+				content: `${SITE_URL}/android-chrome-512x512.png`,
+			},
+			{
 				name: "twitter:card",
 				content: "summary",
 			},

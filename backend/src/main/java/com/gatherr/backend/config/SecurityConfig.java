@@ -52,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/google").permitAll() // The login endpoint is public so users can actually log in
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Allow OpenAPI and Swagger UI to be accessed publicly
                         .requestMatchers(new AntPathRequestMatcher("/events/*/summary", HttpMethod.GET.name())).permitAll() // Public heatmap summary
+                        .requestMatchers(new AntPathRequestMatcher("/events/mine", HttpMethod.GET.name())).authenticated() // My events requires auth
+                        .requestMatchers(new AntPathRequestMatcher("/events/*", HttpMethod.GET.name())).permitAll() // Public event detail
                         .anyRequest().authenticated() // Everything else requires authentication
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
