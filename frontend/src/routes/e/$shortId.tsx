@@ -49,9 +49,8 @@ function RouteComponent() {
 		}
 	}, [me, event]);
 
-	if (!event) {
-		return <p>Not found</p>;
-	}
+	if (isLoading) return null;
+	if (!event) return <p>Not found</p>;
 
 	return (
 		<main className="max-w-md m-auto pt-5 px-4 sm:px-0">
