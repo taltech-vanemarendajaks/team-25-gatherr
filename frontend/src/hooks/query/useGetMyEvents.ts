@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { Event } from "../../mocks/types";
 
-interface ResponseType extends Event {}
+type ResponseType = components["schemas"]["EventResponseDto"];
 
 const queryFn = async (): Promise<ResponseType[]> => {
 	try {

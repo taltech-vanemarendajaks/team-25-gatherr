@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { Event, User } from "../../mocks/types";
 import { m } from "../../paraglide/messages";
 
-interface CreateInput extends Partial<User> {}
-
-interface ResponseType extends Event {}
+type CreateInput = components["schemas"]["UpdateUserDto"];
+type ResponseType = components["schemas"]["UserResponseDto"];
 
 const mutationFn = async (input: CreateInput): Promise<ResponseType> => {
 	const { data } = await GatherrApiClient.patch<ResponseType>("/users/me", input);

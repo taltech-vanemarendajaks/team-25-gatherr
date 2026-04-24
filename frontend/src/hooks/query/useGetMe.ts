@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { User } from "../../mocks/types";
 
-interface ResponseType extends User {}
+type ResponseType = components["schemas"]["UserResponseDto"];
 
 const queryFn = async (): Promise<ResponseType | null> => {
 	try {
