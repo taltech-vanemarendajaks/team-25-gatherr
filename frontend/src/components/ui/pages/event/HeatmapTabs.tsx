@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import type { components } from "../../../../api/types.gen";
 import { useGetEvent } from "../../../../hooks/query/useGetEvent";
 import { useGetMe } from "../../../../hooks/query/useGetMe";
+import { convertSlot } from "../../../../lib/timezone";
 import { cn } from "../../../../lib/utils";
 import { m } from "../../../../paraglide/messages";
 import { getLocale } from "../../../../paraglide/runtime";
@@ -68,12 +69,19 @@ export const HeatmapTabs = ({
 	const isDragging = useRef(false);
 	const visitedSlots = useRef(new Set<string>());
 
+	const eventTz = event?.details.timezone ?? "UTC";
+	const userTz = me?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 	const uniqueTimes = new Set<string>();
 	const uniqueDates = new Set<string>();
 	const heatMapSlots = new Map<string, components["schemas"]["SlotSummaryDto"]>();
+	// maps display-tz slot → original event-tz slot (for selectedSlots lookups)
+	const displayToSlot = new Map<string, string>();
 
-	for (const time of event?.details.times ?? []) {
-		const [_time, date] = time.split("-");
+	for (const eventSlot of event?.details.times ?? []) {
+		const displaySlot = convertSlot(eventSlot, eventTz, userTz);
+		displayToSlot.set(displaySlot, eventSlot);
+		const [_time, date] = displaySlot.split("-");
 		uniqueTimes.add(_time);
 		uniqueDates.add(date ?? "");
 	}
@@ -89,8 +97,10 @@ export const HeatmapTabs = ({
 		return sortableA.localeCompare(sortableB);
 	});
 
-	const toggleRow = (time: string) => {
-		const rowSlots = Array.from(heatMapDates).map(date => `${time}-${date}`);
+	const toggleRow = (displayTime: string) => {
+		const rowSlots = Array.from(heatMapDates).map(
+			date => displayToSlot.get(`${displayTime}-${date}`) ?? `${displayTime}-${date}`,
+		);
 		const allSelected = rowSlots.every(slot => selectedSlots.includes(slot));
 		setSelectedSlots(prev =>
 			allSelected
@@ -99,8 +109,10 @@ export const HeatmapTabs = ({
 		);
 	};
 
-	const toggleColumn = (date: string) => {
-		const colSlots = Array.from(heatMapTimes).map(time => `${time}-${date}`);
+	const toggleColumn = (displayDate: string) => {
+		const colSlots = Array.from(heatMapTimes).map(
+			time => displayToSlot.get(`${time}-${displayDate}`) ?? `${time}-${displayDate}`,
+		);
 		const allSelected = colSlots.every(slot => selectedSlots.includes(slot));
 		setSelectedSlots(prev =>
 			allSelected
@@ -267,13 +279,14 @@ export const HeatmapTabs = ({
 										{/* <div className="w-full border absolute z-10 border-[#686868]"/>*/}
 										<div className="w-16 shrink-0" />
 										{Array.from(heatMapDates.values()).map(heatMapDate => {
-											const realSlot = `${heatMapTime}-${heatMapDate}`;
+											const displaySlot = `${heatMapTime}-${heatMapDate}`;
+											const realSlot = displayToSlot.get(displaySlot) ?? displaySlot;
 											const isInLocal = selectedSlots.includes(realSlot);
 
 											return (
 												<button
 													type="button"
-													key={realSlot}
+													key={displaySlot}
 													data-slot={realSlot}
 													className="relative w-12 h-12 shrink-0 m-0.5 overflow-hidden rounded-xl"
 													disabled={!me}
@@ -366,23 +379,24 @@ export const HeatmapTabs = ({
 										</p>
 										<div className="w-16 shrink-0" />
 										{Array.from(heatMapDates.values()).map(heatMapDate => {
-											const realSlot = `${heatMapTime}-${heatMapDate}`;
+											const displaySlot = `${heatMapTime}-${heatMapDate}`;
+											const realSlot = displayToSlot.get(displaySlot) ?? displaySlot;
 											const slot = heatMapSlots.get(realSlot);
 											const count = slot?.count ?? 0;
 											const hasMaxVotes = count === event?.summary.users?.length;
 
 											return (
 												<Popover
-													key={realSlot}
-													open={openSlot === realSlot}
-													onOpenChange={open => setOpenSlot(open ? realSlot : null)}
+													key={displaySlot}
+													open={openSlot === displaySlot}
+													onOpenChange={open => setOpenSlot(open ? displaySlot : null)}
 												>
 													<PopoverTrigger asChild>
 														<button
 															type="button"
 															className="relative w-12 h-12 shrink-0 m-0.5"
 															onClick={() =>
-																setOpenSlot(prev => (prev === realSlot ? null : realSlot))
+																setOpenSlot(prev => (prev === displaySlot ? null : displaySlot))
 															}
 														>
 															<div
