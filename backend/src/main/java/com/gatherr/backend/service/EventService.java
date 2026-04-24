@@ -2,6 +2,7 @@ package com.gatherr.backend.service;
 
 import com.gatherr.backend.dto.CreateEventDto;
 import com.gatherr.backend.dto.EventResponseDto;
+import com.gatherr.backend.dto.UpdateEventDto;
 import com.gatherr.backend.model.Event;
 import com.gatherr.backend.model.EventUser;
 import com.gatherr.backend.model.User;
@@ -90,6 +91,41 @@ public class EventService {
                         HttpStatus.NOT_FOUND, "Event not found: " + shortId
                 ));
         return EventResponseDto.from(event);
+    }
+
+    public EventResponseDto updateEvent(Long userId, String shortId, UpdateEventDto updateEventDto) {
+        Event event = findActiveEventByShortId(shortId);
+        validateCreator(event, userId);
+        applyUpdates(event, updateEventDto);
+        Event savedEvent = eventRepository.save(event);
+        return EventResponseDto.from(savedEvent);
+    }
+
+    private void applyUpdates(Event event, UpdateEventDto dto) {
+        if (dto.name() != null) {
+            event.setName(dto.name());
+        }
+
+        if (dto.description() != null) {
+            event.setDescription(dto.description());
+        }
+    }
+
+    private void validateCreator(Event event, Long userId) {
+        if (!event.getCreator().getId().equals(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to update this event"
+            );
+        }
+    }
+
+    private Event findActiveEventByShortId(String shortId) {
+        return eventRepository.findByShortIdAndIsDeletedFalse(shortId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Event not found"
+                ));
     }
 
 }
