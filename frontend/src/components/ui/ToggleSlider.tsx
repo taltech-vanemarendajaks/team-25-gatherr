@@ -1,5 +1,4 @@
 import { motion, type Variants } from "motion/react";
-import { useGetMe } from "../../hooks/query/useGetMe";
 import { cn } from "../../lib/utils";
 
 interface TwoElementMovingBoxProps {

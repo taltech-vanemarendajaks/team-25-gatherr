@@ -10,9 +10,8 @@ interface Props {
 	date: Date;
 	month: Date;
 	selected: Date[];
-	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
-export const CalendarDate = ({ date, month, selected, setSelected }: Props) => {
+export const CalendarDate = ({ date, month, selected }: Props) => {
 	const isSelected = selected.some(_date => _date.getTime() === date.getTime());
 	const isDisabled = isBefore(date, subDays(new Date(), 1));
 

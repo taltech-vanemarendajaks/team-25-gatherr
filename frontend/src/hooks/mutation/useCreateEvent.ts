@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { Event } from "../../mocks/types";
 
-interface CreateInput extends Partial<Event> {}
-
-interface ResponseType extends Event {}
+type CreateInput = components["schemas"]["CreateEventDto"];
+type ResponseType = components["schemas"]["EventResponseDto"];
 
 const mutationFn = async (input: CreateInput): Promise<ResponseType> => {
 	const { data } = await GatherrApiClient.post<ResponseType>("/events", input);

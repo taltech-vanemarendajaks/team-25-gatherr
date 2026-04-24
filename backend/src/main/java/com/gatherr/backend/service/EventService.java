@@ -40,6 +40,7 @@ public class EventService {
                 .times(dto.getTimes())
                 .timezone(dto.getTimezone())
                 .shortId(generateUniqueShortId())
+                .timeIncrement(dto.getTimeIncrement())
                 .creator(creator)
                 .build();
         

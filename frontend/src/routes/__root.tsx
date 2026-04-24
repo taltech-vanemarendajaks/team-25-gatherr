@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { env } from "../env";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
-import { SITE_TITLE } from "../lib/site";
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "../lib/site";
 import { getLocale } from "../paraglide/runtime";
 import appCss from "../styles.css?url";
 
@@ -39,6 +39,42 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				title: SITE_TITLE,
+			},
+			{
+				name: "description",
+				content: SITE_DESCRIPTION,
+			},
+			{
+				property: "og:site_name",
+				content: SITE_TITLE,
+			},
+			{
+				property: "og:title",
+				content: SITE_TITLE,
+			},
+			{
+				property: "og:description",
+				content: SITE_DESCRIPTION,
+			},
+			{
+				property: "og:url",
+				content: SITE_URL,
+			},
+			{
+				property: "og:type",
+				content: "website",
+			},
+			{
+				name: "twitter:card",
+				content: "summary",
+			},
+			{
+				name: "twitter:title",
+				content: SITE_TITLE,
+			},
+			{
+				name: "twitter:description",
+				content: SITE_DESCRIPTION,
 			},
 		],
 		links: [

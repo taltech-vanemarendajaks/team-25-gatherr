@@ -2,9 +2,12 @@ cd frontend
 
 echo "🚀 Checking for API schema changes..."
 
-# Run the type generator from the static schema.json file
-npm run generate:types && echo "✅ TypeScript types updated from schema.json"
-git add src/api/types.gen.ts
+# Try to fetch latest schema from running backend (optional - skipped if backend is not running)
+npm run generate:schema && echo "Schema fetched from backend" || echo "Backend not running, using existing schema.json"
+
+# Regenerate types from schema.json
+npm run generate:types && echo "TypeScript types updated"
+git add schema.json src/api/types.gen.ts
 
 # Linting/formatting
 echo "🧼 Running linting and formatting..."

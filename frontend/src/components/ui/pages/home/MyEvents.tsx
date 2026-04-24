@@ -1,12 +1,10 @@
-import { EllipsisIcon, LinkIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDeleteEvent } from "../../../../hooks/mutation/useDeleteEvent";
 import { useGetMe } from "../../../../hooks/query/useGetMe";
 import { useGetMyEvents } from "../../../../hooks/query/useGetMyEvents";
 import { cn } from "../../../../lib/utils";
-import { shortId } from "../../../../mocks/data";
 import { m } from "../../../../paraglide/messages";
-import { Button } from "../../button";
 import { CopyLinkButton } from "../../CopyLinkButton";
 import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
 
@@ -20,7 +18,7 @@ export const MyEvents = () => {
 			{myEvents?.length && !isLoading ? (
 				<div className="flex flex-col space-y-4 bg-canvas rounded-xl px-6 py-6 mt-12 mx-4">
 					{myEvents.map(event => {
-						const isCreator = me?.id === event.creator.id;
+						const isCreator = me?.id === event.creatorId;
 
 						return (
 							<div key={event.id} className="bg-paint p-3 rounded-xl">
@@ -28,7 +26,7 @@ export const MyEvents = () => {
 									<div className="flex flex-col">
 										<p className="text-xl">{event.name}</p>
 										<p className="text-info text-sm">
-											{event.respondedCount === 0
+											{!event.respondedCount
 												? m.home_event_waiting()
 												: m.home_event_responded({ count: event.respondedCount })}
 										</p>
@@ -60,14 +58,14 @@ export const MyEvents = () => {
 												<button
 													type="button"
 													className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-paint w-full text-sm text-red-400 cursor-pointer"
-													onClick={() => deleteEvent(event.shortId)}
+													onClick={() => deleteEvent(event.shortId ?? "")}
 												>
 													<Trash2Icon className="size-4" />
 													{m.home_event_delete()}
 												</button>
 											</PopoverContent>
 										</Popover>
-										<CopyLinkButton shortId={event.shortId} className="px-2 py-1" />
+										<CopyLinkButton shortId={event.shortId ?? ""} className="px-2 py-1" />
 									</div>
 								</div>
 							</div>

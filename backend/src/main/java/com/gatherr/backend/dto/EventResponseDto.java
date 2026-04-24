@@ -2,6 +2,7 @@ package com.gatherr.backend.dto;
 
 import com.gatherr.backend.model.Event;
 import com.gatherr.backend.model.enums.EventType;
+import java.util.List;
 
 public record EventResponseDto(
         Long id,
@@ -10,6 +11,8 @@ public record EventResponseDto(
         String shortId,
         Long creatorId,
         EventType type,
+        List<String> times,
+        int timeIncrement,
         String timezone,
         int respondedCount
 ) {
@@ -25,6 +28,8 @@ public record EventResponseDto(
                 event.getShortId(),
                 event.getCreator() != null ? event.getCreator().getId() : null,
                 event.getType(),
+                event.getTimes(),
+                event.getTimeIncrement(),
                 event.getTimezone(),
                 respondedCount
         );

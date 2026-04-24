@@ -1,14 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { Event } from "../../mocks/types";
+
+type EventResponseDto = components["schemas"]["EventResponseDto"];
 
 interface UpdateInput {
 	shortId: string;
-	data: Partial<Pick<Event, "name" | "description">>;
+	data: Pick<EventResponseDto, "name" | "description">;
 }
 
-const mutationFn = async ({ shortId, data }: UpdateInput): Promise<Event> => {
-	const { data: response } = await GatherrApiClient.patch<Event>(`/events/${shortId}`, data);
+const mutationFn = async ({ shortId, data }: UpdateInput): Promise<EventResponseDto> => {
+	const { data: response } = await GatherrApiClient.patch<EventResponseDto>(
+		`/events/${shortId}`,
+		data,
+	);
 	return response;
 };
 

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { components } from "../../api/types.gen";
 import { GatherrApiClient } from "../../lib/axios";
-import type { EventUser } from "../../mocks/types";
 
 interface RespondInput {
 	shortId: string;
@@ -8,16 +8,11 @@ interface RespondInput {
 	notAvailable: string[];
 }
 
-const mutationFn = async ({
-	shortId,
-	available,
-	notAvailable,
-}: RespondInput): Promise<EventUser> => {
-	const { data } = await GatherrApiClient.put<EventUser>(`/events/${shortId}/respond`, {
-		available,
-		notAvailable,
-	});
-	return data;
+type RespondBody = components["schemas"]["RespondDto"];
+
+const mutationFn = async ({ shortId, available, notAvailable }: RespondInput): Promise<void> => {
+	const body: RespondBody = { available, notAvailable };
+	await GatherrApiClient.put(`/events/${shortId}/respond`, body);
 };
 
 export const useRespondToEvent = (shortId: string) => {
