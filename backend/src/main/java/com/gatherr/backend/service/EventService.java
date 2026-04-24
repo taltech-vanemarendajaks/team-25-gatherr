@@ -81,4 +81,14 @@ public class EventService {
             .map(eventUser -> EventResponseDto.from(eventUser.getEvent()))
             .toList();
     }
+
+    @Transactional(readOnly = true)
+    public EventResponseDto getEventByShortId(String shortId) {
+        Event event = eventRepository.findByShortIdAndIsDeletedFalse(shortId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Event not found: " + shortId
+                ));
+        return EventResponseDto.from(event);
+    }
+
 }
