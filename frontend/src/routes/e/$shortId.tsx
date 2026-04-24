@@ -128,8 +128,8 @@ function RouteComponent() {
 									{user?.profilePicture ? (
 										<img src={user.profilePicture} alt="PP" className="rounded-full size-8" />
 									) : (
-										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full text-center size-8">
-											<p className="">{user?.name?.slice(0, 1)}</p>
+										<div className="bg-linear-to-tr from-primary from-5% to-secondary rounded-full size-8 flex items-center justify-center">
+											<p>{user?.name?.slice(0, 1)}</p>
 										</div>
 									)}
 								</div>
