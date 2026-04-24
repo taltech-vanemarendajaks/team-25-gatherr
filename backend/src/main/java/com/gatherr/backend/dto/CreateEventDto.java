@@ -25,4 +25,6 @@ public class CreateEventDto {
     @NotBlank
     private String timezone;
 
+    @NotNull
+    private Integer timeIncrement;
 }
