@@ -2,6 +2,7 @@ package com.gatherr.backend.service;
 
 import com.gatherr.backend.dto.CreateEventDto;
 import com.gatherr.backend.dto.EventResponseDto;
+import com.gatherr.backend.dto.UpdateEventDto;
 import com.gatherr.backend.model.Event;
 import com.gatherr.backend.model.EventUser;
 import com.gatherr.backend.model.User;
