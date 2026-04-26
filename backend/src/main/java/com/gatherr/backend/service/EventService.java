@@ -92,4 +92,20 @@ public class EventService {
         return EventResponseDto.from(event);
     }
 
+    @Transactional
+    public void deleteEvent(Long userId, String shortId) {
+        Event event = eventRepository.findByShortIdAndIsDeletedFalse(shortId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Event not found: " + shortId
+                ));
+
+        if (event.getCreator() == null || !event.getCreator().getId().equals(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have permission to delete this event"
+            );
+        }
+
+        event.setDeleted(true); 
+        eventRepository.save(event);
+    }
 }
