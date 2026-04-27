@@ -260,11 +260,14 @@ FE->>FE: Check Auth State (isLoggedIn?)
 
 alt Not Logged In
     FE->>U: Show Google Sign-In Modal
-    U->>G: Signs in with Google
-    G-->>FE: Return id_token (name, email, picture)
-    FE->>BE: POST /api/auth/google (id_token)
-    BE->>DB: UPSERT INTO users (name, email, picture)
-    BE-->>FE: Return JWT + User
+    U->>G: Signs in with Google (OAuth implicit flow)
+    G-->>FE: Return access_token
+    FE->>BE: POST /api/auth/google { accessToken, timezone }
+    BE->>G: GET /oauth2/v3/userinfo (Bearer access_token)
+    G-->>BE: Return { email, name, picture, email_verified }
+    BE->>DB: UPSERT INTO users (name, email, picture, language, timezone)
+    BE-->>FE: Return { token (app JWT), id, name, email, profilePicture }
+    FE->>FE: Store JWT in localStorage
 end
 
 FE->>BE: POST /api/events (name, times, timezone, creator_id)
@@ -297,10 +300,14 @@ FE->>FE: Check Auth State (isLoggedIn?)
 
 alt Not Logged In
     FE->>U: Show Google Sign-In Modal
-    U->>G: Signs in with Google
-    G-->>FE: Return id_token
-    FE->>BE: POST /api/auth/google (id_token)
-    BE-->>FE: Return JWT + User
+    U->>G: Signs in with Google (OAuth implicit flow)
+    G-->>FE: Return access_token
+    FE->>BE: POST /api/auth/google { accessToken, timezone }
+    BE->>G: GET /oauth2/v3/userinfo (Bearer access_token)
+    G-->>BE: Return { email, name, picture, email_verified }
+    BE->>DB: UPSERT INTO users (name, email, picture, language, timezone)
+    BE-->>FE: Return { token (app JWT), id, name, email, profilePicture }
+    FE->>FE: Store JWT in localStorage
 end
 
 opt Google Calendar Sync
@@ -317,9 +324,11 @@ end
 
 U->>FE: Adjusts and confirms availability slots
 U->>FE: Clicks "Save"
-FE->>BE: POST /api/events/{shortId}/availability
-Note right of BE: Upserts EventUser record
-BE-->>FE: 200 OK (Updated Heatmap)
+FE->>BE: PUT /api/events/{shortId}/respond { available, notAvailable }
+Note right of BE: Upserts event_user row (full replace)
+BE-->>FE: 200 OK
+FE->>BE: GET /api/events/{shortId}/summary
+BE-->>FE: Return updated heatmap
 FE->>U: Show updated Heatmap
 ```
 
