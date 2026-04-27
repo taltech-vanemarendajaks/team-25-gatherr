@@ -78,7 +78,7 @@ export interface paths {
 		get: operations["getEventByShortId"];
 		put?: never;
 		post?: never;
-		delete?: never;
+		delete: operations["deleteEvent"];
 		options?: never;
 		head?: never;
 		patch?: never;
@@ -350,6 +350,26 @@ export interface operations {
 				content: {
 					"*/*": components["schemas"]["EventResponseDto"];
 				};
+			};
+		};
+	};
+	deleteEvent: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				shortId: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
 			};
 		};
 	};
