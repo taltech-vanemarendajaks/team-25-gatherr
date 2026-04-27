@@ -32,10 +32,6 @@ export const UserButton = () => {
 		me?.startOnMonday === true || me?.startOnMonday === undefined ? 0 : 1,
 	);
 
-	const [timezone, setTimezone] = useState(
-		me?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
-	);
-
 	return (
 		<Popover>
 			<PopoverTrigger className="disabled:opacity-80">
@@ -61,33 +57,6 @@ export const UserButton = () => {
 						selectedIndex={weekStartsOn}
 						setSelectedIndex={setWeekStartsOn}
 					/>
-				</div>
-				<div className="flex flex-col mb-4">
-					<p className="ml-1 mb-1 font-semibold">{m.create_timezone()}</p>
-					<Select
-						value={timezone}
-						onValueChange={value => {
-							setTimezone(value);
-							if (me) {
-								updateUser({ timezone: value });
-							} else {
-								toast.error(m.user_settings_sign_in_to_save());
-							}
-						}}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								{Intl.supportedValuesOf("timeZone").map(tz => (
-									<SelectItem key={tz} value={tz}>
-										{tz}
-									</SelectItem>
-								))}
-							</SelectGroup>
-						</SelectContent>
-					</Select>
 				</div>
 				<div className="flex flex-col mb-4">
 					<p className="ml-1 mb-1 font-semibold">{m.user_settings_language()}</p>
