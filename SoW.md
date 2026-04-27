@@ -57,7 +57,7 @@ order are carried out? These should be each 10-30h of work. -->
 
 * **Google Calendar Sync:** Fetching `calendarList` and busy calendar times.
 * **Email notifications:** Send notifications about event times to users and allow them to add the time to google calendar with one button click.
-* **User Preferences:** Implementation of timezone detection and toggleable settings (24h clock, Monday-start, support estonian language).
+* **User Preferences:** Implementation of toggleable settings (24h clock, Monday-start, support estonian language). Timezone is detected automatically from the browser and not stored.
 * **Deployment:** Moving from local development to a live production environment.
 * **App:** Simple expo webview app for mobile.
 
@@ -260,11 +260,14 @@ FE->>FE: Check Auth State (isLoggedIn?)
 
 alt Not Logged In
     FE->>U: Show Google Sign-In Modal
-    U->>G: Signs in with Google
-    G-->>FE: Return id_token (name, email, picture)
-    FE->>BE: POST /api/auth/google (id_token)
-    BE->>DB: UPSERT INTO users (name, email, picture)
-    BE-->>FE: Return JWT + User
+    U->>G: Signs in with Google (OAuth implicit flow)
+    G-->>FE: Return access_token
+    FE->>BE: POST /api/auth/google { accessToken, timezone }
+    BE->>G: GET /oauth2/v3/userinfo (Bearer access_token)
+    G-->>BE: Return { email, name, picture, email_verified }
+    BE->>DB: UPSERT INTO users (name, email, picture, language, timezone)
+    BE-->>FE: Return { token (app JWT), id, name, email, profilePicture }
+    FE->>FE: Store JWT in localStorage
 end
 
 FE->>BE: POST /api/events (name, times, timezone, creator_id)
@@ -297,10 +300,14 @@ FE->>FE: Check Auth State (isLoggedIn?)
 
 alt Not Logged In
     FE->>U: Show Google Sign-In Modal
-    U->>G: Signs in with Google
-    G-->>FE: Return id_token
-    FE->>BE: POST /api/auth/google (id_token)
-    BE-->>FE: Return JWT + User
+    U->>G: Signs in with Google (OAuth implicit flow)
+    G-->>FE: Return access_token
+    FE->>BE: POST /api/auth/google { accessToken, timezone }
+    BE->>G: GET /oauth2/v3/userinfo (Bearer access_token)
+    G-->>BE: Return { email, name, picture, email_verified }
+    BE->>DB: UPSERT INTO users (name, email, picture, language, timezone)
+    BE-->>FE: Return { token (app JWT), id, name, email, profilePicture }
+    FE->>FE: Store JWT in localStorage
 end
 
 opt Google Calendar Sync
@@ -317,9 +324,11 @@ end
 
 U->>FE: Adjusts and confirms availability slots
 U->>FE: Clicks "Save"
-FE->>BE: POST /api/events/{shortId}/availability
-Note right of BE: Upserts EventUser record
-BE-->>FE: 200 OK (Updated Heatmap)
+FE->>BE: PUT /api/events/{shortId}/respond { available, notAvailable }
+Note right of BE: Upserts event_user row (full replace)
+BE-->>FE: 200 OK
+FE->>BE: GET /api/events/{shortId}/summary
+BE-->>FE: Return updated heatmap
 FE->>U: Show updated Heatmap
 ```
 
@@ -338,23 +347,23 @@ Note over FE: FE detects user timezone via Intl.DateTimeFormat().resolvedOptions
 
 U->>FE: Selects available slots on grid
 U->>FE: Clicks "Save"
-FE->>BE: PUT /api/events/{shortId}/respond<br/>{ available, notAvailable, timezone: "Europe/Tallinn" }
-BE->>DB: UPSERT event_user (available, notAvailable, timezone)
+FE->>BE: PUT /api/events/{shortId}/respond<br/>{ available, notAvailable }
+BE->>DB: UPSERT event_user (available, notAvailable, timezone=null)
 BE-->>FE: 200 OK
 
-Note over BE: Each event_user row now stores slots in the participant's own timezone
+Note over BE: Slots are stored in event.timezone (no per-user conversion needed)
 
 FE->>BE: GET /api/events/{shortId}/summary
 BE->>DB: SELECT all event_user rows for event
 
-Note over BE: For each event_user row:<br/>convert available slots from eventUser.timezone → event.timezone<br/>using ZonedDateTime (e.g. "0700-10042026" Europe/Tallinn → "0600-10042026" Europe/Amsterdam)
+Note over BE: For each event_user row:<br/>timezone=null → falls back to event.timezone (no-op conversion)<br/>slots are already in event.timezone
 
 BE->>BE: Build slots list — count per slot using normalized times
 BE-->>FE: { users: [...], slots: [{ slot, count, users }] }
 
-Note over FE: Slots are now in event.timezone
+Note over FE: Slots are in event.timezone
 
-FE->>FE: Heatmap wrapper converts each slot from event.timezone → user.timezone<br/>for display (e.g. "0600-10042026" → "0800-10042026" for Tallinn user)
+FE->>FE: Heatmap wrapper converts each slot from event.timezone → user.timezone<br/>for display only (e.g. "0900-24042026" Europe/Tallinn → "0200-24042026" America/New_York)
 FE->>U: Render heatmap — each cell colored by count, labels in user's local time
 ```
 
@@ -369,7 +378,7 @@ SET `server.servlet.context-path=/api/v1` in `application.properties`
 | Group | Method | Endpoint | Purpose |
 | :--- | :--- | :--- | :--- |
 | **Users** | `GET` | `/users/me` | Fetch current user profile & settings |
-| **Users** | `PATCH` | `/users/me` | Update user preferences (e.g. timezone) |
+| **Users** | `PATCH` | `/users/me` | Update user preferences (startOnMonday, timeFormat24, language) |
 | **Events** | `POST` | `/events` | Create a new event and time slots |
 | **Events** | `GET` | `/events/{shortId}` | Fetch specific event details |
 | **Events** | `GET` | `/events/mine` | List all events created by the user |

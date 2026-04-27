@@ -166,7 +166,6 @@ export interface components {
 			profilePicture?: string;
 		};
 		UpdateUserDto: {
-			timezone?: string;
 			startOnMonday?: boolean;
 			timeFormat24?: boolean;
 			language?: string;
@@ -177,7 +176,6 @@ export interface components {
 			name?: string;
 			email?: string;
 			profilePicture?: string;
-			timezone?: string;
 			startOnMonday?: boolean;
 			timeFormat24?: boolean;
 			language?: string;

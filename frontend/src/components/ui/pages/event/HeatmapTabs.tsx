@@ -70,7 +70,7 @@ export const HeatmapTabs = ({
 	const visitedSlots = useRef(new Set<string>());
 
 	const eventTz = event?.details.timezone ?? "UTC";
-	const userTz = me?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const uniqueTimes = new Set<string>();
 	const uniqueDates = new Set<string>();
