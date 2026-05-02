@@ -20,6 +20,7 @@ export const CalendarDate = ({ date, month, selected }: Props) => {
 			type="button"
 			aria-disabled={isDisabled}
 			data-date={isDisabled ? undefined : date.toISOString()}
+			style={{ touchAction: isDisabled ? "auto" : "none" }}
 			className={cn(
 				"relative w-full h-full m-auto rounded-lg overflow-hidden transition-colors duration-300",
 				isSelected && "text-content!",

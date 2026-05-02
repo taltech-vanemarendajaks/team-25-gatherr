@@ -24,6 +24,10 @@ const devLinks: Plugin = {
 };
 
 const config = defineConfig({
+	server: {
+		host: true,
+		allowedHosts: ["gatherr.alber.ee", "reputably-fanciness-trowel.ngrok-free.dev"],
+	},
 	plugins: [
 		devLinks,
 		devtools(),

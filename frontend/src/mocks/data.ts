@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import type { Event, EventType, EventUser, User } from "./types";
 
 // Fixed seed = same data every refresh
-faker.seed(42);
+faker.seed(43);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ function generateTimeSlots(startDate: Date, numberOfDays: number, increment: num
 		const mm = String(date.getMonth() + 1).padStart(2, "0");
 		const yyyy = date.getFullYear();
 		const dateStr = `${dd}${mm}${yyyy}`;
-		for (let h = 8; h <= 14; h++) {
+		for (let h = 10; h <= 22; h++) {
 			for (let m = 0; m < 60; m += increment) {
 				slots.push(`${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}-${dateStr}`);
 			}
@@ -43,7 +43,7 @@ function makeUser(id: number, overrides: Partial<User> = {}): User {
 		id,
 		name: faker.person.fullName(),
 		email: faker.internet.email(),
-		profilePicture: faker.datatype.boolean(0.6) ? faker.image.avatarGitHub() : null,
+		profilePicture: faker.datatype.boolean(0.6) ? faker.image.avatar() : null,
 		timezone: faker.helpers.arrayElement(["Europe/Tallinn", "Europe/London"]),
 		startOnMonday: faker.datatype.boolean(0.7),
 		timeFormat24: faker.datatype.boolean(0.6),
@@ -56,15 +56,21 @@ function makeUser(id: number, overrides: Partial<User> = {}): User {
 
 /** The hardcoded "logged in" user — always returned by GET /users/me */
 export const ME: User = makeUser(1, {
-	name: "Tomi Markus Alber",
-	email: "tomimarkus@alber.ee",
+	name: "Tomi",
+	email: "tomi@demo.ee",
 	timezone: "Europe/Tallinn",
 	startOnMonday: true,
 	timeFormat24: true,
 	language: "EN",
 });
 
-export const USERS: User[] = [ME, makeUser(2), makeUser(3), makeUser(4), makeUser(5)];
+export const USERS: User[] = [
+	ME,
+	makeUser(2, { name: "Oliver", email: "oliver@demo.ee" }),
+	makeUser(3, { name: "Karina", email: "karina@demo.ee" }),
+	makeUser(4, { name: "Kaur", email: "kaur@demo.ee" }),
+	makeUser(5, { name: "Ingrid", email: "ingrid@demo.ee" }),
+];
 
 // ─── Events ──────────────────────────────────────────────────────────────────
 
@@ -77,8 +83,8 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 	return {
 		id,
 		name: faker.helpers.arrayElement([
-			"Team Standup",
-			"Team Standup",
+			"Palworld pela",
+			"Game Night",
 			"Birthday party",
 			"Team Standup",
 		]),
@@ -149,3 +155,7 @@ export const EVENT_USERS: EventUser[] = [
 	makeEventUser(5, EVENTS[1], USERS[3]),
 	makeEventUser(6, EVENTS[3], ME, { available: [], notAvailable: [] }),
 ];
+
+for (const event of EVENTS) {
+	event.respondedCount = EVENT_USERS.filter(eu => eu.event.id === event.id).length;
+}

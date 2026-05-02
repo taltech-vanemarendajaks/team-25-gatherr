@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 export const buttonVariantColors = {
 	orange: ["text-content bg-primary border-[#894822]", "active:border-primary"],
 	red: ["text-content bg-secondary border-[#752102]", "active:border-secondary"],
-	dark: ["text-content bg-paint border-[#130E0A]", "active:border-paint"],
+	dark: ["text-content bg-[#3a3733] border-[#12110f]", "active:border-[#3a3733]"],
 };
 
 export const buttonVariants = cva(

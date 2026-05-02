@@ -1,10 +1,11 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { format } from "date-fns";
-import { CheckIcon, PenBoxIcon, PencilIcon, XIcon } from "lucide-react";
+import { BanIcon, CheckIcon, PenBoxIcon, PencilIcon, XIcon } from "lucide-react";
 import { motion, type Variants } from "motion/react";
 import { useRef, useState } from "react";
 import type { components } from "../../../../api/types.gen";
+import { useRespondToEvent } from "../../../../hooks/mutation/useRespondToEvent";
 import { useGetEvent } from "../../../../hooks/query/useGetEvent";
 import { useGetMe } from "../../../../hooks/query/useGetMe";
 import { convertSlot } from "../../../../lib/timezone";
@@ -17,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../tabs";
 import { useIsMobile } from "../../useIsMobile";
 import { dateFnsLocale } from "../create/calendar/Calendar";
+import { GoogleCalendarSync } from "./GoogleCalendarSync";
 
 interface TwoElementMovingBoxProps {
 	selectedIndex: number;
@@ -69,6 +71,8 @@ export const HeatmapTabs = ({
 	const isDragging = useRef(false);
 	const visitedSlots = useRef(new Set<string>());
 
+	const { mutate: respond } = useRespondToEvent(shortId);
+
 	const eventTz = event?.details.timezone ?? "UTC";
 	const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -90,6 +94,10 @@ export const HeatmapTabs = ({
 		if (slot.slot) heatMapSlots.set(slot.slot, slot);
 	}
 
+	const myNotAvailable = new Set(
+		event?.summary.users?.find(u => u.user?.id === me?.id)?.notAvailable ?? [],
+	);
+
 	const heatMapTimes = Array.from(uniqueTimes).sort();
 	const heatMapDates = Array.from(uniqueDates).sort((a, b) => {
 		const sortableA = a.slice(4, 8) + a.slice(2, 4) + a.slice(0, 2);
@@ -98,9 +106,9 @@ export const HeatmapTabs = ({
 	});
 
 	const toggleRow = (displayTime: string) => {
-		const rowSlots = Array.from(heatMapDates).map(
-			date => displayToSlot.get(`${displayTime}-${date}`) ?? `${displayTime}-${date}`,
-		);
+		const rowSlots = Array.from(heatMapDates)
+			.map(date => displayToSlot.get(`${displayTime}-${date}`) ?? `${displayTime}-${date}`)
+			.filter(slot => !myNotAvailable.has(slot));
 		const allSelected = rowSlots.every(slot => selectedSlots.includes(slot));
 		setSelectedSlots(prev =>
 			allSelected
@@ -110,9 +118,9 @@ export const HeatmapTabs = ({
 	};
 
 	const toggleColumn = (displayDate: string) => {
-		const colSlots = Array.from(heatMapTimes).map(
-			time => displayToSlot.get(`${time}-${displayDate}`) ?? `${time}-${displayDate}`,
-		);
+		const colSlots = Array.from(heatMapTimes)
+			.map(time => displayToSlot.get(`${time}-${displayDate}`) ?? `${time}-${displayDate}`)
+			.filter(slot => !myNotAvailable.has(slot));
 		const allSelected = colSlots.every(slot => selectedSlots.includes(slot));
 		setSelectedSlots(prev =>
 			allSelected
@@ -121,8 +129,14 @@ export const HeatmapTabs = ({
 		);
 	};
 
-	const handleSelectAll = () => setSelectedSlots(event?.details.times ?? []);
+	const handleSelectAll = () =>
+		setSelectedSlots((event?.details.times ?? []).filter(s => !myNotAvailable.has(s)));
 	const handleDeselectAll = () => setSelectedSlots([]);
+
+	const handleCalendarSync = (available: string[], notAvailable: string[]) => {
+		setSelectedSlots(available);
+		respond({ shortId, available, notAvailable });
+	};
 
 	return (
 		<>
@@ -152,6 +166,13 @@ export const HeatmapTabs = ({
 								<p className="text-info text-sm">{m.event_mark_availability_text()}</p>
 							</div>
 						</div>
+					</div>
+					<div className="flex justify-center">
+						<GoogleCalendarSync
+							eventTimes={event?.details.times ?? []}
+							selectedSlots={selectedSlots}
+							onSync={handleCalendarSync}
+						/>
 					</div>
 
 					{me && (
@@ -282,6 +303,7 @@ export const HeatmapTabs = ({
 											const displaySlot = `${heatMapTime}-${heatMapDate}`;
 											const realSlot = displayToSlot.get(displaySlot) ?? displaySlot;
 											const isInLocal = selectedSlots.includes(realSlot);
+											const isNotAvailable = !isInLocal && myNotAvailable.has(realSlot);
 
 											return (
 												<button
@@ -291,7 +313,12 @@ export const HeatmapTabs = ({
 													className="relative w-12 h-12 shrink-0 m-0.5 overflow-hidden rounded-xl"
 													disabled={!me}
 												>
-													<div className="absolute inset-0 rounded-xl bg-paint" />
+													<div
+														className={cn(
+															"absolute inset-0 rounded-xl",
+															isNotAvailable ? "bg-secondary/25" : "bg-paint",
+														)}
+													/>
 													<motion.span
 														initial={false}
 														animate={{
@@ -308,6 +335,9 @@ export const HeatmapTabs = ({
 													/>
 													{me?.id && isInLocal && (
 														<CheckIcon className="absolute inset-0 size-6 m-auto z-10" />
+													)}
+													{isNotAvailable && (
+														<BanIcon className="absolute inset-0 size-5 m-auto z-10 text-secondary" />
 													)}
 												</button>
 											);

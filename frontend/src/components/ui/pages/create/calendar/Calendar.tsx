@@ -160,7 +160,6 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 			<motion.div variants={animations.calendar.view} custom={direction}>
 				<div
 					className="grid grid-rows-5 gap-0.5"
-					style={{ touchAction: "none" }}
 					onPointerDown={e => {
 						const el = document.elementFromPoint(e.clientX, e.clientY);
 						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");

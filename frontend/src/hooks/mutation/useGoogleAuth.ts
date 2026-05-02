@@ -10,5 +10,6 @@ export const useGoogleAuth = () => {
 		onSuccess: ({ access_token }) => login(access_token),
 		onError: () => toast.error(m.google_sign_in_failed()),
 	});
+	if (env.VITE_ENABLE_MOCK) return () => login(undefined);
 	return env.VITE_GOOGLE_CLIENT_ID ? () => googleLogin() : () => login(undefined);
 };

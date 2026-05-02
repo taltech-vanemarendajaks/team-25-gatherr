@@ -127,8 +127,8 @@ function RootDocument({ children }: { children: ReactNode }) {
 					<GoogleOAuthProvider clientId={env.VITE_GOOGLE_CLIENT_ID ?? ""}>
 						{mswReady ? children : null}
 					</GoogleOAuthProvider>
-					<TanStackDevtools
-						config={{ position: "bottom-right" }}
+					{/* <TanStackDevtools
+						config={{ position: "bottom-right", }}
 						plugins={[
 							{
 								name: "Tanstack Router",
@@ -136,7 +136,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 							},
 							TanStackQueryDevtools,
 						]}
-					/>
+					/> */}
 				</TanStackQueryProvider>
 				<Scripts />
 				<Toaster

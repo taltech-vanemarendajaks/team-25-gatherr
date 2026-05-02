@@ -2,8 +2,9 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
-import { UsersRound } from "lucide-react";
+import { SendIcon, UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
@@ -31,6 +32,8 @@ function RouteComponent() {
 
 	const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
 
+	const isCreator = me && event && me.id === event.details.creatorId;
+
 	const handleSave = () => {
 		const allTimes = event?.details.times ?? [];
 		respond({
@@ -38,6 +41,16 @@ function RouteComponent() {
 			available: selectedSlots,
 			notAvailable: allTimes.filter((time: string) => !selectedSlots.includes(time)),
 		});
+	};
+
+	const handleSendInvites = () => {
+		toast.success("Invites sent to people");
+		const shareText = "Game night begins at 19:00 02.05 This sunday.";
+		if (navigator.share) {
+			navigator.share({ text: shareText }).catch(() => {});
+		} else {
+			navigator.clipboard.writeText(shareText);
+		}
 	};
 
 	useEffect(() => {
@@ -63,7 +76,15 @@ function RouteComponent() {
 						<p className="text-3xl mb-2 font-viking">{event?.details.name}</p>
 					)}
 
-					<CopyLinkButton shortId={shortId} />
+					<div className="flex flex-row gap-3">
+						<CopyLinkButton shortId={shortId} />
+						{isCreator && (
+							<Button size="xs" onClick={handleSendInvites}>
+								<SendIcon className="size-4 mr-2" />
+								Send final date
+							</Button>
+						)}
+					</div>
 				</div>
 				<div>
 					<UserButton />
