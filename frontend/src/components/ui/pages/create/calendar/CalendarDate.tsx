@@ -50,12 +50,7 @@ export const CalendarDate = ({ date, month, selected }: Props) => {
 				style={{ originX: 0.5, originY: 0.5 }}
 			/>
 
-			<div
-				className={cn(
-					"relative z-10 flex flex-col h-full justify-center text-sm",
-					"duration-300 hover:text-lg",
-				)}
-			>
+			<div className={cn("relative z-10 flex flex-col h-full justify-center text-sm")}>
 				<time className={cn("font-number font-medium")} dateTime={format(date, "dd-MM-yyyy")}>
 					{date.getDate()}
 				</time>
