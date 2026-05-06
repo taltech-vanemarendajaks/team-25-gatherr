@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import type { Event, EventType, EventUser, User } from "./types";
 
 // Fixed seed = same data every refresh
-faker.seed(42);
+faker.seed(43);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ function generateTimeSlots(startDate: Date, numberOfDays: number, increment: num
 		const mm = String(date.getMonth() + 1).padStart(2, "0");
 		const yyyy = date.getFullYear();
 		const dateStr = `${dd}${mm}${yyyy}`;
-		for (let h = 8; h <= 14; h++) {
+		for (let h = 10; h <= 22; h++) {
 			for (let m = 0; m < 60; m += increment) {
 				slots.push(`${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}-${dateStr}`);
 			}
@@ -43,7 +43,8 @@ function makeUser(id: number, overrides: Partial<User> = {}): User {
 		id,
 		name: faker.person.fullName(),
 		email: faker.internet.email(),
-		profilePicture: faker.datatype.boolean(0.6) ? faker.image.avatarGitHub() : null,
+		profilePicture: null,
+		// profilePicture: faker.datatype.boolean(0.6) ? faker.image.avatar() : null,
 		timezone: faker.helpers.arrayElement(["Europe/Tallinn", "Europe/London"]),
 		startOnMonday: faker.datatype.boolean(0.7),
 		timeFormat24: faker.datatype.boolean(0.6),
@@ -56,15 +57,31 @@ function makeUser(id: number, overrides: Partial<User> = {}): User {
 
 /** The hardcoded "logged in" user — always returned by GET /users/me */
 export const ME: User = makeUser(1, {
-	name: "Tomi Markus Alber",
-	email: "tomimarkus@alber.ee",
+	name: "Tomi",
+	email: "tomi@demo.ee",
 	timezone: "Europe/Tallinn",
 	startOnMonday: true,
 	timeFormat24: true,
 	language: "EN",
 });
 
-export const USERS: User[] = [ME, makeUser(2), makeUser(3), makeUser(4), makeUser(5)];
+export const JAMES: User = makeUser(6, {
+	name: "Britishhh Dudee",
+	email: "james@demo.co.uk",
+	timezone: "Europe/London",
+	startOnMonday: true,
+	timeFormat24: false,
+	language: "EN",
+});
+
+export const USERS: User[] = [
+	ME,
+	makeUser(2, { name: "Oliver", email: "oliver@demo.ee" }),
+	makeUser(3, { name: "Karina", email: "karina@demo.ee" }),
+	makeUser(4, { name: "Kaur", email: "kaur@demo.ee" }),
+	makeUser(5, { name: "Ingrid", email: "ingrid@demo.ee" }),
+	JAMES,
+];
 
 // ─── Events ──────────────────────────────────────────────────────────────────
 
@@ -77,8 +94,8 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 	return {
 		id,
 		name: faker.helpers.arrayElement([
-			"Team Standup",
-			"Team Standup",
+			"Palworld pela",
+			"Game Night",
 			"Birthday party",
 			"Team Standup",
 		]),
@@ -97,7 +114,86 @@ function makeEvent(id: number, creator: User, overrides: Partial<Event> = {}): E
 	};
 }
 
+function demoSlots(): string[] {
+	const slots: string[] = [];
+	for (let d = 1; d <= 4; d++) {
+		const date = new Date();
+		date.setDate(date.getDate() + d);
+		const dd = String(date.getDate()).padStart(2, "0");
+		const mm = String(date.getMonth() + 1).padStart(2, "0");
+		const yyyy = date.getFullYear();
+		const dateStr = `${dd}${mm}${yyyy}`;
+		for (let h = 9; h < 18; h++) {
+			for (const min of [0, 30]) {
+				slots.push(`${String(h).padStart(2, "0")}${String(min).padStart(2, "0")}-${dateStr}`);
+			}
+		}
+	}
+	return slots;
+}
+
+function gatherSlots(): string[] {
+	const slots: string[] = [];
+	const dates = [
+		"11052026",
+		"12052026",
+		"13052026",
+		"14052026",
+		"15052026",
+		"16052026",
+		"17052026",
+		"23052026",
+		"24052026",
+	];
+	for (const dateStr of dates) {
+		for (let h = 12; h <= 22; h++) {
+			for (const min of [0, 30]) {
+				if (h === 22 && min === 30) continue;
+				slots.push(`${String(h).padStart(2, "0")}${String(min).padStart(2, "0")}-${dateStr}`);
+			}
+		}
+	}
+	return slots;
+}
+
+const DEMO_TIMES = demoSlots();
+const GATHER_TIMES = gatherSlots();
+
+export const GATHER_EVENT: Event = {
+	id: 20,
+	name: "Game Night",
+	description: null,
+	shortId: "game-night",
+	creator: ME,
+	type: "SPECIFIC_DATES_AND_TIMES",
+	times: GATHER_TIMES,
+	timeIncrement: 30,
+	timezone: "Europe/Tallinn",
+	isDeleted: false,
+	respondedCount: 4,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+};
+
+export const DEMO_EVENT: Event = {
+	id: 10,
+	name: "Gaming",
+	description: null,
+	shortId: "english",
+	creator: ME,
+	type: "SPECIFIC_DATES_AND_TIMES",
+	times: DEMO_TIMES,
+	timeIncrement: 30,
+	timezone: "Europe/London",
+	isDeleted: false,
+	respondedCount: 2,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+};
+
 export const EVENTS: Event[] = [
+	GATHER_EVENT,
+	DEMO_EVENT,
 	makeEvent(1, ME, { shortId: "cozy-hot-toast-1234" }),
 	makeEvent(2, ME),
 	makeEvent(3, ME),
@@ -140,12 +236,51 @@ export function makeEventUser(
 	};
 }
 
+const jamesAvailable = DEMO_TIMES.filter(s => {
+	const h = parseInt(s.slice(0, 2));
+	return h >= 9 && h < 14;
+});
+const tomiAvailable = DEMO_TIMES.filter(s => {
+	const h = parseInt(s.slice(0, 2));
+	return h >= 12 && h < 18;
+});
+
+// "game-night" event availability — all three only overlap on Wed May 13 at 19:00 (peak)
+const gatherOliver = GATHER_TIMES.filter(s => {
+	const dateStr = s.slice(5);
+	const h = parseInt(s.slice(0, 2));
+	if (dateStr === "13052026") return h >= 18 && h < 21; // Wed: 18:00–20:30
+	return h >= 14 && h < 17; // other days: 14:00–16:30 (no triple overlap)
+});
+const gatherKarina = GATHER_TIMES.filter(s => {
+	const dateStr = s.slice(5);
+	const h = parseInt(s.slice(0, 2));
+	if (dateStr === "13052026") return h >= 19; // Wed: 19:00–22:00
+	return h >= 20; // other days: 20:00–22:00 (no triple overlap)
+});
+const gatherKaur = GATHER_TIMES.filter(s => {
+	const dateStr = s.slice(5);
+	const h = parseInt(s.slice(0, 2));
+	if (dateStr === "13052026") return h >= 16 && h < 20; // Wed: 16:00–19:30
+	return h >= 12 && h < 15; // other days: 12:00–14:30 (no triple overlap)
+});
+
 export const EVENT_USERS: EventUser[] = [
-	makeEventUser(1, EVENTS[0], ME, { available: [], notAvailable: [] }),
-	makeEventUser(2, EVENTS[0], USERS[1]),
-	makeEventUser(3, EVENTS[0], USERS[2]),
-	makeEventUser(8, EVENTS[0], USERS[4]),
-	makeEventUser(4, EVENTS[1], ME, { available: [], notAvailable: [] }),
-	makeEventUser(5, EVENTS[1], USERS[3]),
-	makeEventUser(6, EVENTS[3], ME, { available: [], notAvailable: [] }),
+	makeEventUser(20, GATHER_EVENT, ME, { available: [], notAvailable: [] }),
+	makeEventUser(21, GATHER_EVENT, USERS[1], { available: gatherOliver, notAvailable: [] }),
+	makeEventUser(22, GATHER_EVENT, USERS[2], { available: gatherKarina, notAvailable: [] }),
+	makeEventUser(23, GATHER_EVENT, USERS[3], { available: gatherKaur, notAvailable: [] }),
+	makeEventUser(11, DEMO_EVENT, JAMES, { available: jamesAvailable, notAvailable: [] }),
+	makeEventUser(12, DEMO_EVENT, ME, { available: tomiAvailable, notAvailable: [] }),
+	makeEventUser(1, EVENTS[2], ME, { available: [], notAvailable: [] }),
+	makeEventUser(2, EVENTS[2], USERS[1]),
+	makeEventUser(3, EVENTS[2], USERS[2]),
+	makeEventUser(8, EVENTS[2], USERS[4]),
+	makeEventUser(4, EVENTS[3], ME, { available: [], notAvailable: [] }),
+	makeEventUser(5, EVENTS[3], USERS[3]),
+	makeEventUser(6, EVENTS[5], ME, { available: [], notAvailable: [] }),
 ];
+
+for (const event of EVENTS) {
+	event.respondedCount = EVENT_USERS.filter(eu => eu.event.id === event.id).length;
+}
