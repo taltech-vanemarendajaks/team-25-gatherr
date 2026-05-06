@@ -24,8 +24,16 @@ function App() {
 						value={name}
 						onChange={e => setName(e.target.value)}
 						placeholder={m.home_create_input_placeholder()}
+						onKeyDown={e => {
+							if (e.key === "Enter" && name.trim()) {
+								navigate({ to: "/create", search: { name } });
+							}
+						}}
 					/>
-					<Button onClick={() => navigate({ to: "/create", search: { name } })}>
+					<Button
+						disabled={!name.trim()}
+						onClick={() => navigate({ to: "/create", search: { name } })}
+					>
 						{m.home_create_button()}
 					</Button>
 				</div>

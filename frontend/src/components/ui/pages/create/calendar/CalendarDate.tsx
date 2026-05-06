@@ -20,7 +20,6 @@ export const CalendarDate = ({ date, month, selected }: Props) => {
 			type="button"
 			aria-disabled={isDisabled}
 			data-date={isDisabled ? undefined : date.toISOString()}
-			style={{ touchAction: isDisabled ? "auto" : "none" }}
 			className={cn(
 				"relative w-full h-full m-auto rounded-lg overflow-hidden transition-colors duration-300",
 				isSelected && "text-content!",
@@ -51,12 +50,7 @@ export const CalendarDate = ({ date, month, selected }: Props) => {
 				style={{ originX: 0.5, originY: 0.5 }}
 			/>
 
-			<div
-				className={cn(
-					"relative z-10 flex flex-col h-full justify-center text-sm",
-					"duration-300 hover:text-lg",
-				)}
-			>
+			<div className={cn("relative z-10 flex flex-col h-full justify-center text-sm")}>
 				<time className={cn("font-number font-medium")} dateTime={format(date, "dd-MM-yyyy")}>
 					{date.getDate()}
 				</time>

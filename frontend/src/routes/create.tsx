@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
-import { format, setMinutes, startOfDay } from "date-fns";
+import { format, isBefore, setMinutes, startOfDay, subDays } from "date-fns";
 import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GoogleIcon } from "../components/icons/GoogleIcon";
@@ -97,7 +97,9 @@ function Create() {
 	const draft = loadDraft();
 
 	const [calendarSelectedDates, setCalendarSelectedDates] = useState<Date[]>(
-		draft?.calendarSelectedDates.map(d => new Date(d)) ?? [],
+		draft?.calendarSelectedDates
+			.map(d => new Date(d))
+			.filter(d => !isBefore(d, subDays(new Date(), 1))) ?? [],
 	);
 	const [selectedDays, setSelectedDays] = useState<string[]>(draft?.selectedDays ?? []);
 

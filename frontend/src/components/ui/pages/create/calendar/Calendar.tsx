@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: <a> */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <same letters> */
 import {
 	addDays,
@@ -7,18 +9,22 @@ import {
 	endOfMonth,
 	endOfWeek,
 	format,
+	getISOWeek,
+	isBefore,
 	parse,
 	startOfWeek,
+	subDays,
 } from "date-fns";
 import { enUS, et, type Locale } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, type Variants } from "motion/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useGetMe } from "../../../../../hooks/query/useGetMe";
 import { cn } from "../../../../../lib/utils";
 import { getLocale } from "../../../../../paraglide/runtime";
 import { AnimationWrapper } from "../../../../animations/AnimationWrapper";
 import { animations } from "../../../../animations/anim-constants";
+import { Button } from "../../../button";
 import { CalendarDate } from "./CalendarDate";
 import { getSeason, nextTimeFrame, previousTimeFrame, seasonEmoji } from "./utils";
 
@@ -39,12 +45,10 @@ interface Props {
 	setSelected: React.Dispatch<React.SetStateAction<Date[]>>;
 }
 
+const weekPrefix = getLocale() === "et" ? "N" : "W";
+
 export const Calendar = ({ selected, setSelected }: Props) => {
 	const { data: me } = useGetMe();
-
-	const isDragging = useRef(false);
-	const visitedDates = useRef(new Set<string>());
-	const dragMode = useRef<"add" | "remove">("add");
 
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [direction, setDirection] = useState<number>();
@@ -150,7 +154,8 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 				</header>
 			</div>
 
-			<div className="grid grid-cols-7 font-semibold mb-2">
+			<div className="grid grid-cols-[2rem_repeat(7,1fr)] font-semibold mb-2">
+				<div />
 				{days.map((day, index) => (
 					<div key={day + index} className="flex justify-center">
 						<p className="text-content">{day}</p>
@@ -160,46 +165,16 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 			<motion.div variants={animations.calendar.view} custom={direction}>
 				<div
 					className="grid grid-rows-5 gap-0.5"
-					onPointerDown={e => {
-						const el = document.elementFromPoint(e.clientX, e.clientY);
+					onClick={e => {
+						const el = e.target as HTMLElement;
 						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");
 						if (!dateStr) return;
-						isDragging.current = true;
-						visitedDates.current.clear();
-						visitedDates.current.add(dateStr);
 						const date = new Date(dateStr);
-						dragMode.current = selected.some(d => d.toISOString() === dateStr) ? "remove" : "add";
 						setSelected(prev => {
 							const isAlreadySelected = prev.some(d => d.getTime() === date.getTime());
-							if (dragMode.current === "add" && !isAlreadySelected) return [...prev, date];
-							if (dragMode.current === "remove" && isAlreadySelected)
-								return prev.filter(d => d.getTime() !== date.getTime());
-							return prev;
+							if (isAlreadySelected) return prev.filter(d => d.getTime() !== date.getTime());
+							return [...prev, date];
 						});
-						(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-					}}
-					onPointerMove={e => {
-						if (!isDragging.current) return;
-						const el = document.elementFromPoint(e.clientX, e.clientY);
-						const dateStr = el?.closest("[data-date]")?.getAttribute("data-date");
-						if (!dateStr || visitedDates.current.has(dateStr)) return;
-						visitedDates.current.add(dateStr);
-						const date = new Date(dateStr);
-						setSelected(prev => {
-							const isSelected = prev.some(d => d.getTime() === date.getTime());
-							if (dragMode.current === "add" && !isSelected) return [...prev, date];
-							if (dragMode.current === "remove" && isSelected)
-								return prev.filter(d => d.getTime() !== date.getTime());
-							return prev;
-						});
-					}}
-					onPointerUp={() => {
-						isDragging.current = false;
-						visitedDates.current.clear();
-					}}
-					onPointerCancel={() => {
-						isDragging.current = false;
-						visitedDates.current.clear();
 					}}
 				>
 					{weeks.map(week => {
@@ -207,8 +182,43 @@ export const Calendar = ({ selected, setSelected }: Props) => {
 							start: startOfWeek(week, { weekStartsOn }),
 							end: endOfWeek(week, { weekStartsOn }),
 						});
+						const futureDays = daysForWeek.filter(d => !isBefore(d, subDays(new Date(), 1)));
+						const allFutureSelected =
+							futureDays.length > 0 &&
+							futureDays.every(d => selected.some(s => s.getTime() === d.getTime()));
+
 						return (
-							<div key={week.toISOString()} className={cn("grid grid-cols-7 gap-0.5 h-10")}>
+							<div
+								key={week.toISOString()}
+								className={cn("grid grid-cols-[2rem_repeat(7,1fr)] gap-0.5 h-10")}
+							>
+								<Button
+									variant="dark"
+									type="button"
+									size="xs"
+									className={cn(
+										"mr-4 text-[0.6rem] font-medium border-b-4",
+										futureDays.length === 0 && "opacity-30 cursor-default",
+									)}
+									disabled={futureDays.length === 0}
+									onClick={() => {
+										if (allFutureSelected) {
+											setSelected(prev =>
+												prev.filter(d => !futureDays.some(fd => fd.getTime() === d.getTime())),
+											);
+										} else {
+											setSelected(prev => {
+												const toAdd = futureDays.filter(
+													d => !prev.some(s => s.getTime() === d.getTime()),
+												);
+												return [...prev, ...toAdd];
+											});
+										}
+									}}
+								>
+									{weekPrefix}
+									{getISOWeek(week)}
+								</Button>
 								{daysForWeek.map(day => (
 									<CalendarDate
 										key={day.toISOString()}
