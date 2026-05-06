@@ -22,7 +22,7 @@ export const useCreateEvent = () => {
 		mutationFn,
 		onSuccess: ({ shortId }) => {
 			if (shortId) {
-				navigate({ to: `/e/${shortId}` });
+				navigate({ to: `/e/${shortId}`, search: { fromCreate: true } });
 			}
 			queryClient.invalidateQueries({ queryKey: ["event"] });
 		},

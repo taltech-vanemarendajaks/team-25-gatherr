@@ -16,9 +16,9 @@ const MOCK_CALENDARS = [
 
 // Slots that Google Calendar "blocks" — union of 13:00–15:00 and 14:00–16:00
 const BLOCKED_HOUR_RANGES = [
-	{ from: 10, to: 11 }, // 10:00–10:59
-	{ from: 13, to: 14 }, // 13:00–14:59
-	{ from: 19, to: 20 }, // 14:00–15:59
+	{ from: 10, to: 11 },
+	{ from: 13, to: 14 },
+	{ from: 17, to: 18 },
 ];
 
 function isBlockedByCalendar(slot: string): boolean {

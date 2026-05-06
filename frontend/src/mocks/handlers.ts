@@ -1,6 +1,13 @@
 import { HttpResponse, http } from "msw";
 import { EVENT_USERS, EVENTS, ME, makeEventUser, shortId } from "./data";
-import type { Event, EventUser, SummaryResponse, SummarySlot, SummaryUserResponse } from "./types";
+import type {
+	Event,
+	EventUser,
+	SummaryResponse,
+	SummarySlot,
+	SummaryUserResponse,
+	User,
+} from "./types";
 
 const BASE = "/api/v1";
 
@@ -47,8 +54,8 @@ const BASE = "/api/v1";
  */
 
 // ── Auth state ───────────────────────────────────────────────────────────────
-// Starts logged out. POST /auth/google sets this to true.
 let isLoggedIn = false;
+const activeUser: User = ME;
 
 // IMPORTANT: MSW matches handlers in registration order.
 // Specific paths (mine, summary, respond) MUST be registered before the
@@ -59,10 +66,10 @@ export const handlers = [
 		isLoggedIn = true;
 		return HttpResponse.json({
 			token: "mock-token",
-			id: ME.id,
-			name: ME.name,
-			email: ME.email,
-			profilePicture: ME.profilePicture,
+			id: activeUser.id,
+			name: activeUser.name,
+			email: activeUser.email,
+			profilePicture: activeUser.profilePicture,
 		});
 	}),
 
@@ -70,14 +77,14 @@ export const handlers = [
 	http.get(`${BASE}/users/me`, ({ request }) => {
 		const auth = request.headers.get("Authorization");
 		if (!isLoggedIn && auth !== "Bearer mock-token") return new HttpResponse(null, { status: 401 });
-		return HttpResponse.json(ME);
+		return HttpResponse.json(activeUser);
 	}),
 
 	// ── PATCH /users/me ───────────────────────────────────────────────────────
 	http.patch(`${BASE}/users/me`, async ({ request }) => {
-		const body = (await request.json()) as Partial<typeof ME>;
-		Object.assign(ME, body, { updatedAt: new Date().toISOString() });
-		return HttpResponse.json(ME);
+		const body = (await request.json()) as Partial<User>;
+		Object.assign(activeUser, body, { updatedAt: new Date().toISOString() });
+		return HttpResponse.json(activeUser);
 	}),
 
 	// ── GET /events/mine /:shortId ───────────────────────────────────
@@ -85,7 +92,7 @@ export const handlers = [
 		const auth = request.headers.get("Authorization");
 		if (!isLoggedIn && auth !== "Bearer mock-token") return new HttpResponse(null, { status: 401 });
 		const myEventIds = new Set(
-			EVENT_USERS.filter(eu => eu.user.id === ME.id).map(eu => eu.event.id),
+			EVENT_USERS.filter(eu => eu.user.id === activeUser.id).map(eu => eu.event.id),
 		);
 		const mine = EVENTS.filter(e => myEventIds.has(e.id) && !e.isDeleted);
 		return HttpResponse.json(mine);
@@ -150,7 +157,7 @@ export const handlers = [
 			notAvailable: string[];
 		};
 		const existing = EVENT_USERS.find(
-			eu => eu.event.shortId === params.shortId && eu.user.id === ME.id,
+			eu => eu.event.shortId === params.shortId && eu.user.id === activeUser.id,
 		);
 
 		if (existing) {
@@ -164,10 +171,10 @@ export const handlers = [
 			id: EVENT_USERS.length + 1,
 			event: { id: event.id, shortId: event.shortId, name: event.name },
 			user: {
-				id: ME.id,
-				name: ME.name,
-				email: ME.email,
-				profilePicture: ME.profilePicture,
+				id: activeUser.id,
+				name: activeUser.name,
+				email: activeUser.email,
+				profilePicture: activeUser.profilePicture,
 			},
 			available: body.available,
 			notAvailable: body.notAvailable,
@@ -185,9 +192,8 @@ export const handlers = [
 			id: EVENTS.length + 1,
 			name: body.name ?? "New Event",
 			description: body.description ?? null,
-			// shortId: "cozy-hot-toast-1234",
 			shortId: shortId(),
-			creator: ME,
+			creator: activeUser,
 			type: body.type ?? "SPECIFIC_DATES",
 			times: body.times ?? [],
 			timeIncrement: body.timeIncrement ?? 30,
@@ -199,7 +205,10 @@ export const handlers = [
 		};
 		EVENTS.push(newEvent);
 		EVENT_USERS.push(
-			makeEventUser(EVENT_USERS.length + 1, newEvent, ME, { available: [], notAvailable: [] }),
+			makeEventUser(EVENT_USERS.length + 1, newEvent, activeUser, {
+				available: [],
+				notAvailable: [],
+			}),
 		);
 		return HttpResponse.json(newEvent, { status: 201 });
 	}),

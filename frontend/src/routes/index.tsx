@@ -9,7 +9,7 @@ import { m } from "../paraglide/messages";
 export const Route = createFileRoute("/")({ component: App });
 
 function App() {
-	const [name, setName] = useState("");
+	const [name, setName] = useState("Game night");
 	const navigate = useNavigate();
 
 	return (

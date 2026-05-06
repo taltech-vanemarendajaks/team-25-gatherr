@@ -2,13 +2,20 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { createFileRoute } from "@tanstack/react-router";
-import { SendIcon, UsersRound } from "lucide-react";
+import { SendIcon, ShareIcon, UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { GoogleIcon } from "../../components/icons/GoogleIcon";
 import { GradientIcon } from "../../components/icons/GradientIcon";
 import { Button } from "../../components/ui/button";
 import { CopyLinkButton } from "../../components/ui/CopyLinkButton";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "../../components/ui/dialog";
 import { HeatmapTabs } from "../../components/ui/pages/event/HeatmapTabs";
 import { Skeleton } from "../../components/ui/skeleton";
 import { UserButton } from "../../components/ui/UserButton";
@@ -21,16 +28,21 @@ import { m } from "../../paraglide/messages";
 
 export const Route = createFileRoute("/e/$shortId")({
 	component: RouteComponent,
+	validateSearch: (search: Record<string, unknown>) => ({
+		fromCreate: search.fromCreate === true || search.fromCreate === "true",
+	}),
 });
 
 function RouteComponent() {
 	const { shortId } = Route.useParams();
+	const { fromCreate } = Route.useSearch();
 	const { data: event, isLoading } = useGetEvent(shortId);
 	const { data: me } = useGetMe();
 	const handleLogin = useGoogleAuth();
 	const { mutate: respond, isPending: isSaving } = useRespondToEvent(shortId);
 
 	const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+	const [shareModalOpen, setShareModalOpen] = useState(fromCreate);
 
 	const isCreator = me && event && me.id === event.details.creatorId;
 
@@ -45,12 +57,15 @@ function RouteComponent() {
 
 	const handleSendInvites = () => {
 		toast.success("Invites sent to people");
-		const shareText = "Game night begins at 19:00 02.05 This sunday.";
-		if (navigator.share) {
-			navigator.share({ text: shareText }).catch(() => {});
-		} else {
-			navigator.clipboard.writeText(shareText);
-		}
+		const shareText = "Game night begins at 19:00 13.05 Wednesday.";
+
+		setTimeout(() => {
+			if (navigator.share) {
+				navigator.share({ text: shareText }).catch(() => {});
+			} else {
+				navigator.clipboard.writeText(shareText);
+			}
+		}, 1000);
 	};
 
 	useEffect(() => {
@@ -78,12 +93,11 @@ function RouteComponent() {
 
 					<div className="flex flex-row gap-3">
 						<CopyLinkButton shortId={shortId} />
-						{isCreator && (
-							<Button size="xs" onClick={handleSendInvites}>
-								<SendIcon className="size-4 mr-2" />
-								Send final date
-							</Button>
-						)}
+
+						<Button size="xs" onClick={handleSendInvites}>
+							<SendIcon className="size-4 mr-2" />
+							Send final date
+						</Button>
 					</div>
 				</div>
 				<div>
@@ -202,6 +216,32 @@ function RouteComponent() {
 				onSave={handleSave}
 				isSaving={isSaving}
 			/>
+
+			<Dialog open={shareModalOpen} onOpenChange={setShareModalOpen}>
+				<DialogContent className="max-w-sm" showCloseButton={true}>
+					<DialogHeader>
+						<img src="/fireplace.svg" alt="Fireplace" className="h-14 sm:h-16 mb-8" />
+						<DialogTitle className="font-medium text-2xl mb-8 text-nowrap">
+							Share this event with your friends
+						</DialogTitle>
+						<Button
+							onClick={() => {
+								const url = window.location.href.split("?")[0];
+								if (navigator.share) {
+									navigator.share({ url, title: event?.details.name }).catch(() => {});
+								} else {
+									navigator.clipboard.writeText(url);
+									toast.success("Link copied!");
+								}
+							}}
+							className="mb-4 px-8"
+						>
+							<ShareIcon className="size-5 mr-3" />
+							Share
+						</Button>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
 		</main>
 	);
 }
