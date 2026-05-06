@@ -63,7 +63,7 @@ function RouteComponent() {
 						<p className="text-3xl mb-2 font-viking">{event?.details.name}</p>
 					)}
 
-					<CopyLinkButton shortId={shortId} />
+					<CopyLinkButton shortId={shortId} text />
 				</div>
 				<div>
 					<UserButton />
